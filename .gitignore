@@ -341,4 +341,4 @@ healthchecksdb
 /coveragereport
 .vs/ResearchXBRL/v16/.suo
 .vs/ResearchXBRL/DesignTimeBuild/.dtbcache.v2
-.vs/ResearchXBRL/v16/.suo
+obj/*
