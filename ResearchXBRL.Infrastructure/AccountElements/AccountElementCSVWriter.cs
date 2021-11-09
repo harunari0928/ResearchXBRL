@@ -22,7 +22,7 @@ namespace ResearchXBRL.Infrastructure.AccountElements
         {
             csvWriter.WriteHeader<AccountElement>();
             await csvWriter.NextRecordAsync();
-            await csvWriter.WriteRecordsAsync(elements.ToList());
+            await csvWriter.WriteRecordsAsync(elements);
         }
 
         public void Dispose()
