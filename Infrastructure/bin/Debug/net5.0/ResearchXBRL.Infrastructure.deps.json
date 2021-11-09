@@ -1,0 +1,63 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "ResearchXBRL.Infrastructure/1.0.0": {
+        "dependencies": {
+          "CsvHelper": "27.1.1",
+          "ResearchXBRL.CrossCuttingInterest": "1.0.0",
+          "ResearchXBRL.Domain": "1.0.0"
+        },
+        "runtime": {
+          "ResearchXBRL.Infrastructure.dll": {}
+        }
+      },
+      "CsvHelper/27.1.1": {
+        "runtime": {
+          "lib/net5.0/CsvHelper.dll": {
+            "assemblyVersion": "27.0.0.0",
+            "fileVersion": "27.1.1.0"
+          }
+        }
+      },
+      "ResearchXBRL.CrossCuttingInterest/1.0.0": {
+        "runtime": {
+          "ResearchXBRL.CrossCuttingInterest.dll": {}
+        }
+      },
+      "ResearchXBRL.Domain/1.0.0": {
+        "runtime": {
+          "ResearchXBRL.Domain.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ResearchXBRL.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CsvHelper/27.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-lo5yypClBORR2XiWPRxQApaA4C2R4GVCIPVRt9HfaLxLmVQtg/KZiOYsd4luLgyOxkUatF9R0QdFQYk7Y2l0cw==",
+      "path": "csvhelper/27.1.1",
+      "hashPath": "csvhelper.27.1.1.nupkg.sha512"
+    },
+    "ResearchXBRL.CrossCuttingInterest/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ResearchXBRL.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
