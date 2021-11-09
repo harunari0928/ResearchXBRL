@@ -5,12 +5,17 @@ namespace ResearchXBRL.CrossCuttingInterest.Extensions
 {
     public static class XmlNodeExtensions
     {
-        public static IEnumerable<XmlNode> GetChildNodes(this XmlNode doc)
+        public static IEnumerable<XmlNode> GetChildNodes(this XmlNode node)
         {
-            foreach (XmlNode item in doc.ChildNodes)
+            foreach (XmlNode child in node.ChildNodes)
             {
-                yield return item;
+                yield return child;
             }
+        }
+
+        public static string? GetAttributeValue(this XmlNode node, string key)
+        {
+            return node.Attributes?[key]?.Value;
         }
     }
 }
