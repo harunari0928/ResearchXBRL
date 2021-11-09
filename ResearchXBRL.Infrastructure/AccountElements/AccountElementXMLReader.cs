@@ -28,28 +28,28 @@ namespace ResearchXBRL.Infrastructure.AccountElements
 
         private static XmlNode GetAccountItemElement(IEnumerable<XmlNode> accountElements, string elementId)
         {
-            return accountElements.Single(x => x.Attributes?["name"]?.Value == elementId);
+            return accountElements.Single(x => x.GetAttributeValue("name") == elementId);
         }
 
         private static IEnumerable<(string elementId, string name)> ReadAccountLabels(StreamReader labelReader)
         {
-            var accountItemLabelDoc = new XmlDocument();
-            accountItemLabelDoc.Load(labelReader);
-            var labelLinkContents = ReadLabelLinkContents(accountItemLabelDoc);
+            var labelLinkContents = ReadLabelLinkContents(labelReader);
 
             var elementIds = labelLinkContents
                 .Where(x => x.Name == "link:loc")
-                .Select(x => x.Attributes?["xlink:label"]?.Value ?? throw new Exception("XBRL要素名が空"));
+                .Select(x => x.GetAttributeValue("xlink:label") ?? throw new Exception("XBRL要素名が空"));
             var names = labelLinkContents
                 .Where(x => x.Name == "link:label")
-                .GroupBy(x => x.Attributes?["xlink:label"]?.Value.Split('_')[1] ?? "")
+                .GroupBy(x => x.GetAttributeValue("xlink:label").Split('_')[1] ?? "")
                 .Select(x => x.First().InnerText ?? throw new Exception("会計項目名が空"));
 
             return elementIds.Zip(names);
         }
 
-        private static IEnumerable<XmlNode> ReadLabelLinkContents(XmlDocument accountItemLabelDoc)
+        private static IEnumerable<XmlNode> ReadLabelLinkContents(StreamReader labelReader)
         {
+            var accountItemLabelDoc = new XmlDocument();
+            accountItemLabelDoc.Load(labelReader);
             return accountItemLabelDoc
                 .GetChildNodes()
                 .First(x => x.Name == "link:linkbase")
@@ -79,12 +79,12 @@ namespace ResearchXBRL.Infrastructure.AccountElements
                 {
                     XBRLName = elementId,
                     AccountName = name,
-                    Type = accountElement.Attributes?["type"]?.Value ?? "",
-                    SubstitutionGroup = accountElement.Attributes?["substitutionGroup"]?.Value ?? "",
-                    Abstract = bool.Parse(accountElement.Attributes?["abstract"]?.Value ?? "false"),
-                    Nillable = bool.Parse(accountElement.Attributes?["nillable"]?.Value ?? "false"),
-                    Balance = accountElement.Attributes?["xbrli:balance"]?.Value ?? "",
-                    PeriodType = accountElement.Attributes?["xbrli:periodType"]?.Value ?? "",
+                    Type = accountElement.GetAttributeValue("type") ?? "",
+                    SubstitutionGroup = accountElement.GetAttributeValue("substitutionGroup") ?? "",
+                    Abstract = bool.Parse(accountElement.GetAttributeValue("abstract") ?? "false"),
+                    Nillable = bool.Parse(accountElement.GetAttributeValue("nillable") ?? "false"),
+                    Balance = accountElement.GetAttributeValue("xbrli:balance") ?? "",
+                    PeriodType = accountElement.GetAttributeValue("xbrli:periodType") ?? "",
                     TaxonomyVersion = new DateTime(2019, 11, 1)
                 };
             }

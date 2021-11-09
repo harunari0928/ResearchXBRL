@@ -12,6 +12,7 @@ namespace ResearchXBRL.Infrastructure.AccountElements
     {
         private readonly StreamWriter streamWriter;
         private readonly CsvWriter csvWriter;
+
         public AccountElementCSVWriter(string outputPath)
         {
             streamWriter = new StreamWriter(outputPath);
