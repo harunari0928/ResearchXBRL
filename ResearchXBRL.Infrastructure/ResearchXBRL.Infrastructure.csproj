@@ -1,4 +1,4 @@
-
+﻿
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -10,8 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CrossCuttingInterest\ResearchXBRL.CrossCuttingInterest.csproj" />
-    <ProjectReference Include="..\Domain\ResearchXBRL.Domain.csproj" />
     <ProjectReference Include="..\ResearchXBRL.CrossCuttingInterest\ResearchXBRL.CrossCuttingInterest.csproj" />
     <ProjectReference Include="..\ResearchXBRL.Domain\ResearchXBRL.Domain.csproj" />
   </ItemGroup>
