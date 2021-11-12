@@ -4,6 +4,7 @@ using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
 using ResearchXBRL.Domain.AccountElements;
 using ResearchXBRL.Infrastructure.AccountElements;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace ResearchXBRL.CreateAccountItemsCSV
@@ -12,27 +13,33 @@ namespace ResearchXBRL.CreateAccountItemsCSV
     {
         static async Task Main(string[] _)
         {
-            Console.WriteLine("accountItemFilePath(ex: ./jppfs_cor_2019-11-01.xsd) >");
-            var accountItemFilePath = Console.ReadLine() ?? throw new Exception("入力してください");
-            Console.WriteLine("accountItemLabelPath(ex: ./jppfs_2019-11-01_lab.xml) >");
+            Console.WriteLine("accountSchemaFilePath(ex: ./*_2019-11-01.xsd) >");
+            var accountSchemaFilePath = Console.ReadLine() ?? throw new Exception("入力してください");
+            Console.WriteLine("accountItemLabelPath(ex: ./*_lab.xml) >");
             var accountItemLabelPath = Console.ReadLine() ?? throw new Exception("入力してください");
             Console.WriteLine("outputFilePath >");
             var outputFilePath = Console.ReadLine() ?? throw new Exception("入力してください");
 
-            using var serviceProvider = CreateServiceProvider(accountItemFilePath, accountItemLabelPath, outputFilePath);
+            using var accountSchemaReader = new StreamReader(accountSchemaFilePath);
+            using var accountItemLabelReader = new StreamReader(accountItemLabelPath);
+            using var accountElementWriter = new StreamWriter(outputFilePath);
+            using var serviceProvider = CreateServiceProvider(
+                accountSchemaReader,
+                accountItemLabelReader,
+                accountElementWriter);
             var useCase = serviceProvider
                 .GetService<ITransferAccountElementsUsecase>()
                 ?? throw new Exception("実行失敗");
             await useCase.Hundle();
         }
 
-        private static ServiceProvider CreateServiceProvider(string accountItemFilePath, string accountItemLabelPath, string outputFilePath)
+        private static ServiceProvider CreateServiceProvider(TextReader schemaReader, TextReader labelReader, TextWriter writer)
         {
             return new ServiceCollection()
                 .AddTransient<IAccountElementReader>(_ =>
-                    new AccountElementXMLReader(accountItemFilePath, accountItemLabelPath))
+                    new AccountElementXMLReader(schemaReader, labelReader))
                 .AddTransient<IAccountElementWriter>(_ =>
-                    new AccountElementCSVWriter(outputFilePath))
+                    new AccountElementCSVWriter(writer))
                 .AddTransient<ITransferAccountElementsPresenter, ConsolePresenter>()
                 .AddSingleton<ITransferAccountElementsUsecase, TransferAccountElementsInteractor>()
                 .BuildServiceProvider();
