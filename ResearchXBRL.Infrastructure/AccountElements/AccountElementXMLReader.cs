@@ -10,20 +10,20 @@ namespace ResearchXBRL.Infrastructure.AccountElements
 {
     public sealed class AccountElementXMLReader : IAccountElementReader
     {
-        private readonly StreamReader accountItemLabelReader;
-        private readonly StreamReader accountItemElementReader;
+        private readonly TextReader accountItemLabelReader;
+        private readonly TextReader accountItemSchemaReader;
 
-        public AccountElementXMLReader(string acountItemFilePath, string accountItemLabelPath)
+        public AccountElementXMLReader(TextReader accountItemSchemaReader, TextReader accountItemLabelReader)
         {
-            accountItemLabelReader = new StreamReader(accountItemLabelPath);
-            accountItemElementReader = new StreamReader(acountItemFilePath);
+            this.accountItemSchemaReader = accountItemSchemaReader;
+            this.accountItemLabelReader = accountItemLabelReader;
         }
 
         public IEnumerable<AccountElement> Read()
         {
             return CreateAccountElements(
                     accountItemLabelReader,
-                    accountItemElementReader);
+                    accountItemSchemaReader);
         }
 
         private static XmlNode GetAccountItemElement(IEnumerable<XmlNode> accountElements, string elementId)
@@ -31,7 +31,7 @@ namespace ResearchXBRL.Infrastructure.AccountElements
             return accountElements.Single(x => x.GetAttributeValue("name") == elementId);
         }
 
-        private static IEnumerable<(string elementId, string name)> ReadAccountLabels(StreamReader labelReader)
+        private static IEnumerable<(string elementId, string name)> ReadAccountLabels(TextReader labelReader)
         {
             var labelLinkContents = ReadLabelLinkContents(labelReader);
 
@@ -46,7 +46,7 @@ namespace ResearchXBRL.Infrastructure.AccountElements
             return elementIds.Zip(names);
         }
 
-        private static IEnumerable<XmlNode> ReadLabelLinkContents(StreamReader labelReader)
+        private static IEnumerable<XmlNode> ReadLabelLinkContents(TextReader labelReader)
         {
             var accountItemLabelDoc = new XmlDocument();
             accountItemLabelDoc.Load(labelReader);
@@ -58,18 +58,18 @@ namespace ResearchXBRL.Infrastructure.AccountElements
                 .GetChildNodes();
         }
 
-        private static IEnumerable<XmlNode> ReadAccountElements(StreamReader elementReader)
+        private static IEnumerable<XmlNode> ReadAccountElements(TextReader schemaReader)
         {
-            var accountItemElementDoc = new XmlDocument();
-            accountItemElementDoc.Load(elementReader);
-            return accountItemElementDoc
+            var accountItemSchemaDoc = new XmlDocument();
+            accountItemSchemaDoc.Load(schemaReader);
+            return accountItemSchemaDoc
                 .GetChildNodes()
                 .First(x => x.Name == "xsd:schema")
                 .GetChildNodes()
                 .Where(x => x.Name == "xsd:element");
         }
 
-        private static IEnumerable<AccountElement> CreateAccountElements(StreamReader labelReader, StreamReader elementReader)
+        private static IEnumerable<AccountElement> CreateAccountElements(TextReader labelReader, TextReader elementReader)
         {
             var accountElements = ReadAccountElements(elementReader);
             foreach (var (elementId, name) in ReadAccountLabels(labelReader))
@@ -95,7 +95,7 @@ namespace ResearchXBRL.Infrastructure.AccountElements
             foreach (var reader in new TextReader[]
             {
                 accountItemLabelReader,
-                accountItemElementReader
+                accountItemSchemaReader
             })
             {
                 reader.Dispose();

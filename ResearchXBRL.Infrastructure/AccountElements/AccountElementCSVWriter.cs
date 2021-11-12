@@ -10,13 +10,11 @@ namespace ResearchXBRL.Infrastructure.AccountElements
 {
     public sealed class AccountElementCSVWriter : IAccountElementWriter
     {
-        private readonly StreamWriter streamWriter;
         private readonly CsvWriter csvWriter;
 
-        public AccountElementCSVWriter(string outputPath)
+        public AccountElementCSVWriter(TextWriter writer)
         {
-            streamWriter = new StreamWriter(outputPath);
-            csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture);
+            csvWriter = new CsvWriter(writer, CultureInfo.CurrentCulture);
         }
 
         public async Task Write(IEnumerable<AccountElement> elements)
@@ -29,7 +27,6 @@ namespace ResearchXBRL.Infrastructure.AccountElements
         public void Dispose()
         {
             csvWriter.Dispose();
-            streamWriter.Dispose();
         }
     }
 }
