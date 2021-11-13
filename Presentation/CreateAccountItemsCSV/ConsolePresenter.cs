@@ -1,7 +1,7 @@
 ﻿using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
 using System;
 
-namespace ResearchXBRL.CreateAccountItemsCSV
+namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV
 {
     public sealed class ConsolePresenter : ITransferAccountElementsPresenter
     {
