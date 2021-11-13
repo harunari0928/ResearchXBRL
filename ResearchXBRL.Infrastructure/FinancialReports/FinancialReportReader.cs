@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace ResearchXBRL.Infrastructure.FinancialReports
 {
-    public sealed class FinancialReportDownloader : IFinancialReportReader
+    public sealed class FinancialReportReader : IFinancialReportReader
     {
         private readonly IEdinetXBRLDownloader downloader;
         private readonly IFileStorage fileStorage;
 
-        public FinancialReportDownloader(
+        public FinancialReportReader(
             IEdinetXBRLDownloader downloader,
             IFileStorage fileStorage)
         {
