@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Tests.Infrastructure.FinancialReports
+namespace ResearchXBRL.Infrastructure.FinancialReports
 {
     public sealed class FinancialReportDownloader : IFinancialReportReader
     {
