@@ -20,9 +20,9 @@ namespace ResearchXBRL.Tests.Application.AccountElements
 
             public HandleTests()
             {
-                accountElementReader = new ();
-                accountElementWriter = new ();
-                presenter = new ();
+                accountElementReader = new();
+                accountElementWriter = new();
+                presenter = new();
             }
 
             [Fact]
