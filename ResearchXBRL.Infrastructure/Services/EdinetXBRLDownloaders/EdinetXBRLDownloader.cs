@@ -1,23 +1,22 @@
-﻿using ResearchXBRL.Infrastructure.Services.FileStorage;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloader
+namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
 {
-    public sealed class XBRLEdinetDownloader : IEdinetXBRLDownloader
+    public abstract class EdinetXBRLDownloader : IEdinetXBRLDownloader
     {
         private readonly HttpClient httpClient;
         private readonly string apiVersion;
 
-        public XBRLEdinetDownloader(
+        public EdinetXBRLDownloader(
             IHttpClientFactory httpClientFactory,
             string apiVersion = "v1")
         {
-            httpClient = httpClientFactory.CreateClient(typeof(XBRLEdinetDownloader).Name);
+            httpClient = httpClientFactory.CreateClient(typeof(EdinetXBRLDownloader).Name);
             this.apiVersion = apiVersion;
         }
 
@@ -31,7 +30,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloader
 
             var jstStartDate = start.ToOffset(TimeSpan.FromHours(9)).DateTime;
             var jstEndDate = end.ToOffset(TimeSpan.FromHours(9)).DateTime;
-            var documentIds = GetFinancialReportDocumentIds(jstStartDate, jstEndDate);
+            var documentIds = GetFilteredDocumentIds(jstStartDate, jstEndDate);
             return GetDocumentFiles(documentIds);
         }
 
@@ -55,16 +54,9 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloader
             }
         }
 
-        private IAsyncEnumerable<string> GetFinancialReportDocumentIds(DateTime start, DateTime end)
-        {
-            return GetAllDocumentInfos(start, end)
-                // 有価証券報告書のみを絞り込む
-                .Where(x => x.OrdinanceCode == "010")
-                .Where(x => x.FormCode == "030000")
-                .Select(x => x.DocID);
-        }
+        protected abstract IAsyncEnumerable<string> GetFilteredDocumentIds(DateTime start, DateTime end);
 
-        private async IAsyncEnumerable<DocumentInfo> GetAllDocumentInfos(DateTime startDay, DateTime endDay)
+        protected async IAsyncEnumerable<DocumentInfo> GetAllDocumentInfos(DateTime startDay, DateTime endDay)
         {
             foreach (var date in EnumerateDates(startDay, endDay))
             {
@@ -82,7 +74,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloader
             }
         }
 
-        private sealed class DocumentListAPIResponse
+        protected sealed class DocumentListAPIResponse
         {
             public IReadOnlyList<DocumentInfo> Results { get; init; } = new List<DocumentInfo>();
 
@@ -99,7 +91,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloader
             }
         }
 
-        private sealed class DocumentInfo
+        protected sealed class DocumentInfo
         {
             public string DocID { get; init; } = "";
             public string OrdinanceCode { get; init; } = "";

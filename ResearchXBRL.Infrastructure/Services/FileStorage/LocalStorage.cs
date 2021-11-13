@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace ResearchXBRL.Infrastructure.Services.FileStorage
+namespace ResearchXBRL.Infrastructure.Services.FileStorages
 {
     public sealed class LocalStorage : IFileStorage
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloader
+namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
 {
     public sealed class EdinetXBRLData
     {
