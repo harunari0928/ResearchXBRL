@@ -1,6 +1,5 @@
 ﻿using ResearchXBRL.Domain.FinancialReports;
-using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
-using ResearchXBRL.Infrastructure.Services.FileStorages;
+using ResearchXBRL.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

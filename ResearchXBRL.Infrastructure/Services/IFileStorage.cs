@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ResearchXBRL.Infrastructure.Services.FileStorages
+namespace ResearchXBRL.Infrastructure.Services
 {
     public interface IFileStorage
     {
