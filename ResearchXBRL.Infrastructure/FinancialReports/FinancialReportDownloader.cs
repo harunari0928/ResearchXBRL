@@ -1,11 +1,8 @@
 ﻿using ResearchXBRL.Domain.FinancialReports;
-using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloader;
-using ResearchXBRL.Infrastructure.Services.FileStorage;
+using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
+using ResearchXBRL.Infrastructure.Services.FileStorages;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ResearchXBRL.Tests.Infrastructure.FinancialReports
