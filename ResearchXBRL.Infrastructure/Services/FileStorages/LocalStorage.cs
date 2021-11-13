@@ -17,31 +17,26 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
             this.storageDirectoryPath = storageDirectoryPath;
         }
 
-        public byte[] Get(string fileName)
+        public Stream Get(string filePath)
         {
-            using var fileStream = new FileStream(
-                Path.Combine(storageDirectoryPath, fileName),
+            return new FileStream(
+                Path.Combine(storageDirectoryPath, filePath),
                 FileMode.Open);
-            using var reader = new BinaryReader(fileStream);
-            return ReadBytes(reader).ToArray();
         }
 
-        public void Set(IEnumerable<byte> bytes, string fileName)
+        public void Set(IEnumerable<byte> bytes, string filePath)
         {
             using var fileStream = new FileStream(
-                Path.Combine(storageDirectoryPath, fileName),
+                Path.Combine(storageDirectoryPath, filePath),
                 FileMode.Create);
             using var writer = new BinaryWriter(fileStream);
             writer.Write(bytes.ToArray());
             writer.Flush();
         }
 
-        private static IEnumerable<byte> ReadBytes(BinaryReader binaryReader)
+        public void Unzip()
         {
-            while (binaryReader.BaseStream.Position != binaryReader.BaseStream.Length)
-            {
-                yield return binaryReader.ReadByte();
-            }
+            throw new System.NotImplementedException();
         }
     }
 }
