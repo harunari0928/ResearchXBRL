@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace ResearchXBRL.Tests.ResearchXBRL.Infrastructure.AccountElements
+namespace ResearchXBRL.Tests.Infrastructure.AccountElements
 {
     public sealed class AccountElementXMLReaderTests
     {

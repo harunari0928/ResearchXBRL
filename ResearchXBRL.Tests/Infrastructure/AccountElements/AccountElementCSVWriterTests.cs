@@ -1,16 +1,14 @@
 ﻿using CsvHelper;
-using Moq;
 using ResearchXBRL.Domain.AccountElements;
 using ResearchXBRL.Infrastructure.AccountElements;
 using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ResearchXBRL.Tests.ResearchXBRL.Infrastructure.AccountElements
+namespace ResearchXBRL.Tests.Infrastructure.AccountElements
 {
     public sealed class AccountElementCSVWriterTests
     {
