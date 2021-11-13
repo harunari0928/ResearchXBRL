@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ResearchXBRL.Domain.FinancialReports
 {
     public interface IFinancialReportReader
     {
-        IEnumerable<FinancialReport> Read();
+        Task<IEnumerable<FinancialReport>> Read(DateTimeOffset start, DateTimeOffset end);
     }
 }
