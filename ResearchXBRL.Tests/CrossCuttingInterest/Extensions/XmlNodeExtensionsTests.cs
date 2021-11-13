@@ -4,7 +4,7 @@ using System.Linq;
 using System.Xml;
 using Xunit;
 
-namespace ResearchXBRL.Tests.ResearchXBRL.CrossCuttingInterest.Extensions
+namespace ResearchXBRL.Tests.CrossCuttingInterest.Extensions
 {
     public sealed class XmlNodeExtensionsTests
     {
