@@ -109,7 +109,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
         private string DocumentListAPIUrl
             => $"https://disclosure.edinet-fsa.go.jp/api/{apiVersion}/documents.json";
 
-        private static string DocumentAPIUrl(string documentId)
-            => $"https://disclosure.edinet-fsa.go.jp/api/v1/documents/{documentId}";
+        private string DocumentAPIUrl(string documentId)
+            => $"https://disclosure.edinet-fsa.go.jp/api/{apiVersion}/documents/{documentId}";
     }
 }
