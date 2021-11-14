@@ -1,5 +1,4 @@
 ﻿using ResearchXBRL.Application.DTO;
-using ResearchXBRL.Application.Service;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.Domain.FinancialReports;
 using System;

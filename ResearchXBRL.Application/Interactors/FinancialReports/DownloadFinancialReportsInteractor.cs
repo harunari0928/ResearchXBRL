@@ -1,11 +1,10 @@
-﻿using ResearchXBRL.Application.Service;
-using ResearchXBRL.Application.Services;
+﻿using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.FinancialReports;
 using ResearchXBRL.Domain.FinancialReports;
 using System;
 using System.Collections.Generic;
 
-namespace ResearchXBRL.Application.FinancialRepors
+namespace ResearchXBRL.Application.FinancialReports
 {
     public sealed class DownloadFinancialReportsInteractor : IDownloadFinancialReporsUsecase
     {
