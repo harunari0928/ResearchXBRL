@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ResearchXBRL.Application\ResearchXBRL.Application.csproj" />
     <ProjectReference Include="..\ResearchXBRL.CrossCuttingInterest\ResearchXBRL.CrossCuttingInterest.csproj" />
     <ProjectReference Include="..\ResearchXBRL.Domain\ResearchXBRL.Domain.csproj" />
   </ItemGroup>

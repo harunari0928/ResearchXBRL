@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ResearchXBRL.Application.DTO;
+using ResearchXBRL.Application.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -49,7 +51,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
                 yield return new EdinetXBRLData
                 {
                     DocumentId = docuemntId,
-                    BinaryData = await responseMessage.Content.ReadAsByteArrayAsync()
+                    ZippedDataStream = await responseMessage.Content.ReadAsStreamAsync()
                 };
             }
         }

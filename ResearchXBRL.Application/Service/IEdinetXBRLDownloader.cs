@@ -1,8 +1,8 @@
-﻿using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
+﻿using ResearchXBRL.Application.DTO;
 using System;
 using System.Collections.Generic;
 
-namespace ResearchXBRL.Infrastructure.Services
+namespace ResearchXBRL.Application.Services
 {
     public interface IEdinetXBRLDownloader
     {
