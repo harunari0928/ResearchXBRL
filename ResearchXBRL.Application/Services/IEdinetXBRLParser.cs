@@ -1,7 +1,7 @@
 ﻿using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Domain.FinancialReports;
 
-namespace ResearchXBRL.Application.Service
+namespace ResearchXBRL.Application.Services
 {
     public interface IEdinetXBRLParser
     {
