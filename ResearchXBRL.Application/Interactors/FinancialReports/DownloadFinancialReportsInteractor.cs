@@ -21,6 +21,11 @@ namespace ResearchXBRL.Application.FinancialReports
 
         public async IAsyncEnumerable<FinancialReport> Handle(DateTimeOffset start, DateTimeOffset end)
         {
+            if (start > end)
+            {
+                throw new ArgumentException($"{nameof(start)}よりも{nameof(end)}を後の日付にしてください");
+            }
+
             await foreach (var data in downloader.Download(start, end))
             {
                 yield return parser.Parse(data);
