@@ -10,7 +10,6 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
     {
         public sealed class ReadTests
         {
-            
             [Fact]
             public void タクソノミの勘定項目スキーマXSDファイルとラベルXMLファイルから全ての会計項目を読み取る()
             {
@@ -37,8 +36,6 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
                 schemaReader.Dispose();
                 lableReader.Dispose();
             }
-
-          
 
             private (TextReader schemaReader, TextReader labelReader) GetReaders()
             {
