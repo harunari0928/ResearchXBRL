@@ -10,13 +10,13 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
     {
         private readonly string storageDirectoryBasePath;
 
-        public LocalStorage(string storageDirectoryPath)
+        public LocalStorage(string storageDirectoryBasePath)
         {
-            if (!Directory.Exists(storageDirectoryPath))
+            if (!Directory.Exists(storageDirectoryBasePath))
             {
-                Directory.CreateDirectory(storageDirectoryPath);
+                Directory.CreateDirectory(storageDirectoryBasePath);
             }
-            this.storageDirectoryBasePath = storageDirectoryPath;
+            this.storageDirectoryBasePath = storageDirectoryBasePath;
         }
 
         public Stream Get(string filePath)
@@ -24,7 +24,7 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
             return new FileStream(CreateFullPath(filePath), FileMode.Open);
         }
 
-        public void Set(Stream inputStream, string filePath)
+        public void Set(in Stream inputStream, string filePath)
         {
             using var localFileStream = new FileStream(
                 CreateFullPath(filePath),
