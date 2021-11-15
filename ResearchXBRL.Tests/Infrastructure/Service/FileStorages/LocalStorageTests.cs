@@ -118,19 +118,6 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
             }
 
             [Fact]
-            public void Rootパスが指定されたとき例外を出す()
-            {
-                // arrange
-                using var stream = new MemoryStream();
-                using var writer = new StreamWriter(stream) { AutoFlush = true };
-                var expectedStr = "テストです";
-                writer.WriteLine(expectedStr);
-
-                // act & assert
-                Assert.Throws<IOException>(() => storage.Set(stream, "/"));
-            }
-
-            [Fact]
             public void ディレクトリパスが指定されたとき例外を出す()
             {
                 // arrange
