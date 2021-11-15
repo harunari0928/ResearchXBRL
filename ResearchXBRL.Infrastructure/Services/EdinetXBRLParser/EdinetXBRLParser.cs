@@ -30,7 +30,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             var unzippedFolderPath = $"/{data.DocumentId}";
             fileStorage.Set(data.ZippedDataStream, zipFilePath);
             await data.ZippedDataStream.DisposeAsync();
-            fileStorage.Unzip(zipFilePath, unzippedFolderPath, true);
+            fileStorage.Unzip(zipFilePath, unzippedFolderPath);
             var xbrlFilePath = fileStorage.GetFiles(Path.Combine(unzippedFolderPath, "/XBRL/PublicDoc/"), "*.xbrl").Single();
             return fileStorage.Get(xbrlFilePath);
         }
