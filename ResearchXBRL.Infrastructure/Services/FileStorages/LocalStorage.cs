@@ -24,7 +24,7 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
         {
             if (IsDirectory(filePath))
             {
-                throw new IOException("ファイルパスを指定してください");
+                throw new IOException($"{nameof(filePath)}には、ファイルパスを指定してください");
             }
 
             return new FileStream(CreateFullPath(filePath), FileMode.Open);
@@ -32,12 +32,11 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
 
         public void Set(in Stream inputStream, string filePath)
         {
-            var parentPath = Directory.GetParent(CreateFullPath(filePath))?.FullName
-                ?? throw new IOException("rootは指定できません");
+            var parentPath = Directory.GetParent(CreateFullPath(filePath))?.FullName;
 
-            if (IsDirectory(filePath))
+            if (parentPath is null || IsDirectory(filePath))
             {
-                throw new IOException("ファイルパスを指定してください");
+                throw new IOException($"{nameof(filePath)}には、ファイルパスを指定してください");
             }
 
             if (!Directory.Exists(parentPath))
@@ -59,7 +58,7 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
         {
             if (!IsDirectory(directoryPath))
             {
-                throw new IOException("ディレクトリパスを指定してください");
+                throw new IOException($"{nameof(directoryPath)}には、ディレクトリパスを指定してください");
             }
 
             return Directory
