@@ -58,9 +58,9 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
 
         protected abstract IAsyncEnumerable<string> GetFilteredDocumentIds(DateTime start, DateTime end);
 
-        protected async IAsyncEnumerable<DocumentInfo> GetAllDocumentInfos(DateTime startDay, DateTime endDay)
+        protected async IAsyncEnumerable<DocumentInfo> GetAllDocumentInfos(DateTime start, DateTime end)
         {
-            foreach (var date in EnumerateDates(startDay, endDay))
+            foreach (var date in EnumerateDates(start, end))
             {
                 var queryParameters = $"date={date:yyyy-MM-dd}&type=2";
                 using var responseMessage = await httpClient.GetAsync($"{DocumentListAPIUrl}?{queryParameters}");
