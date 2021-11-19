@@ -63,7 +63,7 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
             var dividedUnitHelper = new PostgreSQLCopyHelper<DividedUnit>("units")
                 .MapUUID("id", _ => guid)
                 .MapVarchar("unit_name", x => x.Name)
-                .MapInteger("unit_type", _ => 2)
+                .MapInteger("unit_type", _ => 1)
                 .MapVarchar("unit_numerator", x => x.UnitNumerator)
                 .MapVarchar("unit_numerator", x => x.UnitDenominator);
 
@@ -78,8 +78,6 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
                 .MapDate("period_to", x => x.Period is InstantPeriod p ? p.InstantDate.Date : null);
 
             await contextsHelper.SaveAllAsync(connection, reports.Contexts);
-
-            await dividedUnitHelper.SaveAllAsync(connection, reports.Units.OfType<DividedUnit>());
 
             var reportItemHelper = new PostgreSQLCopyHelper<FinancialReportItem>("report_items")
                 .MapUUID("id", _ => guid)
