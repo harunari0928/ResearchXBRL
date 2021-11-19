@@ -99,6 +99,26 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 }
             }
 
+            [Fact]
+            public async Task 勘定科目を全て取得する()
+            {
+                // arrange & act
+                var report = await CreateReport();
+
+                // assert
+                Assert.Equal(1094, report.Count);
+
+                // 最初の勘定科目
+                var first = report[0];
+                Assert.Equal("jpdei_cor", first.Classification);
+                Assert.Equal("NumberOfSubmissionDEI", first.XBRLName);
+                Assert.Equal("FilingDateInstant", first.ContextName);
+                Assert.Equal("pure", first.UnitName);
+                Assert.Equal(0, first.NumericalAccuracy);
+                Assert.Equal(1, first.Amounts);
+                Assert.Null(first.Scale);
+            }
+
             private static async Task<FinancialReport> CreateReport()
             {
                 using var stream = new FileStream("XBRLParserTest.zip", FileMode.Open);

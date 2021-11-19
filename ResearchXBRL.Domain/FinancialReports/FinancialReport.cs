@@ -4,29 +4,22 @@ using ResearchXBRL.Domain.FinancialReports.Units;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ResearchXBRL.Domain.FinancialReports
 {
     public sealed class FinancialReport : IReadOnlyList<FinancialReportItem>
     {
+        private readonly FinancialReportItem[] reportItems;
+
+        public FinancialReportItem this[int index] => reportItems[index];
+
+        public int Count => reportItems.Length;
+
         /// <summary>
         ///  表紙
         /// </summary>
         public ReportCover Cover { get; init; }
-
-        public FinancialReportItem this[int index] => throw new NotImplementedException();
-
-        public int Count => throw new NotImplementedException();
-
-        public IEnumerator<FinancialReportItem> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// この報告書で使われている単位一覧
@@ -37,5 +30,20 @@ namespace ResearchXBRL.Domain.FinancialReports
         /// この報告書で使われているContext一覧
         /// </summary>
         public IReadOnlySet<Context> Contexts { get; init; }
+
+        public FinancialReport(IEnumerable<FinancialReportItem> reportItems)
+        {
+            this.reportItems = reportItems.ToArray();
+        }
+
+        public IEnumerator<FinancialReportItem> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
