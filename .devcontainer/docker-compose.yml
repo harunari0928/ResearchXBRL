@@ -1,0 +1,28 @@
+version: '3.2'
+services:
+  batch:
+    build: 
+      context: ..
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ..:/src:cached
+    command: /bin/bash -c "dotnet build && while sleep 1000; do :; done"
+    ports:
+      - "5000:5000"
+    container_name: aquire_report_batch
+    environment: 
+      DB_SERVERNAME: report_rdb
+      DB_USERID: postgres
+      DB_PORT: 5432
+      DB_PASSWORD: mysecretpassword
+    depends_on:
+      - rdb
+  rdb:
+    image: postgres:13.2
+    container_name: report_rdb
+    volumes:
+      - ../postgres/init:/docker-entrypoint-initdb.d
+    environment: 
+      POSTGRES_PASSWORD: mysecretpassword
+    ports:
+      - "5432:5432"
