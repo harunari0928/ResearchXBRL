@@ -1,5 +1,6 @@
 ﻿using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.FinancialReports;
+using ResearchXBRL.Domain.FinancialReports;
 using System;
 using System.Threading.Tasks;
 
@@ -9,13 +10,16 @@ namespace ResearchXBRL.Application.FinancialReports
     {
         private readonly IEdinetXBRLDownloader downloader;
         private readonly IEdinetXBRLParser parser;
+        private readonly IFinancialReportRepository reportRepository;
 
         public DownloadFinancialReportsInteractor(
             IEdinetXBRLDownloader downloader,
-            IEdinetXBRLParser parser)
+            IEdinetXBRLParser parser,
+            IFinancialReportRepository reportRepository)
         {
             this.downloader = downloader;
             this.parser = parser;
+            this.reportRepository = reportRepository;
         }
 
         public async Task Handle(DateTimeOffset start, DateTimeOffset end)
@@ -27,7 +31,8 @@ namespace ResearchXBRL.Application.FinancialReports
 
             await foreach (var data in downloader.Download(start, end))
             {
-                await parser.Parse(data);
+                var report = await parser.Parse(data);
+                await reportRepository.Write(report);
             }   
         }
     }

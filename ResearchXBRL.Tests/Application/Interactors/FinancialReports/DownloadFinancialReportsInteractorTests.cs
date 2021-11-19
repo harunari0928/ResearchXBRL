@@ -2,6 +2,8 @@
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.FinancialReports;
 using ResearchXBRL.Application.Services;
+using ResearchXBRL.Domain.FinancialReportItems;
+using ResearchXBRL.Domain.FinancialReports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +18,13 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
         {
             private readonly Mock<IEdinetXBRLDownloader> downloader;
             private readonly Mock<IEdinetXBRLParser> parser;
+            private readonly Mock<IFinancialReportRepository> reportRepository;
 
             public HandleTests()
             {
                 downloader = new();
                 parser = new();
+                reportRepository = new();
             }
 
             public sealed class 正常系 : HandleTests
@@ -45,7 +49,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                 }
 
                 [Fact]
-                public async Task Downloaderから返った値を全てParseする()
+                public async Task Downloaderから返った値を全て解析する()
                 {
                     // arrange
                     var expectedDownloadResult = new EdinetXBRLData[]
@@ -74,6 +78,39 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                     parser.Verify(x => x.Parse(It.IsAny<EdinetXBRLData>()),
                             Times.Exactly(expectedDownloadResult.Length));
                 }
+
+                [Fact]
+                public async Task Parserから返った値を全て書き込む()
+                {
+                    // arrange
+                    var expectedDownloadResult = new EdinetXBRLData[]
+                    {
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                    };
+                    RegisterDownloadResult(expectedDownloadResult.ToAsyncEnumerable());
+                    parser.Setup(x => x.Parse(It.IsAny<EdinetXBRLData>()))
+                        .ReturnsAsync(new FinancialReport(Enumerable.Empty<FinancialReportItem>()));
+                    var interactor = CreateInteractor();
+
+                    // act
+                    await interactor
+                        .Handle(DateTimeOffset.Now, DateTimeOffset.Now);
+
+                    // assert
+                    reportRepository.Verify(x => x.Write(It.IsAny<FinancialReport>()),
+                            Times.Exactly(expectedDownloadResult.Length));
+                }
             }
 
             public sealed class 異常系 : HandleTests
@@ -97,7 +134,8 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
             {
                 return new DownloadFinancialReportsInteractor(
                     downloader.Object,
-                    parser.Object);
+                    parser.Object,
+                    reportRepository.Object);
             }
 
             private void RegisterDownloadResult(IAsyncEnumerable<EdinetXBRLData> reports)
