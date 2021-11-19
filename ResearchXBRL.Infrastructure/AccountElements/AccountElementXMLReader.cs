@@ -40,7 +40,7 @@ namespace ResearchXBRL.Infrastructure.AccountElements
                 .Select(x => x.GetAttributeValue("xlink:label") ?? throw new Exception("XBRL要素名が空"));
             var names = labelLinkContents
                 .Where(x => x.Name == "link:label")
-                .GroupBy(x => x.GetAttributeValue("xlink:label").Split('_')[1] ?? "")
+                .GroupBy(x => x?.GetAttributeValue("xlink:label")?.Split('_')[1] ?? "")
                 .Select(x => x.First().InnerText ?? throw new Exception("会計項目名が空"));
 
             return elementIds.Zip(names);
