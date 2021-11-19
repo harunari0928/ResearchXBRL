@@ -48,10 +48,7 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
                 CreateFullPath(filePath),
                 FileMode.Create);
             inputStream.Position = 0;
-            using var streamReader = new StreamReader(inputStream);
-            using var writer = new StreamWriter(localFileStream);
-            writer.Write(streamReader.ReadToEnd());
-            writer.Flush();
+            inputStream.CopyTo(localFileStream);
         }
 
         public IReadOnlyList<string> GetFiles(string directoryPath, string searchPattern = "*")
@@ -78,6 +75,7 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
                 throw new IOException($"{nameof(unzippedDirectoryPath)}には、ディレクトリパスを指定してください");
             }
 
+            var tmp = CreateFullPath(zipFilePath);
             ZipFile.ExtractToDirectory(
                 CreateFullPath(zipFilePath),
                 CreateFullPath(unzippedDirectoryPath));
