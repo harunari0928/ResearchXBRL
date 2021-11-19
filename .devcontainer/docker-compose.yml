@@ -13,6 +13,7 @@ services:
     environment: 
       DB_SERVERNAME: report_rdb
       DB_USERID: postgres
+      DB_NAME: postgres
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
     depends_on:
