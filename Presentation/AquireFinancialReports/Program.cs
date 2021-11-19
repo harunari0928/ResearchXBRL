@@ -6,6 +6,7 @@ using ResearchXBRL.Domain.FinancialReports;
 using ResearchXBRL.Infrastructure.FinancialReports;
 using ResearchXBRL.Infrastructure.Services;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
+using ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
 using ResearchXBRL.Infrastructure.Services.FileStorages;
 using System;
 using System.Net.Http;
@@ -27,6 +28,7 @@ namespace AquireFinancialReports
       return new ServiceCollection()
           .AddTransient<IAquireFinancialReporsUsecase, AquireFinancialReportsInteractor>()
           .AddTransient<IEdinetXBRLDownloader>(x => new SecuritiesReportDownloader(x.GetService<IHttpClientFactory>(), "v1"))
+          .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
           .AddTransient<IFinancialReportRepository, FinancialReportRepository>()
           .AddSingleton<IFileStorage, LocalStorage>()
           .AddHttpClient()
