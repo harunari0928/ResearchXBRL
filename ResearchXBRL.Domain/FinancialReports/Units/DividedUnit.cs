@@ -9,7 +9,7 @@
         /// <summary>
         /// 分子
         /// </summary>
-        public string UnitNumeratorMeasure { get; init; }
+        public string UnitNumerator { get; init; }
         /// <summary>
         /// 分母
         /// </summary>

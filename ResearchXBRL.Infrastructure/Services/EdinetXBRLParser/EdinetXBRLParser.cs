@@ -110,7 +110,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
                 return new DividedUnit
                 {
                     Name = unitName,
-                    UnitNumeratorMeasure = child
+                    UnitNumerator = child
                         .GetChildNodes()
                         .Single(x => x.Name == "xbrli:unitNumerator")
                         .FirstChild?.InnerText,
@@ -145,7 +145,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             {
                 return new InstantPeriod
                 {
-                    InstantDateTime = DateTimeOffset.Parse($"{node.FirstChild?.InnerText} +09:00")
+                    InstantDate = DateTimeOffset.Parse($"{node.FirstChild?.InnerText} +09:00")
                 };
             }
 

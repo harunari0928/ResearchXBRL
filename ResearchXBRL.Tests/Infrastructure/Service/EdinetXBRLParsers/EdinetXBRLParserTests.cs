@@ -38,7 +38,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 Assert.IsType<DividedUnit>(jpyPerShares);
                 if (jpyPerShares is DividedUnit divided1)
                 {
-                    Assert.Equal("iso4217:JPY", divided1.UnitNumeratorMeasure);
+                    Assert.Equal("iso4217:JPY", divided1.UnitNumerator);
                     Assert.Equal("xbrli:shares", divided1.UnitDenominator);
                 }
 
@@ -78,7 +78,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 Assert.IsType<InstantPeriod>(firstContext.Period);
                 if (firstContext.Period is InstantPeriod instantPeriod1)
                 {
-                    Assert.Equal("2021-10-20", $"{instantPeriod1.InstantDateTime:yyyy-MM-dd}");
+                    Assert.Equal("2021-10-20", $"{instantPeriod1.InstantDate:yyyy-MM-dd}");
                 }
 
                 // 中間のコンテキスト
@@ -95,7 +95,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 Assert.IsType<InstantPeriod>(lastContext.Period);
                 if (firstContext.Period is InstantPeriod instantPeriod2)
                 {
-                    Assert.Equal("2021-10-20", $"{instantPeriod2.InstantDateTime:yyyy-MM-dd}");
+                    Assert.Equal("2021-10-20", $"{instantPeriod2.InstantDate:yyyy-MM-dd}");
                 }
             }
 
