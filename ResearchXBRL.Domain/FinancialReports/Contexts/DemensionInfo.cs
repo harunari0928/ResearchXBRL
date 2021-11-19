@@ -1,4 +1,4 @@
-﻿namespace ResearchXBRL.Domain.FinancialReports.FinancialReportItems.Details
+﻿namespace ResearchXBRL.Domain.FinancialReports.Details
 {
     public sealed class DemensionInfo
     {

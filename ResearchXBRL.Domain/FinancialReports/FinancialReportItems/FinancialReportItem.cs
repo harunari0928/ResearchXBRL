@@ -1,5 +1,4 @@
 ﻿using ResearchXBRL.Domain.FinancialReports.FinancialReportItems.Details;
-using ResearchXBRL.Domain.FinancialReports.FinancialReportItems.Units;
 
 namespace ResearchXBRL.Domain.FinancialReportItems
 {
@@ -29,11 +28,11 @@ namespace ResearchXBRL.Domain.FinancialReportItems
         /// <summary>
         /// 単位
         /// </summary>
-        public IUnit Unit { get; init; }
+        public string UnitName { get; init; }
 
         /// <summary>
         /// 詳細
         /// </summary>
-        public Detail Detail { get; init; }
+        public string ContextName { get; init; }
     }
 }

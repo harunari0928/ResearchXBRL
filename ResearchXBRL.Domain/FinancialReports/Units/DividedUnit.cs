@@ -1,10 +1,11 @@
-﻿namespace ResearchXBRL.Domain.FinancialReports.FinancialReportItems.Units
+﻿namespace ResearchXBRL.Domain.FinancialReports.Units
 {
     /// <summary>
     /// 分母及び分子を用いたユニット
     /// </summary>
     public sealed class DividedUnit : IUnit
     {
+        public string Name { get; init; }
         /// <summary>
         /// 分子
         /// </summary>
