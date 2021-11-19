@@ -4,6 +4,6 @@ namespace ResearchXBRL.Domain.FinancialReports.Contexts
 {
     public sealed class InstantPeriod : IPeriod
     {
-        public DateTimeOffset InstantDateTime { get; init; }
+        public DateTimeOffset InstantDate { get; init; }
     }
 }
