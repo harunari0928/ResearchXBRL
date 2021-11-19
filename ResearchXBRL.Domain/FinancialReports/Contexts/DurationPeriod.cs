@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace ResearchXBRL.Domain.FinancialReports.Details
+namespace ResearchXBRL.Domain.FinancialReports.Contexts
 {
     public sealed class DurationPeriod : IPeriod
     {
-        public DateTime From { get; init; }
-        public DateTime To { get; init; }
+        public DateTimeOffset From { get; init; }
+        public DateTimeOffset To { get; init; }
     }
 }

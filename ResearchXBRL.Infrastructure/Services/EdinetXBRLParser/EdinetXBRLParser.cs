@@ -2,6 +2,7 @@
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
 using ResearchXBRL.Domain.FinancialReports;
+using ResearchXBRL.Domain.FinancialReports.Contexts;
 using ResearchXBRL.Domain.FinancialReports.Units;
 using System;
 using System.Collections.Generic;
@@ -32,11 +33,25 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             return new FinancialReport
             {
                 Cover = CreateReortCover(xbrlNodes),
-                Units = xbrlNodes
-                    .Where(x => x.Name == "xbrli:unit")
-                    .Select(CreateUnit)
-                    .ToHashSet()
+                Units = CreateUnits(xbrlNodes),
+                Contexts = CreateContexts(xbrlNodes),
             };
+        }
+
+        private IReadOnlySet<IUnit> CreateUnits(IEnumerable<XmlNode> xbrlNodes)
+        {
+            return xbrlNodes
+                .Where(x => x.Name == "xbrli:unit")
+                .Select(CreateUnit)
+                .ToHashSet();
+        }
+
+        private static HashSet<Context> CreateContexts(IEnumerable<XmlNode> xbrlNodes)
+        {
+            return xbrlNodes
+                .Where(x => x.Name == "xbrli:context")
+                .Select(CreateContext)
+                .ToHashSet();
         }
 
         private static ReportCover CreateReortCover(IEnumerable<XmlNode> xbrlNodes)
@@ -86,6 +101,35 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             {
                 Name = unitName,
                 Measure = child.InnerText
+            };
+        }
+
+        private static Context CreateContext(XmlNode node)
+        {
+            var child = node.GetChildNodes().Single(x => x.Name == "xbrli:period");
+            var contextName = node.GetAttributeValue("id");
+            return new Context
+            {
+                Name = contextName,
+                Period = CreatePeriod(child)
+            };
+        }
+
+        private static IPeriod CreatePeriod(XmlNode node)
+        {
+            if (node.FirstChild?.Name == "xbrli:instant")
+            {
+                return new InstantPeriod
+                {
+                    InstantDateTime = DateTimeOffset.Parse($"{node.FirstChild?.InnerText} +09:00")
+                };
+            }
+
+            var startEndElements = node.GetChildNodes();
+            return new DurationPeriod
+            {
+                From = DateTimeOffset.Parse($"{startEndElements.Single(x => x.Name == "xbrli:startDate").InnerText} +09:00"),
+                To = DateTimeOffset.Parse($"{startEndElements.Single(x => x.Name == "xbrli:endDate").InnerText} +09:00"),
             };
         }
 
