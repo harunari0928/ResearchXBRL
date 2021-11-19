@@ -36,8 +36,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
 
                     // act
                     await interactor
-                        .Handle(expectedStart, expectedEnd)
-                        .ForEachAsync(_ => { }); // 正格評価させる
+                        .Handle(expectedStart, expectedEnd);
 
                     // assert
                     downloader
@@ -69,8 +68,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
 
                     // act
                     await interactor
-                        .Handle(DateTimeOffset.Now, DateTimeOffset.Now)
-                        .ForEachAsync(_ => { });
+                        .Handle(DateTimeOffset.Now, DateTimeOffset.Now);
 
                     // assert
                     parser.Verify(x => x.Parse(It.IsAny<EdinetXBRLData>()),
@@ -91,8 +89,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
 
                     // act & assert
                     await Assert.ThrowsAsync<ArgumentException>(()
-                        => interactor.Handle(start, end)
-                        .ForEachAsync(_ => { }));
+                        => interactor.Handle(start, end));
                 }
             }
 
