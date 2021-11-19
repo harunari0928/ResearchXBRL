@@ -17,9 +17,10 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             this.fileStorage = fileStorage;
         }
 
-        public FinancialReport Parse(EdinetXBRLData data)
+        public async Task<FinancialReport> Parse(EdinetXBRLData data)
         {
-            using var stream = GetXBRLDataStream(data);
+            using var stream = await GetXBRLDataStream(data);
+            using var streamReader = new StreamReader(stream);
 
             throw new NotImplementedException();
         }
