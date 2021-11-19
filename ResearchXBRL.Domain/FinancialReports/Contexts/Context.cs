@@ -4,6 +4,5 @@
     {
         public string Name { get; init; }
         public IPeriod Period { get; init; }
-        public Scenario Scenario { get; init; }
     }
 }
