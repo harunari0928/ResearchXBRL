@@ -1,8 +1,7 @@
 ﻿using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.FinancialReports;
-using ResearchXBRL.Domain.FinancialReports;
 using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ResearchXBRL.Application.FinancialReports
 {
@@ -19,7 +18,7 @@ namespace ResearchXBRL.Application.FinancialReports
             this.parser = parser;
         }
 
-        public async IAsyncEnumerable<FinancialReport> Handle(DateTimeOffset start, DateTimeOffset end)
+        public async Task Handle(DateTimeOffset start, DateTimeOffset end)
         {
             if (start > end)
             {
@@ -28,7 +27,7 @@ namespace ResearchXBRL.Application.FinancialReports
 
             await foreach (var data in downloader.Download(start, end))
             {
-                yield return parser.Parse(data);
+                await parser.Parse(data);
             }   
         }
     }

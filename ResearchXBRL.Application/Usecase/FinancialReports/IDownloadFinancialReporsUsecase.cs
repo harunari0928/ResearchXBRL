@@ -1,11 +1,10 @@
-﻿using ResearchXBRL.Domain.FinancialReports;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace ResearchXBRL.Application.Usecase.FinancialReports
 {
     public interface IDownloadFinancialReporsUsecase
     {
-        IAsyncEnumerable<FinancialReport> Handle(DateTimeOffset start, DateTimeOffset end);
+        Task Handle(DateTimeOffset start, DateTimeOffset end);
     }
 }
