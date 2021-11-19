@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ResearchXBRL.Application.Usecase.FinancialReports
 {
-    public interface IDownloadFinancialReporsUsecase
+    public interface IAquireFinancialReporsUsecase
     {
         Task Handle(DateTimeOffset start, DateTimeOffset end);
     }

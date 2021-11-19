@@ -27,10 +27,10 @@ namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV
                 accountSchemaReader,
                 accountItemLabelReader,
                 accountElementWriter);
-            var useCase = serviceProvider
+            var usecase = serviceProvider
                 .GetService<ITransferAccountElementsUsecase>()
                 ?? throw new Exception("実行失敗");
-            await useCase.Hundle();
+            await usecase.Hundle();
         }
 
         private static ServiceProvider CreateServiceProvider(TextReader schemaReader, TextReader labelReader, TextWriter writer)

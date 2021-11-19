@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace ResearchXBRL.Application.FinancialReports
 {
-    public sealed class DownloadFinancialReportsInteractor : IDownloadFinancialReporsUsecase
+    public sealed class AquireFinancialReportsInteractor : IAquireFinancialReporsUsecase
     {
         private readonly IEdinetXBRLDownloader downloader;
         private readonly IEdinetXBRLParser parser;
         private readonly IFinancialReportRepository reportRepository;
 
-        public DownloadFinancialReportsInteractor(
+        public AquireFinancialReportsInteractor(
             IEdinetXBRLDownloader downloader,
             IEdinetXBRLParser parser,
             IFinancialReportRepository reportRepository)

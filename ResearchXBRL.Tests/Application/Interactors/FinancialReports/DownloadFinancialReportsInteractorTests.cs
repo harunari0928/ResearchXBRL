@@ -130,9 +130,9 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                 }
             }
 
-            private DownloadFinancialReportsInteractor CreateInteractor()
+            private AquireFinancialReportsInteractor CreateInteractor()
             {
-                return new DownloadFinancialReportsInteractor(
+                return new AquireFinancialReportsInteractor(
                     downloader.Object,
                     parser.Object,
                     reportRepository.Object);
