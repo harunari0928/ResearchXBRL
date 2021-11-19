@@ -2,6 +2,7 @@
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
 using ResearchXBRL.Domain.FinancialReports;
+using ResearchXBRL.Domain.FinancialReports.Units;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,19 +28,28 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
                 .GetChildNodes()
                 .Single(x => x.Name == "xbrli:xbrl")
                 .GetChildNodes();
-            
+
             return new FinancialReport
             {
-                Cover = new ReportCover
-                {
-                    CompanyName = xbrlNodes.Single(x => x.Name == "jpcrp_cor:CompanyNameCoverPage").InnerText,
-                    DocumentTitle = xbrlNodes.Single(x => x.Name == "jpcrp_cor:DocumentTitleCoverPage").InnerText,
-                    SubmissionDate = DateTimeOffset.Parse(xbrlNodes
-                            .Single(x => x.Name == "jpcrp_cor:FilingDateCoverPage")
-                            .InnerText
-                        ?? throw new Exception("提出日時が検出できませんでした")
-                    ),
-                }
+                Cover = CreateReortCover(xbrlNodes),
+                Units = xbrlNodes
+                    .Where(x => x.Name == "xbrli:unit")
+                    .Select(CreateUnit)
+                    .ToHashSet()
+            };
+        }
+
+        private static ReportCover CreateReortCover(IEnumerable<XmlNode> xbrlNodes)
+        {
+            return new ReportCover
+            {
+                CompanyName = xbrlNodes.Single(x => x.Name == "jpcrp_cor:CompanyNameCoverPage").InnerText,
+                DocumentTitle = xbrlNodes.Single(x => x.Name == "jpcrp_cor:DocumentTitleCoverPage").InnerText,
+                SubmissionDate = DateTimeOffset.Parse(xbrlNodes
+                                        .Single(x => x.Name == "jpcrp_cor:FilingDateCoverPage")
+                                        .InnerText
+                                    ?? throw new Exception("提出日時が検出できませんでした")
+                                ),
             };
         }
 
@@ -50,6 +60,33 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             var xbrl = new XmlDocument();
             xbrl.Load(xbrlFileStream);
             return xbrl;
+        }
+
+        private static IUnit CreateUnit(XmlNode node)
+        {
+            var child = node.FirstChild ?? throw new Exception("単位タグが不正です");
+            var unitName = node.GetAttributeValue("id");
+            if (child.Name == "xbrli:divide")
+            {
+                return new DividedUnit
+                {
+                    Name = unitName,
+                    UnitNumeratorMeasure = child
+                        .GetChildNodes()
+                        .Single(x => x.Name == "xbrli:unitNumerator")
+                        .FirstChild?.InnerText,
+                    UnitDenominator = child
+                        .GetChildNodes()
+                        .Single(x => x.Name == "xbrli:unitDenominator")
+                        .FirstChild?.InnerText
+                };
+            }
+
+            return new NormalUnit
+            {
+                Name = unitName,
+                Measure = child.InnerText
+            };
         }
 
         private async Task<IReadOnlyList<string>> GetXBRLFiles(EdinetXBRLData data)
