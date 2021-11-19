@@ -1,6 +1,7 @@
 ﻿using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
+using ResearchXBRL.Domain.FinancialReportItems;
 using ResearchXBRL.Domain.FinancialReports;
 using ResearchXBRL.Domain.FinancialReports.Contexts;
 using ResearchXBRL.Domain.FinancialReports.Units;
@@ -30,7 +31,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
                 .Single(x => x.Name == "xbrli:xbrl")
                 .GetChildNodes();
 
-            return new FinancialReport
+            return new FinancialReport(CreateReportItems(xbrlNodes))
             {
                 Cover = CreateReortCover(xbrlNodes),
                 Units = CreateUnits(xbrlNodes),
@@ -38,7 +39,30 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             };
         }
 
-        private IReadOnlySet<IUnit> CreateUnits(IEnumerable<XmlNode> xbrlNodes)
+        private static IEnumerable<FinancialReportItem> CreateReportItems(IEnumerable<XmlNode> xbrlNodes)
+        {
+            return xbrlNodes
+                .Where(x => x.GetAttributeValue("unitRef") is not null)
+                .Select(CreateReportItem);
+        }
+
+        private static FinancialReportItem CreateReportItem(XmlNode node)
+        {
+            var accuraryValue = node.GetAttributeValue("decimals");
+            var scaleValue = node.GetAttributeValue("scale");
+            return new FinancialReportItem
+            {
+                Classification = node.Name.Split(':')[0],
+                XBRLName = node.Name.Split(':')[1],
+                ContextName = node.GetAttributeValue("contextRef"),
+                UnitName = node.GetAttributeValue("unitRef"),
+                NumericalAccuracy = accuraryValue is null ? null : decimal.Parse(accuraryValue),
+                Amounts = string.IsNullOrWhiteSpace(node.InnerText) ? null : decimal.Parse(node.InnerText),
+                Scale = scaleValue is null ? null : decimal.Parse(scaleValue),
+            };
+        }
+
+        private static IReadOnlySet<IUnit> CreateUnits(IEnumerable<XmlNode> xbrlNodes)
         {
             return xbrlNodes
                 .Where(x => x.Name == "xbrli:unit")
