@@ -1,6 +1,4 @@
-﻿using ResearchXBRL.Domain.FinancialReports.FinancialReportItems.Details;
-
-namespace ResearchXBRL.Domain.FinancialReportItems
+﻿namespace ResearchXBRL.Domain.FinancialReportItems
 {
     public sealed class FinancialReportItem
     {
