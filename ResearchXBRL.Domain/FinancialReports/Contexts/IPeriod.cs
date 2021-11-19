@@ -1,4 +1,4 @@
-﻿namespace ResearchXBRL.Domain.FinancialReports.Details
+﻿namespace ResearchXBRL.Domain.FinancialReports.Contexts
 {
     public interface IPeriod { }
 }

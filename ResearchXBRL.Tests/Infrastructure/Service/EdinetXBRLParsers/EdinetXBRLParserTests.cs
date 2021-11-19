@@ -1,4 +1,5 @@
 ﻿using ResearchXBRL.Domain.FinancialReports;
+using ResearchXBRL.Domain.FinancialReports.Contexts;
 using ResearchXBRL.Domain.FinancialReports.Units;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
 using ResearchXBRL.Infrastructure.Services.FileStorages;
@@ -27,7 +28,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
             }
 
             [Fact]
-            public async Task 単位をすべて取得する()
+            public async Task 単位を全て取得する()
             {
                 // arrange & act
                 var report = await CreateReport();
@@ -60,6 +61,41 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 if (jpyPerShares is NormalUnit normal3)
                 {
                     Assert.Equal("iso4217:JPY", normal3.Measure);
+                }
+            }
+
+            [Fact]
+            public async Task コンテキスト情報を全て取得する()
+            {
+                // arrange & act
+                var report = await CreateReport();
+
+                // assert
+                Assert.Equal(195, report.Contexts.Count);
+
+                // 一番先頭のコンテキスト
+                var firstContext = report.Contexts.Single(x => x.Name == "FilingDateInstant_jpcrp030000-asr_E02484-000MasudaKazuyukiMember");
+                Assert.IsType<InstantPeriod>(firstContext.Period);
+                if (firstContext.Period is InstantPeriod instantPeriod1)
+                {
+                    Assert.Equal("2021-10-20", $"{instantPeriod1.InstantDateTime:yyyy-MM-dd}");
+                }
+
+                // 中間のコンテキスト
+                var intermediateContext = report.Contexts.Single(x => x.Name == "Prior1YearDuration_NonConsolidatedMember_CapitalStockMember");
+                Assert.IsType<DurationPeriod>(intermediateContext.Period);
+                if (intermediateContext.Period is DurationPeriod durationPeriod1)
+                {
+                    Assert.Equal("2019-08-01", $"{durationPeriod1.From:yyyy-MM-dd}");
+                    Assert.Equal("2020-07-31", $"{durationPeriod1.To:yyyy-MM-dd}");
+                }
+
+                // 一番最後のコンテキスト
+                var lastContext = report.Contexts.Single(x => x.Name == "FilingDateInstant_jpcrp030000-asr_E02484-000UedaTaroMember");
+                Assert.IsType<InstantPeriod>(lastContext.Period);
+                if (firstContext.Period is InstantPeriod instantPeriod2)
+                {
+                    Assert.Equal("2021-10-20", $"{instantPeriod2.InstantDateTime:yyyy-MM-dd}");
                 }
             }
 

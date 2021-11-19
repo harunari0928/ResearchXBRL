@@ -1,5 +1,5 @@
 ﻿using ResearchXBRL.Domain.FinancialReportItems;
-using ResearchXBRL.Domain.FinancialReports.Details;
+using ResearchXBRL.Domain.FinancialReports.Contexts;
 using ResearchXBRL.Domain.FinancialReports.Units;
 using System;
 using System.Collections;

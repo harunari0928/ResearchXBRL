@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace ResearchXBRL.Domain.FinancialReports.Details
+namespace ResearchXBRL.Domain.FinancialReports.Contexts
 {
     public sealed class InstantPeriod : IPeriod
     {
-        public DateTime InstantDateTime { get; init; }
+        public DateTimeOffset InstantDateTime { get; init; }
     }
 }
