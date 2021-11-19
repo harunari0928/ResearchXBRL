@@ -8,8 +8,8 @@ create table report_covers (
 );
 
 create table units (
-  id uuid primary key,
-  unit_name varchar not null,
+  report_id uuid primary key,
+  unit_name varchar primary key,
   unit_type integer not null,
   measure varchar null,
   unit_numerator varchar null,
@@ -17,8 +17,8 @@ create table units (
 );
 
 create table contexts (
-  id uuid primary key,
-  context_name varchar not null,
+  report_id uuid primary key,
+  context_name varchar primary key,
   period_type integer not null,
   period_from date null,
   period_to date null,
@@ -26,9 +26,9 @@ create table contexts (
 );
 
 create table report_items (
-  id uuid primary key,
-  classification varchar not null,
-  xbrl_name varchar not null,
+  report_id uuid primary key,
+  classification varchar primary key,
+  xbrl_name varchar primary key,
   amounts decimal null,
   numerical_accuracy decimal null,
   scale decimal null,
