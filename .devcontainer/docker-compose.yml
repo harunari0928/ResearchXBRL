@@ -21,8 +21,14 @@ services:
     image: postgres:13.2
     container_name: report_rdb
     volumes:
+      - database:/var/lib/postgresql/data
       - ../postgres/init:/docker-entrypoint-initdb.d
-    environment: 
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
       POSTGRES_PASSWORD: mysecretpassword
     ports:
       - "5432:5432"
+volumes:
+  database:
+    driver: local
