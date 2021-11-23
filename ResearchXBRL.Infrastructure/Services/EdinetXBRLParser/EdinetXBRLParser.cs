@@ -165,7 +165,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             await data.ZippedDataStream.DisposeAsync();
             fileStorage.Unzip(zipFilePath, unzippedFolderPath);
             return fileStorage
-                .GetFiles(Path.Combine(unzippedFolderPath, $"{data.DocumentId}/XBRL/PublicDoc/"),
+                .GetFiles(Path.Combine(unzippedFolderPath, $"XBRL/PublicDoc/"),
                 "*");
         }
     }
