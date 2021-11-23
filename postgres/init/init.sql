@@ -28,6 +28,7 @@ create table contexts (
 );
 
 create table report_items (
+  id uuid primary key,
   report_id uuid,
   classification varchar,
   xbrl_name varchar,
@@ -35,6 +36,5 @@ create table report_items (
   numerical_accuracy decimal null,
   scale decimal null,
   unit_name varchar not null,
-  context_name varchar not null,
-  PRIMARY KEY (report_id, classification, xbrl_name, context_name)
+  context_name varchar not null
 );
