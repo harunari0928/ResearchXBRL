@@ -66,7 +66,7 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
                 .MapVarchar("unit_name", x => x.Name)
                 .MapInteger("unit_type", _ => 1)
                 .MapVarchar("unit_numerator", x => x.UnitNumerator)
-                .MapVarchar("unit_numerator", x => x.UnitDenominator);
+                .MapVarchar("unit_denominator", x => x.UnitDenominator);
 
             await dividedUnitHelper.SaveAllAsync(connection, reports.Units.OfType<DividedUnit>());
 
@@ -76,7 +76,7 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
                 .MapInteger("period_type", x => x.Period is InstantPeriod ? 0 : 1)
                 .MapDate("period_from", x => x.Period is DurationPeriod p ? p.From.Date : null)
                 .MapDate("period_to", x => x.Period is DurationPeriod p ? p.From.Date : null)
-                .MapDate("period_to", x => x.Period is InstantPeriod p ? p.InstantDate.Date : null);
+                .MapDate("instant_date", x => x.Period is InstantPeriod p ? p.InstantDate.Date : null);
 
             await contextsHelper.SaveAllAsync(connection, reports.Contexts);
 
