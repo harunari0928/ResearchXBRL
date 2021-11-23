@@ -95,6 +95,33 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
             }
 
             [Fact]
+            public void ベースパスからの相対パスを返す()
+            {
+                // arrange
+                var path = "./testd";
+                var fileSize = 10;
+                foreach (var number in Enumerable.Range(0, fileSize))
+                {
+                    using var stream = new MemoryStream();
+                    using var writer = new StreamWriter(stream) { AutoFlush = true };
+                    stream.Position = 0;
+                    var expectedStr = $"テストです{number}";
+                    writer.WriteLine(expectedStr);
+                    var filePath = $"{path}/test{number}.txt";
+                    storage.Set(stream, filePath);
+                }
+
+                // act
+                var files = storage.GetFiles(path);
+
+                // assert
+                Assert.True(Enumerable.Range(0, fileSize)
+                    .Select(n => $"test{n}.txt")
+                    .Zip(files, (expected, actual) => actual.StartsWith(path))
+                    .All(x => x));
+            }
+
+            [Fact]
             public void ファイルパスが指定されたとき例外を出す()
             {
                 // act & assert

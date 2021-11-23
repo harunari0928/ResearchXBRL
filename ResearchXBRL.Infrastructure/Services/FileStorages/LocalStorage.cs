@@ -59,6 +59,9 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
 
             return Directory
                 .GetFiles(CreateFullPath(directoryPath), searchPattern)
+                .Select(x => $"{string.Concat(x.Skip(storageDirectoryBasePath.Length))}")
+                .Select(x => $"./{x.Replace("./", "")}")
+                .Select(x => x.Replace("//", "/"))
                 .ToList();
         }
 
