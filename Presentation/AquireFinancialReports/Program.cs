@@ -14,25 +14,25 @@ using System.Threading.Tasks;
 
 namespace AquireFinancialReports
 {
-  class Program
-  {
-    static async Task Main(string[] _)
+    class Program
     {
-      var usecase = CreateServiceProvider()
-          .GetService<IAquireFinancialReporsUsecase>();
-      await usecase.Handle(DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now);
-    }
+        static async Task Main(string[] _)
+        {
+            var usecase = CreateServiceProvider()
+                .GetService<IAquireFinancialReporsUsecase>();
+            await usecase.Handle(DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now);
+        }
 
-    private static ServiceProvider CreateServiceProvider()
-    {
-      return new ServiceCollection()
-          .AddTransient<IAquireFinancialReporsUsecase, AquireFinancialReportsInteractor>()
-          .AddTransient<IEdinetXBRLDownloader>(x => new SecuritiesReportDownloader(x.GetService<IHttpClientFactory>(), "v1"))
-          .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
-          .AddTransient<IFinancialReportRepository, FinancialReportRepository>()
-          .AddSingleton<IFileStorage>(_ => new LocalStorage("./"))
-          .AddHttpClient()
-          .BuildServiceProvider();
+        private static ServiceProvider CreateServiceProvider()
+        {
+            return new ServiceCollection()
+                .AddTransient<IAquireFinancialReporsUsecase, AquireFinancialReportsInteractor>()
+                .AddTransient<IEdinetXBRLDownloader>(x => new SecuritiesReportDownloader(x.GetService<IHttpClientFactory>(), "v1"))
+                .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
+                .AddTransient<IFinancialReportRepository, FinancialReportRepository>()
+                .AddSingleton<IFileStorage>(_ => new LocalStorage("tmp"))
+                .AddHttpClient()
+                .BuildServiceProvider();
+        }
     }
-  }
 }
