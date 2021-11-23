@@ -15,6 +15,14 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
     {
         public sealed class ParseTests : IDisposable
         {
+            public ParseTests()
+            {
+                if (Directory.Exists("work"))
+                {
+                    Directory.Delete("work", true);
+                }
+            }
+
             [Fact]
             public async Task 表紙情報を取得する()
             {
@@ -121,8 +129,8 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
 
             private static async Task<FinancialReport> CreateReport()
             {
-                using var stream = new FileStream("XBRLParserTest.zip", FileMode.Open);
-                var parser = new EdinetXBRLParser(new LocalStorage("./"));
+                using var stream = new FileStream("S100MMP3.zip", FileMode.Open);
+                var parser = new EdinetXBRLParser(new LocalStorage("./work"));
                 return await parser.Parse(new ResearchXBRL.Application.DTO.EdinetXBRLData
                 {
                     DocumentId = "S100MMP3",
@@ -132,7 +140,10 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
 
             public void Dispose()
             {
-                Directory.Delete("S100MMP3", true);
+                if (Directory.Exists("work"))
+                {
+                    Directory.Delete("work", true);
+                }
             }
         }
     }
