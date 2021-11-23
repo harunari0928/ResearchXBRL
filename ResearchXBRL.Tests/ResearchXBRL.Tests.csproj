@@ -34,7 +34,7 @@
     <None Update="jppfs_cor_2019-11-01.xsd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="XBRLParserTest.zip">
+    <None Update="S100MMP3.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
