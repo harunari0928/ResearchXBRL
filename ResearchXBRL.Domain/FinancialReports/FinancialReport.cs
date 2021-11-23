@@ -38,9 +38,10 @@ namespace ResearchXBRL.Domain.FinancialReports
 
         public IEnumerator<FinancialReportItem> GetEnumerator()
         {
-            foreach (var item in reportItems)
+            var iterator = (this as IEnumerable).GetEnumerator();
+            while (iterator.MoveNext())
             {
-                yield return item;
+                yield return iterator.Current as FinancialReportItem;
             }
         }
 
