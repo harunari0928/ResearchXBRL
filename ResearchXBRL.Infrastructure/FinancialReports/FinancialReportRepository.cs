@@ -81,6 +81,7 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
             await contextsHelper.SaveAllAsync(connection, reports.Contexts);
 
             var reportItemHelper = new PostgreSQLCopyHelper<FinancialReportItem>("report_items")
+                .MapUUID("id", _ => Guid.NewGuid())
                 .MapUUID("report_id", _ => guid)
                 .MapVarchar("classification", x => x.Classification)
                 .MapVarchar("xbrl_name", x => x.XBRLName)
