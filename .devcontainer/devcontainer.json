@@ -3,13 +3,15 @@
 	"service": "batch",
 	"dockerComposeFile": "docker-compose.yml",
 	"workspaceFolder": "/src",
-	
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"terminal.integrated.defaultProfile.linux": "zsh",
-		"editor.formatOnSave": true
+		"terminal.integrated.defaultProfile.linux": "bash",
+		"editor.formatOnSave": true,
+		"editor.autoIndent": "full",
+		"editor.tabSize": 4,
+		"editor.insertSpaces": true,
+		"editor.comments.insertSpace": true,
 	},
-
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-dotnettools.csharp",
@@ -17,7 +19,9 @@
 		"k--kato.docomment",
 		"fudge.auto-using"
 	],
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [5000, 80]
+	"forwardPorts": [
+		5000,
+		80
+	]
 }
