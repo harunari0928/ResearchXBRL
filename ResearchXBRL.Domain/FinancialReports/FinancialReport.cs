@@ -38,12 +38,18 @@ namespace ResearchXBRL.Domain.FinancialReports
 
         public IEnumerator<FinancialReportItem> GetEnumerator()
         {
-            throw new NotImplementedException();
+            foreach (var item in reportItems)
+            {
+                yield return item;
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            foreach (var item in reportItems)
+            {
+                yield return item;
+            }
         }
     }
 }
