@@ -36,5 +36,5 @@ create table report_items (
   scale decimal null,
   unit_name varchar not null,
   context_name varchar not null,
-  PRIMARY KEY (report_id, classification, xbrl_name)
+  PRIMARY KEY (report_id, classification, xbrl_name, context_name)
 );
