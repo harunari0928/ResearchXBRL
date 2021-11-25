@@ -1,14 +1,14 @@
 set client_encoding = 'UTF8';
 
 create table report_covers (
-  id uuid primary key,
-  document_title varchar not null,
-  company_name varchar not null,
+  id varchar primary key,
+  company_id varchar not null,
+  document_type varchar not null,
   submission_date date not null
 );
 
 create table units (
-  report_id uuid,
+  report_id varchar,
   unit_name varchar,
   unit_type integer not null,
   measure varchar null,
@@ -18,7 +18,7 @@ create table units (
 );
 
 create table contexts (
-  report_id uuid,
+  report_id varchar,
   context_name varchar,
   period_type integer not null,
   period_from date null,
@@ -29,7 +29,7 @@ create table contexts (
 
 create table report_items (
   id uuid primary key,
-  report_id uuid,
+  report_id varchar,
   classification varchar,
   xbrl_name varchar,
   amounts decimal null,
