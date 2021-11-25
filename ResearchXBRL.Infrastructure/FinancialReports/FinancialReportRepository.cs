@@ -44,17 +44,16 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
         public async Task Write(FinancialReport reports)
         {
             using var tran = connection.BeginTransaction();
-            var guid = Guid.NewGuid();
             var reportCoverHelper = new PostgreSQLCopyHelper<ReportCover>("report_covers")
-                .MapUUID("id", _ => guid)
-                .MapVarchar("document_title", x => x.DocumentType)
-                .MapVarchar("company_name", x => x.CompanyId)
+                .MapVarchar("id", x => x.DocumentId)
+                .MapVarchar("company_id", x => x.CompanyId)
+                .MapVarchar("document_type", x => x.DocumentType)
                 .MapDate("submission_date", x => x.SubmissionDate.Date);
 
             await reportCoverHelper.SaveAllAsync(connection, new ReportCover[] { reports.Cover });
 
             var normalUnitHelper = new PostgreSQLCopyHelper<NormalUnit>("units")
-                .MapUUID("report_id", _ => guid)
+                .MapVarchar("report_id", _ => reports.Cover.DocumentId)
                 .MapVarchar("unit_name", x => x.Name)
                 .MapInteger("unit_type", _ => 0)
                 .MapVarchar("measure", x => x.Measure);
@@ -62,7 +61,7 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
             await normalUnitHelper.SaveAllAsync(connection, reports.Units.OfType<NormalUnit>());
 
             var dividedUnitHelper = new PostgreSQLCopyHelper<DividedUnit>("units")
-                .MapUUID("report_id", _ => guid)
+                .MapVarchar("report_id", _ => reports.Cover.DocumentId)
                 .MapVarchar("unit_name", x => x.Name)
                 .MapInteger("unit_type", _ => 1)
                 .MapVarchar("unit_numerator", x => x.UnitNumerator)
@@ -71,7 +70,7 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
             await dividedUnitHelper.SaveAllAsync(connection, reports.Units.OfType<DividedUnit>());
 
             var contextsHelper = new PostgreSQLCopyHelper<Context>("contexts")
-                .MapUUID("report_id", _ => guid)
+                .MapVarchar("report_id", _ => reports.Cover.DocumentId)
                 .MapVarchar("context_name", x => x.Name)
                 .MapInteger("period_type", x => x.Period is InstantPeriod ? 0 : 1)
                 .MapDate("period_from", x => x.Period is DurationPeriod p ? p.From.Date : null)
@@ -82,7 +81,7 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
 
             var reportItemHelper = new PostgreSQLCopyHelper<FinancialReportItem>("report_items")
                 .MapUUID("id", _ => Guid.NewGuid())
-                .MapUUID("report_id", _ => guid)
+                .MapVarchar("report_id", _ => reports.Cover.DocumentId)
                 .MapVarchar("classification", x => x.Classification)
                 .MapVarchar("xbrl_name", x => x.XBRLName)
                 .MapNumeric("amounts", x => x.Amounts)
