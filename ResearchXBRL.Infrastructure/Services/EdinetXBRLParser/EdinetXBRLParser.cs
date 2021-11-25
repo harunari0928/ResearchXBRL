@@ -43,6 +43,9 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
         {
             return xbrlNodes
                 .Where(x => x.GetAttributeValue("unitRef") is not null)
+                .Where(x => x.Name.StartsWith("jpcrp_cor:")
+                 || x.Name.StartsWith("jppfs_cor:")
+                 || x.Name.StartsWith("jpigp_cor:"))
                 .Select(CreateReportItem);
         }
 
