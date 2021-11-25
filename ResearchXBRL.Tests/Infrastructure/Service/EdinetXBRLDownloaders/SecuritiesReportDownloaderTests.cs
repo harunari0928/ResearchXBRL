@@ -47,7 +47,9 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
         {{
             ""docID"": ""{documentId}"",
             ""ordinanceCode"": ""010"",
-            ""formCode"": ""030000""
+            ""formCode"": ""030000"",
+            ""docTypeCode"": ""111"",
+            ""edinetCode"": ""aaaa""
         }}
     ]
 }}")
@@ -85,10 +87,10 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                             .Expect(HttpMethod.Get,
                             $"https://disclosure.edinet-fsa.go.jp/api/v1/documents.json?date={currentDay:yyyy-MM-dd}&type=2")
                             .Respond(_ => new HttpResponseMessage
-                             {
-                                 StatusCode = HttpStatusCode.OK,
-                                 Content = new StringContent(@"{ ""results"": [] }")
-                             });
+                            {
+                                StatusCode = HttpStatusCode.OK,
+                                Content = new StringContent(@"{ ""results"": [] }")
+                            });
                         currentDay = currentDay.AddDays(1);
                     }
 
@@ -112,6 +114,8 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
 
                     var documentId1 = Guid.NewGuid().ToString();
                     var documentId2 = Guid.NewGuid().ToString();
+                    var companyId2 = Guid.NewGuid().ToString();
+                    var documentType2 = Guid.NewGuid().ToString();
                     var documentId3 = Guid.NewGuid().ToString();
                     mockHttpHandler
                         .When(HttpMethod.Get,
@@ -125,17 +129,23 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
         {{
             ""docID"": ""{documentId1}"",
             ""ordinanceCode"": ""009"",
-            ""formCode"": ""030000""
+            ""formCode"": ""030000"",
+            ""docTypeCode"": ""333"",
+            ""edinetCode"": ""ccc""
         }},
         {{
             ""docID"": ""{documentId2}"",
             ""ordinanceCode"": ""010"",
-            ""formCode"": ""030000""
+            ""formCode"": ""030000"",
+            ""docTypeCode"": ""{documentType2}"",
+            ""edinetCode"": ""{companyId2}""
         }},
         {{
             ""docID"": ""{documentId3}"",
             ""ordinanceCode"": ""010"",
-            ""formCode"": ""030001""
+            ""formCode"": ""030001"",
+            ""docTypeCode"": ""111"",
+            ""edinetCode"": ""aaaa""
         }}
     ]
 }}")
@@ -156,6 +166,8 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
 
                     // assert
                     Assert.Equal(documentId2, data.Single().DocumentId);
+                    Assert.Equal(documentType2, data.Single().DocumentType);
+                    Assert.Equal(companyId2, data.Single().CompanyId);
                 }
             }
 
@@ -232,7 +244,9 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
         {{
             ""docID"": ""{documentId}"",
             ""ordinanceCode"": ""010"",
-            ""formCode"": ""030000""
+            ""formCode"": ""030000"",
+            ""docTypeCode"": ""111"",
+            ""edinetCode"": ""aaaa""
         }}
     ]
 }}")

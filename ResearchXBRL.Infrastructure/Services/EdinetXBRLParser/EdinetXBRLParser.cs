@@ -33,7 +33,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
 
             return new FinancialReport(CreateReportItems(xbrlNodes))
             {
-                Cover = CreateReortCover(xbrlNodes),
+                Cover = CreateReortCover(data, xbrlNodes),
                 Units = CreateUnits(xbrlNodes),
                 Contexts = CreateContexts(xbrlNodes),
             };
@@ -81,12 +81,13 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
                 .ToHashSet();
         }
 
-        private static ReportCover CreateReortCover(IEnumerable<XmlNode> xbrlNodes)
+        private static ReportCover CreateReortCover(EdinetXBRLData data, IEnumerable<XmlNode> xbrlNodes)
         {
             return new ReportCover
             {
-                CompanyName = xbrlNodes.Single(x => x.Name == "jpcrp_cor:CompanyNameCoverPage").InnerText,
-                DocumentTitle = xbrlNodes.Single(x => x.Name == "jpcrp_cor:DocumentTitleCoverPage").InnerText,
+                DocumentId = data.DocumentId,
+                CompanyId = data.CompanyId,
+                DocumentType = data.DocumentType,
                 SubmissionDate = DateTimeOffset.Parse(xbrlNodes
                                         .Single(x => x.Name == "jpcrp_cor:FilingDateCoverPage")
                                         .InnerText
