@@ -15,6 +15,10 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
     {
         public sealed class ParseTests : IDisposable
         {
+            private readonly string documentId = "S100MMP3";
+            private readonly string companyId = "test";
+            private readonly string documentType = "testtype";
+
             public ParseTests()
             {
                 if (Directory.Exists("work"))
@@ -30,8 +34,9 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 var report = await CreateReport();
 
                 // assert
-                Assert.Equal("有価証券報告書", report.Cover.DocumentTitle);
-                Assert.Equal("株式会社ファーマフーズ", report.Cover.CompanyName);
+                Assert.Equal(documentId, report.Cover.DocumentId);
+                Assert.Equal(documentType, report.Cover.DocumentType);
+                Assert.Equal(companyId, report.Cover.CompanyId);
                 Assert.Equal("2021-10-20", $"{report.Cover.SubmissionDate:yyyy-MM-dd}");
             }
 
@@ -129,13 +134,15 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 Assert.Null(first.Scale);
             }
 
-            private static async Task<FinancialReport> CreateReport()
+            private async Task<FinancialReport> CreateReport()
             {
-                using var stream = new FileStream("S100MMP3.zip", FileMode.Open);
+                using var stream = new FileStream($"{documentId}.zip", FileMode.Open);
                 var parser = new EdinetXBRLParser(new LocalStorage("./work"));
                 return await parser.Parse(new ResearchXBRL.Application.DTO.EdinetXBRLData
                 {
-                    DocumentId = "S100MMP3",
+                    DocumentId = documentId,
+                    CompanyId = companyId,
+                    DocumentType = documentType,
                     ZippedDataStream = stream
                 });
             }

@@ -32,13 +32,13 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
 
             var jstStartDate = start.ToOffset(TimeSpan.FromHours(9)).DateTime;
             var jstEndDate = end.ToOffset(TimeSpan.FromHours(9)).DateTime;
-            var documentIds = GetFilteredDocumentIds(jstStartDate, jstEndDate);
-            return GetDocumentFiles(documentIds);
+            var ids = GetFilteredDocumentIds(jstStartDate, jstEndDate);
+            return GetDocumentFiles(ids);
         }
 
-        private async IAsyncEnumerable<EdinetXBRLData> GetDocumentFiles(IAsyncEnumerable<string> documentIds)
+        private async IAsyncEnumerable<EdinetXBRLData> GetDocumentFiles(IAsyncEnumerable<(string, string, string)> ids)
         {
-            await foreach (var docuemntId in documentIds)
+            await foreach (var (docuemntId, documentType, companyId) in ids)
             {
                 var queryParameters = $"type=1";
                 var url = $"{DocumentAPIUrl(docuemntId)}?{queryParameters}";
@@ -51,12 +51,14 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
                 yield return new EdinetXBRLData
                 {
                     DocumentId = docuemntId,
+                    DocumentType = documentType,
+                    CompanyId = companyId,
                     ZippedDataStream = await responseMessage.Content.ReadAsStreamAsync()
                 };
             }
         }
 
-        protected abstract IAsyncEnumerable<string> GetFilteredDocumentIds(DateTime start, DateTime end);
+        protected abstract IAsyncEnumerable<(string documentId, string documentType, string companyId)> GetFilteredDocumentIds(DateTime start, DateTime end);
 
         protected async IAsyncEnumerable<DocumentInfo> GetAllDocumentInfos(DateTime start, DateTime end)
         {
@@ -98,6 +100,8 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
             public string DocID { get; init; } = "";
             public string OrdinanceCode { get; init; } = "";
             public string FormCode { get; init; } = "";
+            public string EdinetCode { get; init; } = "";
+            public string DocTypeCode { get; init; } = "";
         }
 
         private static IEnumerable<DateTime> EnumerateDates(DateTime start, DateTime end)

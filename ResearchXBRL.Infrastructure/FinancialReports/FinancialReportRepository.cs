@@ -47,8 +47,8 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
             var guid = Guid.NewGuid();
             var reportCoverHelper = new PostgreSQLCopyHelper<ReportCover>("report_covers")
                 .MapUUID("id", _ => guid)
-                .MapVarchar("document_title", x => x.DocumentTitle)
-                .MapVarchar("company_name", x => x.CompanyName)
+                .MapVarchar("document_title", x => x.DocumentType)
+                .MapVarchar("company_name", x => x.CompanyId)
                 .MapDate("submission_date", x => x.SubmissionDate.Date);
 
             await reportCoverHelper.SaveAllAsync(connection, new ReportCover[] { reports.Cover });
