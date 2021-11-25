@@ -11,6 +11,8 @@
 		"editor.tabSize": 4,
 		"editor.insertSpaces": true,
 		"editor.comments.insertSpace": true,
+		"files.autoSave": "afterDelay",
+		"files.autoSaveDelay": 500,
 		"omnisharp.useGlobalMono": "never"
 	},
 	// Add the IDs of extensions you want installed when the container is created.
