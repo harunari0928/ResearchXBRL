@@ -11,7 +11,7 @@ services:
       - "5000:5000"
     container_name: aquire_report_batch
     environment: 
-      DB_SERVERNAME: report_rdb
+      DB_SERVERNAME: report_rdb_primary
       DB_USERID: postgres
       DB_NAME: postgres
       DB_PORT: 5432
