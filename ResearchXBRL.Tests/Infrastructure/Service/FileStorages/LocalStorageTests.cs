@@ -232,6 +232,76 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
             }
         }
 
+        public sealed class DeleteTests : IDisposable
+        {
+            private readonly string basePath = $"./{Guid.NewGuid()}";
+            private readonly LocalStorage storage;
+
+            public DeleteTests()
+            {
+                storage = new(basePath);
+            }
+
+            public void Dispose()
+            {
+                Clean(basePath);
+            }
+
+            [Fact]
+            public void 指定したディレクトリを削除する()
+            {
+                // arrange
+                using var stream = new MemoryStream();
+                using var writer = new StreamWriter(stream) { AutoFlush = true };
+                var expectedStr = "テストです";
+                writer.WriteLine(expectedStr);
+                var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
+                var directoryPath = filePath.Replace("test.txt", "");
+                storage.Set(stream, filePath);
+
+                // act
+                storage.Delete(directoryPath);
+
+                // assert
+                Assert.False(Directory.Exists(Path.Combine(basePath, directoryPath)));
+            }
+
+            [Fact]
+            public void 指定したディレクトリが存在しないとき例外を出す()
+            {
+                // arrange
+                var directoryPath = $"./{Guid.NewGuid()}/testd/";
+
+                // act & assert
+                Assert.Throws<DirectoryNotFoundException>(() => storage.Delete(directoryPath));
+            }
+
+            [Fact]
+            public void 指定したファイルを削除する()
+            {
+                // arrange
+                using var stream = new MemoryStream();
+                using var writer = new StreamWriter(stream) { AutoFlush = true };
+                var expectedStr = "テストです";
+                writer.WriteLine(expectedStr);
+                var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
+                storage.Set(stream, filePath);
+
+                // act
+                storage.Delete(filePath);
+
+                // assert
+                Assert.False(File.Exists(Path.Combine(basePath, filePath)));
+            }
+
+            [Fact]
+            public void 指定したファイルが存在しないとき例外を出す()
+            {
+                // act & assert
+                Assert.Throws<FileNotFoundException>(() => storage.Delete("./not_existed_file.csv"));
+            }
+        }
+
         private static void Clean(string path)
         {
             Directory.Delete(path, true);

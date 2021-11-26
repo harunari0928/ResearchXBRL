@@ -18,6 +18,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
             private readonly string documentId = "S100MMP3";
             private readonly string companyId = "test";
             private readonly string documentType = "testtype";
+            private readonly LocalStorage storage = new("./work");
 
             public ParseTests()
             {
@@ -135,10 +136,28 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 Assert.Null(first.Scale);
             }
 
+            [Fact]
+            public async Task Zipファイルを削除する()
+            {
+                // arrange & act
+                await CreateReport();
+
+                Assert.False(Directory.Exists($"./work/{documentId}"));
+            }
+
+            [Fact]
+            public async Task Zip解凍後フォルダを削除する()
+            {
+                // arrange & act
+                await CreateReport();
+
+                Assert.Throws<FileNotFoundException>(() => storage.Get($"/{documentId}.zip"));
+            }
+
             private async Task<FinancialReport> CreateReport()
             {
                 using var stream = new FileStream($"{documentId}.zip", FileMode.Open);
-                var parser = new EdinetXBRLParser(new LocalStorage("./work"));
+                var parser = new EdinetXBRLParser(storage);
                 return await parser.Parse(new ResearchXBRL.Application.DTO.EdinetXBRLData
                 {
                     DocumentId = documentId,
