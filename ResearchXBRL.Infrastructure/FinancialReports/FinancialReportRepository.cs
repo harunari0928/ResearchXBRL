@@ -7,6 +7,7 @@ using ResearchXBRL.Domain.FinancialReports.Units;
 using System.Linq;
 using ResearchXBRL.Domain.FinancialReportItems;
 using ResearchXBRL.Domain.FinancialReports.Contexts;
+using NpgsqlTypes;
 
 namespace ResearchXBRL.Infrastructure.FinancialReports
 {
@@ -36,9 +37,19 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
             await connection.DisposeAsync();
         }
 
-        public Task<bool> IsExists(FinancialReport reports)
+        public async Task<bool> IsExists(string doucmentId)
         {
-            throw new NotImplementedException();
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+SELECT
+    id
+FROM
+    report_covers
+WHERE
+    id = @documentId
+LIMIT 1";
+            command.Parameters.Add("@documentId", NpgsqlDbType.Varchar).Value = doucmentId;
+            return await command.ExecuteScalarAsync() is not null;
         }
 
         public async Task Write(FinancialReport reports)
