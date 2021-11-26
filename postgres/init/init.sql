@@ -4,6 +4,7 @@ create table report_covers (
   id varchar primary key,
   company_id varchar not null,
   document_type varchar not null,
+  accounting_standards varchar not null,
   submission_date date not null
 );
 
