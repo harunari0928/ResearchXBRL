@@ -17,19 +17,41 @@ services:
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
     depends_on:
-      - rdb
-  rdb:
-    image: postgres:13.2
-    container_name: report_rdb
+      - rdb_primary
+  rdb_primary:
+    build:
+      context: ../postgres
+      dockerfile: Dockerfile.primary
+    command: postgres -c log_destination=stderr -c log_statement=all
+    container_name: report_rdb_primary
     volumes:
-      - database:/var/lib/postgresql/data
-      - ../postgres/init:/docker-entrypoint-initdb.d
+      - primary_database:/var/lib/postgresql/data
+      - ../postgres/init/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: mysecretpassword
     ports:
       - "5432:5432"
+  rdb_readonly:
+    build:
+      context: ../postgres
+      dockerfile: Dockerfile.readonly
+    command: postgres -c log_destination=stderr -c log_statement=all
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      PGPASSFILE: /.pgpass
+    container_name: report_rdb_readonly
+    volumes:
+      - readonly_database:/var/lib/postgresql/data
+    ports:
+      - "5433:5433"
+    depends_on:
+      - rdb_primary
 volumes:
-  database:
+  primary_database:
+    driver: local
+  readonly_database:
     driver: local
