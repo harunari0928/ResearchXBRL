@@ -48,6 +48,7 @@ namespace ResearchXBRL.Infrastructure.FinancialReports
                 .MapVarchar("id", x => x.DocumentId)
                 .MapVarchar("company_id", x => x.CompanyId)
                 .MapVarchar("document_type", x => x.DocumentType)
+                .MapVarchar("accounting_standards", x => x.AccountingStandards)
                 .MapDate("submission_date", x => x.SubmissionDate.Date);
 
             await reportCoverHelper.SaveAllAsync(connection, new ReportCover[] { reports.Cover });

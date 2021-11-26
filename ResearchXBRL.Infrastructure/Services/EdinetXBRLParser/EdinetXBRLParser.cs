@@ -31,9 +31,10 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
                 .Single(x => x.Name == "xbrli:xbrl")
                 .GetChildNodes();
 
+            var accountingStandards = GetAccountingStandards(files);
             return new FinancialReport(CreateReportItems(xbrlNodes))
             {
-                Cover = CreateReortCover(data, xbrlNodes),
+                Cover = CreateReortCover(data, xbrlNodes, accountingStandards),
                 Units = CreateUnits(xbrlNodes),
                 Contexts = CreateContexts(xbrlNodes),
             };
@@ -81,13 +82,14 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
                 .ToHashSet();
         }
 
-        private static ReportCover CreateReortCover(EdinetXBRLData data, IEnumerable<XmlNode> xbrlNodes)
+        private static ReportCover CreateReortCover(EdinetXBRLData data, IEnumerable<XmlNode> xbrlNodes, string accountingStandards)
         {
             return new ReportCover
             {
                 DocumentId = data.DocumentId,
                 CompanyId = data.CompanyId,
                 DocumentType = data.DocumentType,
+                AccountingStandards = accountingStandards,
                 SubmissionDate = DateTimeOffset.Parse(xbrlNodes
                                         .Single(x => x.Name == "jpcrp_cor:FilingDateCoverPage")
                                         .InnerText
@@ -103,6 +105,15 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             var xbrl = new XmlDocument();
             xbrl.Load(xbrlFileStream);
             return xbrl;
+        }
+
+        private string GetAccountingStandards(IReadOnlyList<string> files)
+        {
+            var xbrlFile = files.Single(x => x.EndsWith(".xsd"));
+            using var xbrlFileStream = fileStorage.Get(xbrlFile);
+            using var streamReader = new StreamReader(xbrlFileStream);
+            var isJppfs = streamReader.ReadToEnd().Contains("jppfs");
+            return isJppfs ? "jppfs" : "jpigp";
         }
 
         private static IUnit CreateUnit(XmlNode node)
