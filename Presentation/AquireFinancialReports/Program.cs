@@ -30,7 +30,7 @@ namespace AquireFinancialReports
                 .AddTransient<IEdinetXBRLDownloader>(x => new SecuritiesReportDownloader(x.GetService<IHttpClientFactory>(), "v1"))
                 .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
                 .AddTransient<IFinancialReportRepository, FinancialReportRepository>()
-                .AddSingleton<IFileStorage>(_ => new LocalStorage("tmp"))
+                .AddSingleton<IFileStorage>(_ => new LocalStorage(".tmp"))
                 .AddHttpClient()
                 .BuildServiceProvider();
         }
