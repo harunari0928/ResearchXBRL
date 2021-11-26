@@ -107,5 +107,22 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
 
             return string.IsNullOrWhiteSpace(Path.GetExtension(path));
         }
+
+        public void Delete(string path)
+        {
+            if (IsDirectory(path))
+            {
+                Directory.Delete(CreateFullPath(path), true);
+            }
+            else
+            {
+                var fullPath = CreateFullPath(path);
+                if (!File.Exists(fullPath))
+                {
+                    throw new FileNotFoundException(fullPath);
+                }
+                File.Delete(fullPath);
+            }
+        }
     }
 }

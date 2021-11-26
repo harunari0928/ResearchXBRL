@@ -25,13 +25,16 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
 
         public async Task<FinancialReport> Parse(EdinetXBRLData data)
         {
-            var files = await GetXBRLFiles(data);
+            var (directory, files) = await GetXBRLFiles(data);
             var xbrlNodes = GetXBRL(files)
                 .GetChildNodes()
                 .Single(x => x.Name == "xbrli:xbrl")
                 .GetChildNodes();
 
             var accountingStandards = GetAccountingStandards(files);
+
+            fileStorage.Delete(directory);
+
             return new FinancialReport(CreateReportItems(xbrlNodes))
             {
                 Cover = CreateReortCover(data, xbrlNodes, accountingStandards),
@@ -172,16 +175,17 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             };
         }
 
-        private async Task<IReadOnlyList<string>> GetXBRLFiles(EdinetXBRLData data)
+        private async Task<(string directory, IReadOnlyList<string> files)> GetXBRLFiles(EdinetXBRLData data)
         {
             var zipFilePath = $"./{data.DocumentId}.zip";
             var unzippedFolderPath = $"./{data.DocumentId}";
             fileStorage.Set(data.ZippedDataStream, zipFilePath);
             await data.ZippedDataStream.DisposeAsync();
             fileStorage.Unzip(zipFilePath, unzippedFolderPath);
-            return fileStorage
+            fileStorage.Delete(zipFilePath);
+            return (unzippedFolderPath, fileStorage
                 .GetFiles(Path.Combine(unzippedFolderPath, $"XBRL/PublicDoc/"),
-                "*");
+                "*"));
         }
     }
 }
