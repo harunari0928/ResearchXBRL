@@ -37,6 +37,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 Assert.Equal(documentId, report.Cover.DocumentId);
                 Assert.Equal(documentType, report.Cover.DocumentType);
                 Assert.Equal(companyId, report.Cover.CompanyId);
+                Assert.Equal("jppfs", report.Cover.AccountingStandards);
                 Assert.Equal("2021-10-20", $"{report.Cover.SubmissionDate:yyyy-MM-dd}");
             }
 
