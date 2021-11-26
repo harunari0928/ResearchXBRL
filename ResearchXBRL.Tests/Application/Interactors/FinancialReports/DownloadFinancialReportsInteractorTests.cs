@@ -111,6 +111,35 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                     reportRepository.Verify(x => x.Write(It.IsAny<FinancialReport>()),
                             Times.Exactly(expectedDownloadResult.Length));
                 }
+
+                [Fact]
+                public async Task 既に財務データが保存されていれば解析及び書き込みを行わない()
+                {
+                    // arrange
+                    var existedDocumentId = Guid.NewGuid().ToString();
+                    var expectedDownloadResult = new EdinetXBRLData[]
+                    {
+                        new EdinetXBRLData
+                        {
+                            DocumentId = existedDocumentId,
+                        },
+                    };
+                    RegisterDownloadResult(expectedDownloadResult.ToAsyncEnumerable());
+                    reportRepository
+                        .Setup(x => x.IsExists(existedDocumentId))
+                        .ReturnsAsync(true);
+                    var interactor = CreateInteractor();
+
+                    // act
+                    await interactor
+                        .Handle(DateTimeOffset.Now, DateTimeOffset.Now);
+
+                    // assert
+                    parser.Verify(x => x.Parse(It.IsAny<EdinetXBRLData>()),
+                            Times.Never);
+                    reportRepository.Verify(x => x.Write(It.IsAny<FinancialReport>()),
+                            Times.Never);
+                }
             }
 
             public sealed class 異常系 : HandleTests

@@ -31,9 +31,14 @@ namespace ResearchXBRL.Application.FinancialReports
 
             await foreach (var data in downloader.Download(start, end))
             {
+                if (await reportRepository.IsExists(data.DocumentId))
+                {
+                    continue;
+                }
+
                 var report = await parser.Parse(data);
                 await reportRepository.Write(report);
-            }   
+            }
         }
     }
 }
