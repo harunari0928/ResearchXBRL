@@ -7,6 +7,9 @@ using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
 using System.Text.Json;
 using System.Collections.Generic;
 using System;
+using System.IO;
+using ResearchXBRL.Application.DTO;
+using ResearchXBRL.Application.Services;
 
 namespace ResearchXBRL.Tests.Application.AccountElements
 {
@@ -14,7 +17,7 @@ namespace ResearchXBRL.Tests.Application.AccountElements
     {
         public sealed class HandleTests
         {
-            private readonly Mock<IAccountElementReader> accountElementReader;
+            private readonly Mock<ITaxonomyParser> accountElementReader;
             private readonly Mock<IAccountElementWriter> accountElementWriter;
             private readonly Mock<ITransferAccountElementsPresenter> presenter;
 
@@ -58,12 +61,12 @@ namespace ResearchXBRL.Tests.Application.AccountElements
                     },
                 };
                 accountElementReader
-                    .Setup(x => x.Read())
+                    .Setup(x => x.Read(It.IsAny<AccountElementSource>()))
                     .Returns(expectedAccountElements);
                 var interactor = CreateInteractor();
 
                 // act
-                await interactor.Hundle();
+                await interactor.Hundle(new MemoryStream(0), new MemoryStream(0));
 
                 // assert                
                 accountElementWriter
@@ -84,7 +87,7 @@ namespace ResearchXBRL.Tests.Application.AccountElements
                 var interactor = CreateInteractor();
 
                 // act
-                await interactor.Hundle();
+                await interactor.Hundle(new MemoryStream(0), new MemoryStream(0));
 
                 // assert                
                 presenter

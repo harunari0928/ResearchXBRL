@@ -1,4 +1,6 @@
-﻿using ResearchXBRL.CrossCuttingInterest.Extensions;
+﻿using ResearchXBRL.Application.DTO;
+using ResearchXBRL.Application.Services;
+using ResearchXBRL.CrossCuttingInterest.Extensions;
 using ResearchXBRL.Domain.AccountElements;
 using System;
 using System.Collections.Generic;
@@ -6,24 +8,15 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 
-namespace ResearchXBRL.Infrastructure.AccountElements
+namespace ResearchXBRL.Infrastructure.Services.TaxonomyParsers
 {
-    public sealed class AccountElementXMLReader : IAccountElementReader
+    public sealed class AccountElementXMLReader : ITaxonomyParser
     {
-        private readonly TextReader accountItemLabelReader;
-        private readonly TextReader accountItemSchemaReader;
-
-        public AccountElementXMLReader(TextReader accountItemSchemaReader, TextReader accountItemLabelReader)
+        public IEnumerable<AccountElement> Read(AccountElementSource source)
         {
-            this.accountItemSchemaReader = accountItemSchemaReader;
-            this.accountItemLabelReader = accountItemLabelReader;
-        }
-
-        public IEnumerable<AccountElement> Read()
-        {
-            return CreateAccountElements(
-                    accountItemLabelReader,
-                    accountItemSchemaReader);
+            var labelReader = new StreamReader(source.LabelDataStream);
+            var schemaReader = new StreamReader(source.SchemaDataStream);
+            return CreateAccountElements(labelReader, schemaReader);
         }
 
         private static XmlNode GetAccountItemElement(IEnumerable<XmlNode> accountElements, string elementId)
@@ -87,18 +80,6 @@ namespace ResearchXBRL.Infrastructure.AccountElements
                     PeriodType = accountElement.GetAttributeValue("xbrli:periodType") ?? "",
                     TaxonomyVersion = new DateTime(2019, 11, 1)
                 };
-            }
-        }
-
-        public void Dispose()
-        {
-            foreach (var reader in new TextReader[]
-            {
-                accountItemLabelReader,
-                accountItemSchemaReader
-            })
-            {
-                reader.Dispose();
             }
         }
     }

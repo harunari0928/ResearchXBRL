@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ResearchXBRL.Application.AccountElements;
+using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
 using ResearchXBRL.Domain.AccountElements;
 using ResearchXBRL.Infrastructure.AccountElements;
+using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -23,21 +25,17 @@ namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV
             using var accountSchemaReader = new StreamReader(accountSchemaFilePath);
             using var accountItemLabelReader = new StreamReader(accountItemLabelPath);
             using var accountElementWriter = new StreamWriter(outputFilePath);
-            using var serviceProvider = CreateServiceProvider(
-                accountSchemaReader,
-                accountItemLabelReader,
-                accountElementWriter);
+            using var serviceProvider = CreateServiceProvider(accountElementWriter);
             var usecase = serviceProvider
                 .GetService<ITransferAccountElementsUsecase>()
                 ?? throw new Exception("実行失敗");
-            await usecase.Hundle();
+            await usecase.Hundle(accountItemLabelReader.BaseStream, accountSchemaReader.BaseStream);
         }
 
-        private static ServiceProvider CreateServiceProvider(TextReader schemaReader, TextReader labelReader, TextWriter writer)
+        private static ServiceProvider CreateServiceProvider(TextWriter writer)
         {
             return new ServiceCollection()
-                .AddTransient<IAccountElementReader>(_ =>
-                    new AccountElementXMLReader(schemaReader, labelReader))
+                .AddTransient<ITaxonomyParser, AccountElementXMLReader>()
                 .AddTransient<IAccountElementWriter>(_ =>
                     new AccountElementCSVWriter(writer))
                 .AddTransient<ITransferAccountElementsPresenter, ConsolePresenter>()
