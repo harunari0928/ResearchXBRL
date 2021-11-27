@@ -42,7 +42,7 @@ create table report_items (
 
 create table document_type_master (
   code varchar primary key,
-  type_name varchar
+  type_name varchar not null
 );
 
 INSERT INTO document_type_master
@@ -93,16 +93,16 @@ VALUES
 
 create table company_master (
   code varchar primary key,
-  submission_type varchar,
-  is_listed boolean,
-  is_linking boolean,
-  capital_amount decimal,
-  settlement_date date,
-  submitter_name varchar,
-  submitter_name_english varchar,
-  submitter_name_yomigana varchar,
-  company_location varchar,
-  type_of_industry varchar,
-  securities_code varchar,
-  corporate_number varchar
+  submission_type varchar not null,
+  is_listed boolean not null,
+  is_linking boolean not null,
+  capital_amount decimal null,
+  settlement_date varchar not null,
+  submitter_name varchar not null,
+  submitter_name_english varchar not null,
+  submitter_name_yomigana varchar not null,
+  company_location varchar not null,
+  type_of_industry varchar not null,
+  securities_code varchar not null,
+  corporate_number varchar not null
 );
