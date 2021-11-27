@@ -1,10 +1,11 @@
-﻿using ResearchXBRL.Infrastructure.AccountElements;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+using ResearchXBRL.Application.DTO;
+using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
 using Xunit;
 
-namespace ResearchXBRL.Tests.Infrastructure.AccountElements
+namespace ResearchXBRL.Tests.Infrastructure.Service
 {
     public sealed class AccountElementXMLReaderTests
     {
@@ -14,11 +15,17 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
             public void タクソノミの勘定項目スキーマXSDファイルとラベルXMLファイルから全ての会計項目を読み取る()
             {
                 // arrange
-                var (schemaReader, lableReader) = GetReaders();
-                using var accountElementReader = new AccountElementXMLReader(schemaReader, lableReader);
+                var (schema, label) = GetStreams();
+                var accountElementReader = new AccountElementXMLReader();
 
                 // act
-                var accountElements = accountElementReader.Read() ?? throw new Exception("XML読み込み失敗");
+                var source = new AccountElementSource
+                {
+                    LabelDataStream = label,
+                    SchemaDataStream = schema
+                };
+                var accountElements = accountElementReader.Read(source)
+                    ?? throw new Exception("XML読み込み失敗");
 
                 // assert
                 var actual = accountElements.ElementAt(3);
@@ -33,14 +40,14 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
                 Assert.False(actual.Abstract);
                 Assert.Equal(DateTime.Parse("2019-11-01"), actual.TaxonomyVersion);
 
-                schemaReader.Dispose();
-                lableReader.Dispose();
+                schema.Dispose();
+                label.Dispose();
             }
 
-            private (TextReader schemaReader, TextReader labelReader) GetReaders()
+            private (Stream schema, Stream label) GetStreams()
             {
-                return (new StreamReader("jppfs_cor_2019-11-01.xsd"),
-                    new StreamReader("jppfs_2019-11-01_lab.xml"));
+                return (new StreamReader("jppfs_cor_2019-11-01.xsd").BaseStream,
+                    new StreamReader("jppfs_2019-11-01_lab.xml").BaseStream);
             }
         }
     }
