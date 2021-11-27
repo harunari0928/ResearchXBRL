@@ -6,4 +6,20 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\ResearchXBRL.Infrastructure\ResearchXBRL.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="EdinetcodeDlInfo.csv">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="27.2.1" />
+    <PackageReference Include="Npgsql" Version="6.0.0" />
+    <PackageReference Include="PostgreSQLCopyHelper" Version="2.8.0" />
+  </ItemGroup>
+
 </Project>

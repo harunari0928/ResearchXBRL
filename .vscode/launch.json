@@ -5,13 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "AquireFinancialReports",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "buildAquireFinancialReports",
             "program": "${workspaceFolder}/Presentation/AquireFinancialReports/bin/Debug/net5.0/AquireFinancialReports.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Presentation/AquireFinancialReports",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "ImportCorporationInfo",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "buildImportCorporationInfo",
+            "program": "${workspaceFolder}/Presentation/ImportCorporationInfo/bin/Debug/net5.0/ImportCorporationInfo.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Presentation/ImportCorporationInfo",
             "console": "internalConsole",
             "stopAtEntry": false
         },
