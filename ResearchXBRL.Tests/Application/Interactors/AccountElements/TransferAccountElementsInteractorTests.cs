@@ -61,7 +61,7 @@ namespace ResearchXBRL.Tests.Application.AccountElements
                     },
                 };
                 accountElementReader
-                    .Setup(x => x.Read(It.IsAny<AccountElementSource>()))
+                    .Setup(x => x.Read(It.IsAny<EdinetTaxonomyData>()))
                     .Returns(expectedAccountElements);
                 var interactor = CreateInteractor();
 

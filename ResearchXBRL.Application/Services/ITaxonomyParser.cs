@@ -6,6 +6,6 @@ namespace ResearchXBRL.Application.Services
 {
     public interface ITaxonomyParser
     {
-        IEnumerable<AccountElement> Read(AccountElementSource source);
+        IEnumerable<AccountElement> Read(EdinetTaxonomyData source);
     }
 }
