@@ -25,7 +25,7 @@ namespace ResearchXBRL.Application.AccountElements
 
         public async Task Hundle(Stream label, Stream schema)
         {
-            var accountElements = accountElementReader.Read(new AccountElementSource
+            var accountElements = accountElementReader.Read(new EdinetTaxonomyData
             {
                 LabelDataStream = label,
                 SchemaDataStream = schema

@@ -12,7 +12,7 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyParsers
 {
     public sealed class AccountElementXMLReader : ITaxonomyParser
     {
-        public IEnumerable<AccountElement> Read(AccountElementSource source)
+        public IEnumerable<AccountElement> Read(EdinetTaxonomyData source)
         {
             var labelReader = new StreamReader(source.LabelDataStream);
             var schemaReader = new StreamReader(source.SchemaDataStream);

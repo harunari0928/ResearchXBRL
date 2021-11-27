@@ -19,7 +19,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service
                 var accountElementReader = new AccountElementXMLReader();
 
                 // act
-                var source = new AccountElementSource
+                var source = new EdinetTaxonomyData
                 {
                     LabelDataStream = label,
                     SchemaDataStream = schema
