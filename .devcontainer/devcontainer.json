@@ -13,7 +13,8 @@
 		"editor.comments.insertSpace": true,
 		"files.autoSave": "afterDelay",
 		"files.autoSaveDelay": 500,
-		"omnisharp.useGlobalMono": "never"
+		"omnisharp.useGlobalMono": "never",
+		"files.eol": "\n"
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
