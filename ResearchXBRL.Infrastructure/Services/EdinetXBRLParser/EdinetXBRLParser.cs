@@ -180,9 +180,9 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             var zipFilePath = $"./{data.DocumentId}.zip";
             var unzippedFolderPath = $"./{data.DocumentId}";
             fileStorage.Set(data.ZippedDataStream, zipFilePath);
-            await data.ZippedDataStream.DisposeAsync();
             fileStorage.Unzip(zipFilePath, unzippedFolderPath);
             fileStorage.Delete(zipFilePath);
+            data.Dispose();
             return (unzippedFolderPath, fileStorage
                 .GetFiles(Path.Combine(unzippedFolderPath, $"XBRL/PublicDoc/"),
                 "*"));
