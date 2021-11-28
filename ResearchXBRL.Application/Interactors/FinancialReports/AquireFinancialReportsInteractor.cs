@@ -6,6 +6,7 @@ using ResearchXBRL.Domain.FinancialReports;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using ResearchXBRL.Application.DTO;
 
 namespace ResearchXBRL.Application.FinancialReports
 {
@@ -60,8 +61,10 @@ namespace ResearchXBRL.Application.FinancialReports
             presenter.Complete();
         }
 
-        private async Task SaveReport(DateTimeOffset start, DateTimeOffset end, DTO.EdinetXBRLData data)
+        private async Task SaveReport(DateTimeOffset start, DateTimeOffset end, EdinetXBRLData data)
         {
+            var progress = CalculateProgress(start, end, data.DocumentDateTime);
+            presenter.Progress(progress);
             try
             {
                 if (await reportRepository.IsExists(data.DocumentId))
@@ -71,19 +74,25 @@ namespace ResearchXBRL.Application.FinancialReports
 
                 var report = await parser.Parse(data);
                 await reportRepository.Write(report);
-                var progress = (report.Cover.SubmissionDate - start).TotalDays
-                 / (end - start).TotalDays;
-                presenter.Progress((int)progress);
             }
             catch (Exception ex)
             {
-                presenter.Error("インポート中にエラーが発生しました", ex);
+                presenter.Error($@"インポート中にエラーが発生しました
+document_id: {data.DocumentId}
+document_date_time: {data.DocumentDateTime}
+", ex);
                 exceptions.Push(ex);
             }
             finally
             {
                 semaphore.Release();
             }
+        }
+
+        private static double CalculateProgress(DateTimeOffset start, DateTimeOffset end, DateTime documentDateTime)
+        {
+            return (documentDateTime - start).TotalDays
+                             / (end - start).TotalDays * 100;
         }
     }
 }

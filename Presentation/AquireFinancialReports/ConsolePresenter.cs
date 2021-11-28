@@ -10,9 +10,9 @@ namespace AquireFinancialReports
             Console.WriteLine("Aquire reportsTask is completed.");
         }
 
-        public void Progress(int percentage)
+        public void Progress(double percentage)
         {
-            Console.WriteLine($"progress: {percentage}%");
+            Console.WriteLine($"progress: {percentage:F2}%");
         }
 
         public void Error(string message, Exception ex)
