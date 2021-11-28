@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ResearchXBRL.Domain.AccountElements
 {
@@ -13,5 +14,6 @@ namespace ResearchXBRL.Domain.AccountElements
         public string Balance { get; init; } = "";
         public string PeriodType { get; init; } = "";
         public DateTime TaxonomyVersion { get; init; }
+        public IEnumerable<char> Classification { get; set; }
     }
 }

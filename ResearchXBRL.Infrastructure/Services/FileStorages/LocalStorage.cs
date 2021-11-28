@@ -124,5 +124,15 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
                 File.Delete(fullPath);
             }
         }
+
+        public IReadOnlyList<string> GetFolders(string directoryPath, string searchPattern = "*")
+        {
+            throw new NotImplementedException();
+        }
+
+        public IReadOnlyList<string> GetFolderNames(string directoryPath, string searchPattern = "*")
+        {
+            throw new NotImplementedException();
+        }
     }
 }

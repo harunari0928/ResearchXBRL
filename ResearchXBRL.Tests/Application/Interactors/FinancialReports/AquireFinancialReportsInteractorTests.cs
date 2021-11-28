@@ -12,7 +12,7 @@ using Xunit;
 
 namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
 {
-    public sealed class DownloadFinancialReportsInteractorTests
+    public sealed class AquireFinancialReportsInteractorTests
     {
         public class HandleTests
         {
