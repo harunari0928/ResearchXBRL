@@ -14,5 +14,10 @@ namespace AquireFinancialReports
         {
             Console.WriteLine($"progress: {percentage}%");
         }
+
+        public void Error(string message, Exception ex)
+        {
+            Console.WriteLine($"message:{message}{Environment.NewLine}{ex}");
+        }
     }
 }

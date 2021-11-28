@@ -219,6 +219,45 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                     await Assert.ThrowsAsync<ArgumentException>(()
                         => interactor.Handle(start, end));
                 }
+
+                [Fact]
+                public async Task 解析処理で例外が発生したとき例外が発生する()
+                {
+                    // arrange
+                    var expectedDownloadResult = new EdinetXBRLData[]
+                    {
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                    };
+                    RegisterDownloadResult(expectedDownloadResult.ToAsyncEnumerable());
+                    parser
+                        .Setup(x => x.Parse(It.IsAny<EdinetXBRLData>()))
+                        // 3回の全ての解析処理で下記例外が発生するとする
+                        .ThrowsAsync(new OutOfMemoryException());
+                    var interactor = CreateInteractor();
+
+                    // act & assert
+                    var exception = await Assert.ThrowsAsync<AggregateException>(()
+                        => interactor.Handle(DateTimeOffset.Now, DateTimeOffset.Now));
+
+                    Assert.Equal(
+                        expectedDownloadResult.Length,
+                        exception.InnerExceptions.OfType<OutOfMemoryException>().Count());
+                    presenter.Verify(x => x.Error("インポート中にエラーが発生しました",
+                        It.IsAny<OutOfMemoryException>()),
+                        Times.Exactly(expectedDownloadResult.Length), "エラーが出る都度に通知する");
+                    presenter.Verify(x => x.Complete(), Times.Never, "完了通知は行わない");
+                }
             }
 
             private AquireFinancialReportsInteractor CreateInteractor()
@@ -227,7 +266,8 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                     downloader.Object,
                     parser.Object,
                     reportRepository.Object,
-                    presenter.Object);
+                    presenter.Object,
+                    2);
             }
 
             private void RegisterDownloadResult(IAsyncEnumerable<EdinetXBRLData> reports)
