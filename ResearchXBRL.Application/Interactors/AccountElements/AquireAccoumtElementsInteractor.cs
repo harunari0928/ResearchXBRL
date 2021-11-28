@@ -23,6 +23,7 @@ namespace ResearchXBRL.Application.Interactors.AccountElements
 
         public async Task Handle()
         {
+            await repository.Clean();
             await foreach (var data in downloader.Download())
             {
                 var accountElement = parser.Parse(data);

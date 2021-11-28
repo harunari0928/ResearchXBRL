@@ -1,8 +1,9 @@
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
+using Moq.Language.Flow;
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Interactors.AccountElements;
 using ResearchXBRL.Application.Services;
@@ -24,6 +25,43 @@ namespace ResearchXBRL.Tests.Application.Interactors.AccountElements
                 parser = new();
                 repository = new();
                 downloader = new();
+            }
+
+            [Fact]
+            public async Task ダウンロード前に既存全データの削除処理を行う()
+            {
+                // arrange
+                var downloadResult = new EdinetTaxonomyData[]
+                {
+                    new EdinetTaxonomyData
+                    {
+                        LabelDataStream = new MemoryStream(0),
+                        SchemaDataStream = new MemoryStream(0),
+                    },
+                    new EdinetTaxonomyData
+                    {
+                        LabelDataStream = new MemoryStream(0),
+                        SchemaDataStream = new MemoryStream(0),
+                    },
+                    new EdinetTaxonomyData
+                    {
+                        LabelDataStream = new MemoryStream(0),
+                        SchemaDataStream = new MemoryStream(0),
+                    },
+                };
+                var isCleaned = false;
+                repository.Setup(x => x.Clean())
+                    .Callback(() => isCleaned = true);
+                RegisterDownloadResult(downloadResult.ToAsyncEnumerable())
+                    .Callback(() => Assert.True(isCleaned));
+
+                var interactor = CreateInteractor();
+
+                // act
+                await interactor.Handle();
+
+                // assert
+                repository.Verify(x => x.Clean(), Times.Once);
             }
 
             [Fact]
@@ -103,9 +141,9 @@ namespace ResearchXBRL.Tests.Application.Interactors.AccountElements
                     repository.Object);
             }
 
-            private void RegisterDownloadResult(IAsyncEnumerable<EdinetTaxonomyData> reports)
+            private IReturnsResult<ITaxonomyDownloader> RegisterDownloadResult(IAsyncEnumerable<EdinetTaxonomyData> reports)
             {
-                downloader.Setup(x => x.Download()).Returns(reports);
+                return downloader.Setup(x => x.Download()).Returns(reports);
             }
         }
     }
