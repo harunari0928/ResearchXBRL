@@ -35,7 +35,7 @@ namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV
         private static ServiceProvider CreateServiceProvider(TextWriter writer)
         {
             return new ServiceCollection()
-                .AddTransient<ITaxonomyParser, AccountElementXMLReader>()
+                .AddTransient<ITaxonomyParser, TaxonomyParser>()
                 .AddTransient<IAccountElementWriter>(_ =>
                     new AccountElementCSVWriter(writer))
                 .AddTransient<ITransferAccountElementsPresenter, ConsolePresenter>()
