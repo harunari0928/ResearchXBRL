@@ -8,7 +8,6 @@ using ResearchXBRL.Infrastructure.Services;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
-using System.IO;
 
 namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
 {
