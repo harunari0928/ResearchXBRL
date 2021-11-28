@@ -11,15 +11,18 @@ namespace ResearchXBRL.Application.FinancialReports
         private readonly IEdinetXBRLDownloader downloader;
         private readonly IEdinetXBRLParser parser;
         private readonly IFinancialReportRepository reportRepository;
+        private readonly IAquireFinancialReportsPresenter presenter;
 
         public AquireFinancialReportsInteractor(
             IEdinetXBRLDownloader downloader,
             IEdinetXBRLParser parser,
-            IFinancialReportRepository reportRepository)
+            IFinancialReportRepository reportRepository,
+            IAquireFinancialReportsPresenter presenter)
         {
             this.downloader = downloader;
             this.parser = parser;
             this.reportRepository = reportRepository;
+            this.presenter = presenter;
         }
 
         public async Task Handle(DateTimeOffset start, DateTimeOffset end)
@@ -38,7 +41,11 @@ namespace ResearchXBRL.Application.FinancialReports
 
                 var report = await parser.Parse(data);
                 await reportRepository.Write(report);
+                var progress = report.Cover.SubmissionDate.Ticks / end.Ticks;
+                presenter.Progress((int)progress);
             }
+
+            presenter.Complete();
         }
     }
 }
