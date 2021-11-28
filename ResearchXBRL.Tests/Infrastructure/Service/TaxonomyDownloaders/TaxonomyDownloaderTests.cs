@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using Xunit;
 using Moq;
@@ -11,22 +12,22 @@ using System.IO;
 
 namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
 {
-    public sealed class TaxonomyDownloaderTests
+    public class TaxonomyDownloaderTests
     {
-        public class DownloadTests
+        private readonly Mock<IHttpClientFactory> httpClientFactory;
+        private readonly Mock<IFileStorage> storage;
+        private readonly MockHttpMessageHandler mockHttpHandler;
+
+        public TaxonomyDownloaderTests()
         {
-            private readonly Mock<IHttpClientFactory> httpClientFactory;
-            private readonly Mock<IFileStorage> storage;
-            private readonly MockHttpMessageHandler mockHttpHandler;
+            httpClientFactory = new();
+            storage = new();
+            mockHttpHandler = new();
+        }
 
-            public DownloadTests()
-            {
-                httpClientFactory = new();
-                storage = new();
-                mockHttpHandler = new();
-            }
-
-            public sealed class 正常系 : DownloadTests
+        public sealed class DownloadTests
+        {
+            public sealed class 正常系 : TaxonomyDownloaderTests
             {
                 [Fact]
                 public async Task ダウンロードしたファイル内の全てのバージョンのタクソノミを出力する()
@@ -117,7 +118,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
                 }
             }
 
-            public sealed class 異常系 : DownloadTests
+            public sealed class 異常系 : TaxonomyDownloaderTests
             {
                 [Fact]
                 public async Task ダウンロード失敗時例外を出す()
@@ -131,14 +132,67 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
                         .ForEachAsync(_ => { }));
                 }
             }
+        }
 
-            private TaxonomyDownloader CreateDownloader()
+        public class DisposeTests : TaxonomyDownloaderTests
+        {
+            [Fact]
+            public void IDisposableを継承している()
             {
-                httpClientFactory
-                    .Setup(x => x.CreateClient(typeof(TaxonomyDownloader).Name))
-                    .Returns(mockHttpHandler.ToHttpClient());
-                return new TaxonomyDownloader(httpClientFactory.Object, storage.Object);
+                // arrange
+                var downloader = CreateDownloader();
+
+                // act & assert
+                Assert.IsAssignableFrom<IDisposable>(downloader);
             }
+
+            [Fact]
+            public void ダウンロードしたファイルを削除する()
+            {
+                // arrange
+                storage
+                    .Setup(x => x.GetDirectoryNames(".", "*"))
+                    .Returns(new string[] { "work", "unzipped" });
+                var downloader = CreateDownloader();
+
+                // act
+                downloader.Dispose();
+
+                // assert
+                storage
+                    .Verify(x => x.Delete("work"), Times.Once
+                    , "zipファイル格納ディレクトリを削除する");
+                storage
+                    .Verify(x => x.Delete("unzipped"), Times.Once
+                    , "zip解凍後ディレクトリを削除する");
+            }
+
+            [Fact]
+            public void 削除対象ディレクトリが存在しないとき削除しない()
+            {
+                // arrange
+                storage
+                    .Setup(x => x.GetDirectoryNames(".", "*"))
+                    .Returns(Enumerable.Empty<string>().ToArray());
+                var downloader = CreateDownloader();
+
+                // act
+                downloader.Dispose();
+
+                // assert
+                storage
+                    .Verify(x => x.Delete("work"), Times.Never);
+                storage
+                    .Verify(x => x.Delete("unzipped"), Times.Never);
+            }
+        }
+
+        private TaxonomyDownloader CreateDownloader()
+        {
+            httpClientFactory
+                .Setup(x => x.CreateClient(typeof(TaxonomyDownloader).Name))
+                .Returns(mockHttpHandler.ToHttpClient());
+            return new TaxonomyDownloader(httpClientFactory.Object, storage.Object);
         }
     }
 }

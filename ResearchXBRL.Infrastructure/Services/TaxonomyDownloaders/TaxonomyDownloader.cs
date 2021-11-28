@@ -8,7 +8,7 @@ using ResearchXBRL.Application.Services;
 
 namespace ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders
 {
-    public class TaxonomyDownloader : ITaxonomyDownloader
+    public class TaxonomyDownloader : ITaxonomyDownloader, IDisposable
     {
         private readonly HttpClient httpClient;
         private readonly IFileStorage storage;
@@ -61,6 +61,15 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders
         private Stream GetLabelStream(string basePath, string version, string classification)
         {
             return storage.Get(Path.Combine(basePath, version, $"/taxonomy/{classification}", version, $"label/{classification}_{version}_lab.xml"));
+        }
+
+        public void Dispose()
+        {
+            foreach (var directory in new string[] { "work", "unzipped" }
+                .Intersect(storage.GetDirectoryNames(".")))
+            {
+                storage.Delete(directory);
+            }
         }
 
         private const string TaxonomyFileUrl
