@@ -46,11 +46,19 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
                         .Returns(expectedVersions);
                     foreach (var version in expectedVersions)
                     {
+                        var classifications = new string[] { "jpcrp", "jppfs", "jpigp" };
                         storage
-                          .Setup(x => x.GetDirectoryNames(Path.Combine("/unzipped/data/EDINET/taxonomy/", version, "/taxonomy/"),
+                          .Setup(x => x.GetDirectoryNames($"/unzipped/data/EDINET/taxonomy/{version}/taxonomy/",
                               It.IsAny<string>()))
                           // 全てのバージョンにおいて以下3つの分類が存在するとする
-                          .Returns(new string[] { "jpcor", "jppfs", "jpigp" });
+                          .Returns(classifications);
+                        foreach (var classification in classifications)
+                        {
+                            storage
+                               .Setup(x => x.GetDirectoryNames($"/unzipped/data/EDINET/taxonomy/{version}/taxonomy/{classification}",
+                                   It.IsAny<string>()))
+                               .Returns(new string[] { version });
+                        }
                     }
                     mockHttpHandler
                         .When(HttpMethod.Get,
@@ -65,8 +73,8 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
                     var data = downloader.Download();
 
                     // assert
-                    var acutal1 = data // 分類: jpcorに関して全てのバージョンが存在することを確認
-                        .Where(x => x.Classification == "jpcor")
+                    var acutal1 = data // 分類: jpcrpに関して全てのバージョンが存在することを確認
+                        .Where(x => x.Classification == "jpcrp")
                         .Select(x => $"{x.TaxonomyVersion:yyyy-MM-dd}");
                     Assert.True(await acutal1.SequenceEqualAsync(expectedVersions.ToAsyncEnumerable()));
                     var acutal2 = data // 分類: jppfsに関して全てのバージョンが存在することを確認
@@ -95,11 +103,19 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
                         .Returns(expectedVersions);
                     foreach (var version in expectedVersions)
                     {
+                        var classifications = new string[] { "jpcrp", "jppfs" };
                         storage
-                          .Setup(x => x.GetDirectoryNames(Path.Combine("/unzipped/data/EDINET/taxonomy/", version, "/taxonomy/"),
+                          .Setup(x => x.GetDirectoryNames($"/unzipped/data/EDINET/taxonomy/{version}/taxonomy/",
                               It.IsAny<string>()))
                           // 全てのバージョンにおいてjpigpが存在しないとする
-                          .Returns(new string[] { "jpcor", "jppfs" });
+                          .Returns(classifications);
+                        foreach (var classification in classifications)
+                        {
+                            storage
+                               .Setup(x => x.GetDirectoryNames($"/unzipped/data/EDINET/taxonomy/{version}/taxonomy/{classification}",
+                                   It.IsAny<string>()))
+                               .Returns(new string[] { version });
+                        }
                     }
                     mockHttpHandler
                         .When(HttpMethod.Get,
@@ -115,6 +131,43 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
 
                     // assert
                     Assert.False(await data.AnyAsync(x => x.Classification == "jpigp"));
+                }
+
+                [Fact]
+                public async Task あるバージョンのタクソノミフォルダにいずれかの分類が存在した場合でも古いバージョンだった場合は出力しない()
+                {
+                    // arrange
+                    // ダウンロードしたファイル内に存在するタクソノミバージョン
+                    var expectedVersions = "2014-03-31";
+                    storage
+                        .Setup(x => x.GetDirectoryNames("/unzipped/data/EDINET/taxonomy",
+                            It.IsAny<string>()))
+                        .Returns(new string[] { expectedVersions });
+                    storage
+                        .Setup(x => x.GetDirectoryNames($"/unzipped/data/EDINET/taxonomy/{expectedVersions}/taxonomy/",
+                            It.IsAny<string>()))
+                        // バージョン2014-03-31においてjpcrpが存在するとする
+                        .Returns(new string[] { "jpcrp" });
+                    storage
+                        .Setup(x => x.GetDirectoryNames($"/unzipped/data/EDINET/taxonomy/{expectedVersions}/taxonomy/jpcrp",
+                            It.IsAny<string>()))
+                        // バージョン2014-03-31のjpcrpの中に、古いバージョンが存在するとする
+                        .Returns(new string[] { "2013-02-28" });
+
+                    mockHttpHandler
+                        .When(HttpMethod.Get,
+                        $"http://lang.main.jp/xbrl/data.zip")
+                        .Respond(_ => new HttpResponseMessage
+                        {
+                            StatusCode = HttpStatusCode.OK
+                        });
+                    var downloader = CreateDownloader();
+
+                    // act
+                    var data = downloader.Download();
+
+                    // assert
+                    Assert.Empty(await data.ToArrayAsync());
                 }
             }
 
