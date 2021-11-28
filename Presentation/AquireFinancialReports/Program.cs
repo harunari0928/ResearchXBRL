@@ -18,7 +18,8 @@ namespace AquireFinancialReports
     {
         static async Task Main(string[] _)
         {
-            var usecase = CreateServiceProvider()
+            using var serviceProvider = CreateServiceProvider();
+            var usecase = serviceProvider
                 .GetService<IAquireFinancialReporsUsecase>();
             await usecase.Handle(DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now);
         }
