@@ -8,8 +8,7 @@ namespace ResearchXBRL.Infrastructure.Services
         public Stream Get(string filePath);
         public void Set(in Stream inputStream, string filePath);
         IReadOnlyList<string> GetFiles(string directoryPath, string searchPattern = "*");
-        IReadOnlyList<string> GetFolders(string directoryPath, string searchPattern = "*");
-        IReadOnlyList<string> GetFolderNames(string directoryPath, string searchPattern = "*");
+        IReadOnlyList<string> GetDirectoryNames(string directoryPath, string searchPattern = "*");
         public void Unzip(string zipFilePath, string unzippedDirectoryPath);
         public void Delete(string path);
     }

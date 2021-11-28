@@ -125,14 +125,17 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
             }
         }
 
-        public IReadOnlyList<string> GetFolders(string directoryPath, string searchPattern = "*")
+        public IReadOnlyList<string> GetDirectoryNames(string directoryPath, string searchPattern = "*")
         {
-            throw new NotImplementedException();
-        }
+            if (!IsDirectory(directoryPath))
+            {
+                throw new ArgumentException($"{nameof(directoryPath)}には、ディレクトリパスを指定してください");
+            }
 
-        public IReadOnlyList<string> GetFolderNames(string directoryPath, string searchPattern = "*")
-        {
-            throw new NotImplementedException();
+            return Directory.GetDirectories(CreateFullPath(directoryPath), searchPattern)
+                .Select(Path.GetFileName)
+                .OfType<string>()
+                .ToArray();
         }
     }
 }

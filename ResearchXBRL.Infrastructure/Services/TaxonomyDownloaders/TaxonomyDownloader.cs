@@ -33,11 +33,11 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders
             storage.Set(stream, "/work");
             storage.Unzip("/work/data.zip", "/unzipped");
             var basePath = "/unzipped/data/EDINET/taxonomy";
-            foreach (var taxonomyVersion in storage.GetFolderNames(basePath))
+            foreach (var taxonomyVersion in storage.GetDirectoryNames(basePath))
             {
                 foreach (var classification in new string[] { "jpcor", "jppfs", "jpigp" })
                 {
-                    if (!storage.GetFolderNames(Path.Combine(basePath, taxonomyVersion, "/taxonomy/"))
+                    if (!storage.GetDirectoryNames(Path.Combine(basePath, taxonomyVersion, "/taxonomy/"))
                         .Contains(classification))
                     {
                         continue;
