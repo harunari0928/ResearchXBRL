@@ -27,6 +27,17 @@
             "stopAtEntry": false
         },
         {
+            "name": "AquireAccountItems",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "buildAquireAccountItems",
+            "program": "${workspaceFolder}/Presentation/AquireAccountItems/bin/Debug/net5.0/AquireAccountItems.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Presentation/AquireAccountItems",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
