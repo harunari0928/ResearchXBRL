@@ -35,10 +35,16 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders
             var basePath = "/unzipped/data/EDINET/taxonomy";
             foreach (var taxonomyVersion in storage.GetDirectoryNames(basePath))
             {
-                foreach (var classification in new string[] { "jpcor", "jppfs", "jpigp" })
+                foreach (var classification in new string[] { "jpcrp", "jppfs", "jpigp" })
                 {
-                    if (!storage.GetDirectoryNames(Path.Combine(basePath, taxonomyVersion, "/taxonomy/"))
+                    if (!storage.GetDirectoryNames($"{basePath}/{taxonomyVersion}/taxonomy/")
                         .Contains(classification))
+                    {
+                        continue;
+                    }
+
+                    if (!storage.GetDirectoryNames($"{basePath}/{taxonomyVersion}/taxonomy/{classification}")
+                        .Contains(taxonomyVersion))
                     {
                         continue;
                     }
@@ -56,11 +62,11 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders
 
         private Stream GetSchemaStream(string basePath, string version, string classification)
         {
-            return storage.Get(Path.Combine(basePath, version, $"/taxonomy/{classification}", version, $"{classification}_cor_{version}.xsd"));
+            return storage.Get($"{basePath}/{version}/taxonomy/{classification}/{version}/{classification}_cor_{version}.xsd");
         }
         private Stream GetLabelStream(string basePath, string version, string classification)
         {
-            return storage.Get(Path.Combine(basePath, version, $"/taxonomy/{classification}", version, $"label/{classification}_{version}_lab.xml"));
+            return storage.Get($"{basePath}/{version}/taxonomy/{classification}/{version}/label/{classification}_{version}_lab.xml");
         }
 
         public void Dispose()
