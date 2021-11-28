@@ -42,13 +42,15 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
             {
                 var queryParameters = $"type=1";
                 var url = $"{DocumentAPIUrl(docuemntId)}?{queryParameters}";
-                using var responseMessage = await httpClient.GetAsync(url);
+                // usingしてしまうとZippedDataStreamもDisposeされてしまうので敢えてやらない
+                var responseMessage = await httpClient.GetAsync(url);
                 if (!responseMessage.IsSuccessStatusCode)
                 {
                     throw new HttpRequestException("書類API接続処理失敗", null, responseMessage.StatusCode);
                 }
 
-                yield return new EdinetXBRLData
+                // 引数でresponseMessageを渡して後でDisposeする(ハック)
+                yield return new EdinetXBRLData(new IDisposable[] { responseMessage })
                 {
                     DocumentId = docuemntId,
                     DocumentType = documentType,
