@@ -16,7 +16,8 @@ namespace AquireAccountItems
     {
         static async Task Main(string[] _)
         {
-            var usecase = CreateServiceProvider()
+            using var serviceProvider = CreateServiceProvider();
+            var usecase = serviceProvider
                 .GetService<IAquireAccoumtElementsUsecase>();
             await usecase.Handle();
         }
