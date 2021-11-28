@@ -169,7 +169,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                         .Handle(DateTimeOffset.Now, DateTimeOffset.Now);
 
                     // assert
-                    presenter.Verify(x => x.Progress(It.IsAny<int>()),
+                    presenter.Verify(x => x.Progress(It.IsAny<double>()),
                         Times.Exactly(expectedDownloadResult.Length));
                 }
 
@@ -253,7 +253,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                     Assert.Equal(
                         expectedDownloadResult.Length,
                         exception.InnerExceptions.OfType<OutOfMemoryException>().Count());
-                    presenter.Verify(x => x.Error("インポート中にエラーが発生しました",
+                    presenter.Verify(x => x.Error(It.Is<string>(x => x.Contains("インポート中にエラーが発生しました")),
                         It.IsAny<OutOfMemoryException>()),
                         Times.Exactly(expectedDownloadResult.Length), "エラーが出る都度に通知する");
                     presenter.Verify(x => x.Complete(), Times.Never, "完了通知は行わない");
