@@ -1,28 +1,41 @@
-﻿using ResearchXBRL.Application.Services;
+﻿using System.Collections.Concurrent;
+using System.Threading;
+using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.FinancialReports;
 using ResearchXBRL.Domain.FinancialReports;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace ResearchXBRL.Application.FinancialReports
 {
-    public sealed class AquireFinancialReportsInteractor : IAquireFinancialReportsUsecase
+    public sealed class AquireFinancialReportsInteractor : IAquireFinancialReportsUsecase, IDisposable
     {
         private readonly IEdinetXBRLDownloader downloader;
         private readonly IEdinetXBRLParser parser;
         private readonly IFinancialReportRepository reportRepository;
         private readonly IAquireFinancialReportsPresenter presenter;
+        private readonly SemaphoreSlim semaphore;
+        private readonly ConcurrentStack<Task> jobs = new();
+        private readonly ConcurrentStack<Exception> exceptions = new();
 
         public AquireFinancialReportsInteractor(
             IEdinetXBRLDownloader downloader,
             IEdinetXBRLParser parser,
             IFinancialReportRepository reportRepository,
-            IAquireFinancialReportsPresenter presenter)
+            IAquireFinancialReportsPresenter presenter,
+            int maxParallelism)
         {
             this.downloader = downloader;
             this.parser = parser;
             this.reportRepository = reportRepository;
             this.presenter = presenter;
+            semaphore = new(maxParallelism);
+        }
+
+        public void Dispose()
+        {
+            semaphore.Dispose();
         }
 
         public async Task Handle(DateTimeOffset start, DateTimeOffset end)
@@ -34,9 +47,26 @@ namespace ResearchXBRL.Application.FinancialReports
 
             await foreach (var data in downloader.Download(start, end))
             {
+                await semaphore.WaitAsync();
+                jobs.Push(SaveReport(end, data));
+            }
+            await Task.WhenAll(jobs);
+
+            if (exceptions.Any())
+            {
+                throw new AggregateException(exceptions);
+            }
+
+            presenter.Complete();
+        }
+
+        private async Task SaveReport(DateTimeOffset end, DTO.EdinetXBRLData data)
+        {
+            try
+            {
                 if (await reportRepository.IsExists(data.DocumentId))
                 {
-                    continue;
+                    return;
                 }
 
                 var report = await parser.Parse(data);
@@ -44,8 +74,15 @@ namespace ResearchXBRL.Application.FinancialReports
                 var progress = report.Cover.SubmissionDate.Ticks / end.Ticks;
                 presenter.Progress((int)progress);
             }
-
-            presenter.Complete();
+            catch (Exception ex)
+            {
+                presenter.Error("インポート中にエラーが発生しました", ex);
+                exceptions.Push(ex);
+            }
+            finally
+            {
+                semaphore.Release();
+            }
         }
     }
 }
