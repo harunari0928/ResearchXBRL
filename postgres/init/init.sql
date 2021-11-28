@@ -106,3 +106,11 @@ create table company_master (
   securities_code varchar not null,
   corporate_number varchar not null
 );
+
+CREATE TABLE account_elements (
+  xbrl_name VARCHAR NOT NULL,
+  taxonomy_version DATE NOT NULL,
+  classification VARCHAR NOT NULL,
+  account_name VARCHAR NOT NULL,
+  PRIMARY KEY (xbrl_name, taxonomy_version, classification)
+);
