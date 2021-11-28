@@ -385,7 +385,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
                 var directoryName = storage.GetDirectoryNames(path, "testd5").Single();
 
                 // assert
-                Assert.Equal(directoryName, "testd5");
+                Assert.Equal("testd5", directoryName);
             }
 
             [Fact]
