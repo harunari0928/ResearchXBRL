@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace ResearchXBRL.Application.DTO
 {
-    public sealed class EdinetXBRLData : IDisposable
+    public sealed class EdinetXBRLData : IAsyncDisposable
     {
         private readonly IEnumerable<IDisposable> disposables;
         public string DocumentId { get; init; } = "";
@@ -18,9 +19,9 @@ namespace ResearchXBRL.Application.DTO
             this.disposables = disposables;
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            ZippedDataStream.Dispose();
+            await ZippedDataStream.DisposeAsync();
             foreach (var disposable in disposables)
             {
                 disposable.Dispose();
