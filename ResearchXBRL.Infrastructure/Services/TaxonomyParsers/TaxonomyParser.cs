@@ -10,7 +10,7 @@ using System.Xml;
 
 namespace ResearchXBRL.Infrastructure.Services.TaxonomyParsers
 {
-    public sealed class AccountElementXMLReader : ITaxonomyParser
+    public sealed class TaxonomyParser : ITaxonomyParser
     {
         public IEnumerable<AccountElement> Parse(EdinetTaxonomyData source)
         {

@@ -16,7 +16,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service
             {
                 // arrange
                 var (schema, label) = GetStreams();
-                var accountElementReader = new AccountElementXMLReader();
+                var accountElementReader = new TaxonomyParser();
 
                 // act
                 var source = new EdinetTaxonomyData
