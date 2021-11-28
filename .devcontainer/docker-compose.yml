@@ -22,7 +22,6 @@ services:
     build:
       context: ../postgres
       dockerfile: Dockerfile.primary
-    command: postgres -c log_destination=stderr -c log_statement=all
     container_name: report_rdb_primary
     volumes:
       - primary_database:/var/lib/postgresql/data
