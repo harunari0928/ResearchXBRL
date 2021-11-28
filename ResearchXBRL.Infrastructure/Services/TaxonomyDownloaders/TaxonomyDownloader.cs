@@ -30,7 +30,7 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders
             }
 
             var stream = await responseMessage.Content.ReadAsStreamAsync();
-            storage.Set(stream, "/work");
+            storage.Set(stream, "/work/data.zip");
             storage.Unzip("/work/data.zip", "/unzipped");
             var basePath = "/unzipped/data/EDINET/taxonomy";
             foreach (var taxonomyVersion in storage.GetDirectoryNames(basePath))
