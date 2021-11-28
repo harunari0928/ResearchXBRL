@@ -12,11 +12,9 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyParsers
 {
     public sealed class AccountElementXMLReader : ITaxonomyParser
     {
-        public IEnumerable<AccountElement> Read(EdinetTaxonomyData source)
+        public IEnumerable<AccountElement> Parse(EdinetTaxonomyData source)
         {
-            var labelReader = new StreamReader(source.LabelDataStream);
-            var schemaReader = new StreamReader(source.SchemaDataStream);
-            return CreateAccountElements(labelReader, schemaReader);
+            return CreateAccountElements(source);
         }
 
         private static XmlNode GetAccountItemElement(IEnumerable<XmlNode> accountElements, string elementId)
@@ -62,9 +60,11 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyParsers
                 .Where(x => x.Name == "xsd:element");
         }
 
-        private static IEnumerable<AccountElement> CreateAccountElements(TextReader labelReader, TextReader elementReader)
+        private static IEnumerable<AccountElement> CreateAccountElements(EdinetTaxonomyData source)
         {
-            var accountElements = ReadAccountElements(elementReader);
+            using var labelReader = new StreamReader(source.LabelDataStream);
+            using var schemaReader = new StreamReader(source.SchemaDataStream);
+            var accountElements = ReadAccountElements(schemaReader);
             foreach (var (elementId, name) in ReadAccountLabels(labelReader))
             {
                 var accountElement = GetAccountItemElement(accountElements, elementId);
@@ -78,7 +78,8 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyParsers
                     Nillable = bool.Parse(accountElement.GetAttributeValue("nillable") ?? "false"),
                     Balance = accountElement.GetAttributeValue("xbrli:balance") ?? "",
                     PeriodType = accountElement.GetAttributeValue("xbrli:periodType") ?? "",
-                    TaxonomyVersion = new DateTime(2019, 11, 1)
+                    TaxonomyVersion = source.TaxonomyVersion,
+                    Classification = source.Classification
                 };
             }
         }
