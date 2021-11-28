@@ -2,6 +2,7 @@
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.FinancialReports;
 using ResearchXBRL.Application.Services;
+using ResearchXBRL.Application.Usecase.FinancialReports;
 using ResearchXBRL.Domain.FinancialReportItems;
 using ResearchXBRL.Domain.FinancialReports;
 using System;
@@ -19,12 +20,14 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
             private readonly Mock<IEdinetXBRLDownloader> downloader;
             private readonly Mock<IEdinetXBRLParser> parser;
             private readonly Mock<IFinancialReportRepository> reportRepository;
+            private readonly Mock<IAquireFinancialReportsPresenter> presenter;
 
             public HandleTests()
             {
                 downloader = new();
                 parser = new();
                 reportRepository = new();
+                presenter = new();
             }
 
             public sealed class 正常系 : HandleTests
@@ -99,8 +102,6 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                         },
                     };
                     RegisterDownloadResult(expectedDownloadResult.ToAsyncEnumerable());
-                    parser.Setup(x => x.Parse(It.IsAny<EdinetXBRLData>()))
-                        .ReturnsAsync(new FinancialReport(Enumerable.Empty<FinancialReportItem>()));
                     var interactor = CreateInteractor();
 
                     // act
@@ -140,6 +141,67 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                     reportRepository.Verify(x => x.Write(It.IsAny<FinancialReport>()),
                             Times.Never);
                 }
+
+                [Fact]
+                public async Task 書き込みの都度に進捗報告を行う()
+                {
+                    // arrange
+                    var expectedDownloadResult = new EdinetXBRLData[]
+                    {
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                    };
+                    RegisterDownloadResult(expectedDownloadResult.ToAsyncEnumerable());
+                    var interactor = CreateInteractor();
+
+                    // act
+                    await interactor
+                        .Handle(DateTimeOffset.Now, DateTimeOffset.Now);
+
+                    // assert
+                    presenter.Verify(x => x.Progress(It.IsAny<int>()),
+                        Times.Exactly(expectedDownloadResult.Length));
+                }
+
+                [Fact]
+                public async Task 正常終了したとき完了通知を行う()
+                {
+                    // arrange
+                    var expectedDownloadResult = new EdinetXBRLData[]
+                    {
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                        new EdinetXBRLData
+                        {
+                            DocumentId = Guid.NewGuid().ToString(),
+                        },
+                    };
+                    RegisterDownloadResult(expectedDownloadResult.ToAsyncEnumerable());
+                    var interactor = CreateInteractor();
+
+                    // act
+                    await interactor
+                        .Handle(DateTimeOffset.Now, DateTimeOffset.Now);
+
+                    // assert
+                    presenter.Verify(x => x.Complete(), Times.Once);
+                }
             }
 
             public sealed class 異常系 : HandleTests
@@ -164,7 +226,8 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                 return new AquireFinancialReportsInteractor(
                     downloader.Object,
                     parser.Object,
-                    reportRepository.Object);
+                    reportRepository.Object,
+                    presenter.Object);
             }
 
             private void RegisterDownloadResult(IAsyncEnumerable<EdinetXBRLData> reports)
@@ -174,6 +237,15 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                         It.IsAny<DateTimeOffset>(),
                         It.IsAny<DateTimeOffset>()))
                     .Returns(reports);
+                parser
+                    .Setup(x => x.Parse(It.IsAny<EdinetXBRLData>()))
+                    .ReturnsAsync(new FinancialReport(Enumerable.Empty<FinancialReportItem>())
+                    {
+                        Cover = new ReportCover
+                        {
+                            SubmissionDate = DateTimeOffset.Now
+                        }
+                    });
             }
         }
     }

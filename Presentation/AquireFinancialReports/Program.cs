@@ -63,6 +63,7 @@ namespace AquireFinancialReports
                 .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
                 .AddTransient<IFinancialReportRepository, FinancialReportRepository>()
                 .AddSingleton<IFileStorage>(_ => new LocalStorage(".tmp"))
+                .AddSingleton<IAquireFinancialReportsPresenter, ConsolePresenter>()
                 .AddHttpClient()
                 .BuildServiceProvider();
         }
