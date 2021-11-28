@@ -71,7 +71,7 @@ namespace ResearchXBRL.Application.FinancialReports
 
                 var report = await parser.Parse(data);
                 await reportRepository.Write(report);
-                var progress = report.Cover.SubmissionDate.Ticks / end.Ticks;
+                var progress = (end - report.Cover.SubmissionDate).TotalDays / end.TimeOfDay.TotalDays;
                 presenter.Progress((int)progress);
             }
             catch (Exception ex)
