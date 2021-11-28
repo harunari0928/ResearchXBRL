@@ -20,11 +20,11 @@ namespace ResearchXBRL.Application.FinancialReports
         private readonly ConcurrentStack<Exception> exceptions = new();
 
         public AquireFinancialReportsInteractor(
-            IEdinetXBRLDownloader downloader,
-            IEdinetXBRLParser parser,
-            IFinancialReportRepository reportRepository,
-            IAquireFinancialReportsPresenter presenter,
-            int maxParallelism)
+            in IEdinetXBRLDownloader downloader,
+            in IEdinetXBRLParser parser,
+            in IFinancialReportRepository reportRepository,
+            in IAquireFinancialReportsPresenter presenter,
+            in int maxParallelism)
         {
             this.downloader = downloader;
             this.parser = parser;
@@ -48,7 +48,7 @@ namespace ResearchXBRL.Application.FinancialReports
             await foreach (var data in downloader.Download(start, end))
             {
                 await semaphore.WaitAsync();
-                jobs.Push(SaveReport(end, data));
+                jobs.Push(SaveReport(start, end, data));
             }
             await Task.WhenAll(jobs);
 
@@ -60,7 +60,7 @@ namespace ResearchXBRL.Application.FinancialReports
             presenter.Complete();
         }
 
-        private async Task SaveReport(DateTimeOffset end, DTO.EdinetXBRLData data)
+        private async Task SaveReport(DateTimeOffset start, DateTimeOffset end, DTO.EdinetXBRLData data)
         {
             try
             {
@@ -71,7 +71,8 @@ namespace ResearchXBRL.Application.FinancialReports
 
                 var report = await parser.Parse(data);
                 await reportRepository.Write(report);
-                var progress = (end - report.Cover.SubmissionDate).TotalDays / end.TimeOfDay.TotalDays;
+                var progress = (report.Cover.SubmissionDate - start).TotalDays
+                 / (end - start).TotalDays;
                 presenter.Progress((int)progress);
             }
             catch (Exception ex)
