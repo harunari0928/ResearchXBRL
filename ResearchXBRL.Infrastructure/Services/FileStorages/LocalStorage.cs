@@ -83,8 +83,16 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
                 CreateFullPath(unzippedDirectoryPath));
         }
 
-        private string CreateFullPath(string path)
-            => Path.Combine(storageDirectoryBasePath, path);
+        private string CreateFullPath(in string path)
+        {
+            var copiedPath = path;
+            // pathの先頭が/だとpathの値がそのまま帰ってくるので/を削除する
+            if (path.Any() && path[0] == '/')
+            {
+                copiedPath = string.Concat(path.Skip(1));
+            }
+            return Path.Combine(storageDirectoryBasePath, copiedPath);
+        }
 
         private static bool IsDirectory(string path)
         {
