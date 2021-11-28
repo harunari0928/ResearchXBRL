@@ -44,5 +44,12 @@ namespace ResearchXBRL.Infrastructure.AccountElements
         {
             await connection.DisposeAsync();
         }
+
+        public async Task Clean()
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM account_elements";
+            await command.ExecuteNonQueryAsync();
+        }
     }
 }
