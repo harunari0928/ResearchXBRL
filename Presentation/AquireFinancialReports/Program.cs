@@ -21,7 +21,7 @@ namespace AquireFinancialReports
         {
             using var serviceProvider = CreateServiceProvider();
             var usecase = serviceProvider
-                .GetService<IAquireFinancialReporsUsecase>();
+                .GetService<IAquireFinancialReportsUsecase>();
 
             var (from, to) = GetAquireSpan(args);
 
@@ -58,7 +58,7 @@ namespace AquireFinancialReports
         private static ServiceProvider CreateServiceProvider()
         {
             return new ServiceCollection()
-                .AddTransient<IAquireFinancialReporsUsecase, AquireFinancialReportsInteractor>()
+                .AddTransient<IAquireFinancialReportsUsecase, AquireFinancialReportsInteractor>()
                 .AddTransient<IEdinetXBRLDownloader>(x => new SecuritiesReportDownloader(x.GetService<IHttpClientFactory>(), "v1"))
                 .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
                 .AddTransient<IFinancialReportRepository, FinancialReportRepository>()
