@@ -54,6 +54,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
                     DocumentId = info.DocID,
                     DocumentType = info.DocTypeCode,
                     CompanyId = info.EdinetCode,
+                    DocumentDateTime = DateTime.Parse(info.SubmitDateTime),
                     ZippedDataStream = await ReadContentStream(responseMessage)
                 };
             }
@@ -111,6 +112,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
             public string FormCode { get; init; } = "";
             public string EdinetCode { get; init; } = "";
             public string DocTypeCode { get; init; } = "";
+            public string SubmitDateTime { get; init; } = "";
         }
 
         private static IEnumerable<DateTime> EnumerateDates(DateTime start, DateTime end)

@@ -49,7 +49,8 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
             ""ordinanceCode"": ""010"",
             ""formCode"": ""030000"",
             ""docTypeCode"": ""111"",
-            ""edinetCode"": ""aaaa""
+            ""edinetCode"": ""aaaa"",
+            ""submitDateTime"": ""2021-08-25""
         }}
     ]
 }}")
@@ -116,6 +117,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                     var documentId2 = Guid.NewGuid().ToString();
                     var companyId2 = Guid.NewGuid().ToString();
                     var documentType2 = Guid.NewGuid().ToString();
+                    var documentDate = "2021-08-26";
                     var documentId3 = Guid.NewGuid().ToString();
                     mockHttpHandler
                         .When(HttpMethod.Get,
@@ -131,21 +133,24 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
             ""ordinanceCode"": ""009"",
             ""formCode"": ""030000"",
             ""docTypeCode"": ""333"",
-            ""edinetCode"": ""ccc""
+            ""edinetCode"": ""ccc"",
+            ""submitDateTime"": ""2021-08-25""
         }},
         {{
             ""docID"": ""{documentId2}"",
             ""ordinanceCode"": ""010"",
             ""formCode"": ""030000"",
             ""docTypeCode"": ""{documentType2}"",
-            ""edinetCode"": ""{companyId2}""
+            ""edinetCode"": ""{companyId2}"",
+            ""submitDateTime"": ""{documentDate}""
         }},
         {{
             ""docID"": ""{documentId3}"",
             ""ordinanceCode"": ""010"",
             ""formCode"": ""030001"",
             ""docTypeCode"": ""111"",
-            ""edinetCode"": ""aaaa""
+            ""edinetCode"": ""aaaa"",
+            ""submitDateTime"": ""2021-08-27""
         }}
     ]
 }}")
@@ -168,6 +173,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                     Assert.Equal(documentId2, data.Single().DocumentId);
                     Assert.Equal(documentType2, data.Single().DocumentType);
                     Assert.Equal(companyId2, data.Single().CompanyId);
+                    Assert.Equal(documentDate, $"{data.Single().DocumentDateTime:yyyy-MM-dd}");
                 }
             }
 
@@ -246,7 +252,8 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
             ""ordinanceCode"": ""010"",
             ""formCode"": ""030000"",
             ""docTypeCode"": ""111"",
-            ""edinetCode"": ""aaaa""
+            ""edinetCode"": ""aaaa"",
+            ""submitDateTime"": ""2021-08-27""
         }}
     ]
 }}")
