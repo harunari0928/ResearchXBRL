@@ -12,9 +12,9 @@ namespace ResearchXBRL.Application.Interactors.AccountElements
         private readonly IAccountElementRepository repository;
 
         public AquireAccoumtElementsInteractor(
-            ITaxonomyDownloader downloader,
-            ITaxonomyParser parser,
-            IAccountElementRepository repository)
+            in ITaxonomyDownloader downloader,
+            in ITaxonomyParser parser,
+            in IAccountElementRepository repository)
         {
             this.downloader = downloader;
             this.parser = parser;

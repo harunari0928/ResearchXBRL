@@ -14,9 +14,9 @@ namespace ResearchXBRL.Application.AccountElements
         private readonly ITransferAccountElementsPresenter presenter;
 
         public TransferAccountElementsInteractor(
-            ITaxonomyParser accountElementReader,
-            IAccountElementWriter accountElementWriter,
-            ITransferAccountElementsPresenter presenter)
+            in ITaxonomyParser accountElementReader,
+            in IAccountElementWriter accountElementWriter,
+            in ITransferAccountElementsPresenter presenter)
         {
             this.accountElementReader = accountElementReader;
             this.accountElementWriter = accountElementWriter;
