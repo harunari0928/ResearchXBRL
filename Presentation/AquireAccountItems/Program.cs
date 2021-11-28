@@ -28,7 +28,7 @@ namespace AquireAccountItems
                 .AddTransient<ITaxonomyDownloader, TaxonomyDownloader>()
                 .AddTransient<ITaxonomyParser, TaxonomyParser>()
                 .AddTransient<IAccountElementRepository, AccountElementRepository>()
-                .AddSingleton<IFileStorage>(_ => new LocalStorage(".tmp"))
+                .AddSingleton<IFileStorage>(_ => new LocalStorage("/.tmp"))
                 .AddHttpClient()
                 .BuildServiceProvider();
         }
