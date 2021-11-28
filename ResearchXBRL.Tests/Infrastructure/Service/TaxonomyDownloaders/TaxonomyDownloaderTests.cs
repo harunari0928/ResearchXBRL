@@ -40,13 +40,13 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
                         "2019-11-01",
                     };
                     storage
-                        .Setup(x => x.GetFolderNames("/unzipped/data/EDINET/taxonomy",
+                        .Setup(x => x.GetDirectoryNames("/unzipped/data/EDINET/taxonomy",
                             It.IsAny<string>()))
                         .Returns(expectedVersions);
                     foreach (var version in expectedVersions)
                     {
                         storage
-                          .Setup(x => x.GetFolderNames(Path.Combine("/unzipped/data/EDINET/taxonomy/", version, "/taxonomy/"),
+                          .Setup(x => x.GetDirectoryNames(Path.Combine("/unzipped/data/EDINET/taxonomy/", version, "/taxonomy/"),
                               It.IsAny<string>()))
                           // 全てのバージョンにおいて以下3つの分類が存在するとする
                           .Returns(new string[] { "jpcor", "jppfs", "jpigp" });
@@ -89,13 +89,13 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
                         "2019-11-01",
                     };
                     storage
-                        .Setup(x => x.GetFolderNames("/unzipped/data/EDINET/taxonomy",
+                        .Setup(x => x.GetDirectoryNames("/unzipped/data/EDINET/taxonomy",
                             It.IsAny<string>()))
                         .Returns(expectedVersions);
                     foreach (var version in expectedVersions)
                     {
                         storage
-                          .Setup(x => x.GetFolderNames(Path.Combine("/unzipped/data/EDINET/taxonomy/", version, "/taxonomy/"),
+                          .Setup(x => x.GetDirectoryNames(Path.Combine("/unzipped/data/EDINET/taxonomy/", version, "/taxonomy/"),
                               It.IsAny<string>()))
                           // 全てのバージョンにおいてjpigpが存在しないとする
                           .Returns(new string[] { "jpcor", "jppfs" });

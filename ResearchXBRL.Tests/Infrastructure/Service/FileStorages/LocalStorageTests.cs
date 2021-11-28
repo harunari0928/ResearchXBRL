@@ -67,7 +67,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
             }
 
             [Fact]
-            public void 指定したパスの全ファイル名を取得する()
+            public void 指定したパスの全ファイルパスを取得する()
             {
                 // arrange
                 var path = "./testd";
@@ -299,6 +299,81 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
             {
                 // act & assert
                 Assert.Throws<FileNotFoundException>(() => storage.Delete("./not_existed_file.csv"));
+            }
+        }
+
+        public sealed class GetDirectoryNamesTests : IDisposable
+        {
+            private readonly string basePath = $"./{Guid.NewGuid()}";
+            private readonly LocalStorage storage;
+
+            public GetDirectoryNamesTests()
+            {
+                storage = new(basePath);
+            }
+
+            public void Dispose()
+            {
+                Clean(basePath);
+            }
+
+            [Fact]
+            public void 指定したパスの全ディレクトリ名を取得する()
+            {
+                // arrange
+                var path = "./testd";
+                var folderSize = 10;
+                foreach (var number in Enumerable.Range(0, folderSize))
+                {
+                    using var stream = new MemoryStream();
+                    using var writer = new StreamWriter(stream) { AutoFlush = true };
+                    stream.Position = 0;
+                    var expectedStr = $"テストです{number}";
+                    writer.WriteLine(expectedStr);
+                    var filePath = $"{path}/testd{number}/test{number}.txt";
+                    storage.Set(stream, filePath);
+                }
+
+                // act
+                var directoryNames = storage.GetDirectoryNames(path).OrderBy(x => x);
+
+                // assert
+                Assert.Equal(folderSize, directoryNames.Count());
+                Assert.True(Enumerable.Range(0, folderSize)
+                    .Select(n => $"testd{n}")
+                    .Zip(directoryNames, (expected, actual) => actual == expected)
+                    .All(x => x));
+            }
+
+            [Fact]
+            public void 引数で指定したパターンのディレクトリ名を取得する()
+            {
+                // arrange
+                var path = "./testd";
+                var folderSize = 10;
+                foreach (var number in Enumerable.Range(0, folderSize))
+                {
+                    using var stream = new MemoryStream();
+                    using var writer = new StreamWriter(stream) { AutoFlush = true };
+                    stream.Position = 0;
+                    var expectedStr = $"テストです{number}";
+                    writer.WriteLine(expectedStr);
+                    var filePath = $"{path}/testd{number}/test{number}.txt";
+                    storage.Set(stream, filePath);
+                }
+
+                // act
+                var directoryName = storage.GetDirectoryNames(path, "testd5").Single();
+
+                // assert
+                Assert.Equal(directoryName, "testd5");
+            }
+
+            [Fact]
+            public void ファイルパスが指定されたとき例外を出す()
+            {
+                // act & assert
+                Assert.Throws<ArgumentException>(() => storage.GetDirectoryNames("/test/test.txt"));
             }
         }
 
