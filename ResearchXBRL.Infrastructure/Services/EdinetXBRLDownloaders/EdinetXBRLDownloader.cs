@@ -1,4 +1,5 @@
-﻿using ResearchXBRL.Application.DTO;
+﻿using System.IO;
+using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
 using System;
 using System.Collections.Generic;
@@ -32,35 +33,41 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
 
             var jstStartDate = start.ToOffset(TimeSpan.FromHours(9)).DateTime;
             var jstEndDate = end.ToOffset(TimeSpan.FromHours(9)).DateTime;
-            var ids = GetFilteredDocumentIds(jstStartDate, jstEndDate);
-            return GetDocumentFiles(ids);
+            var documentInfos = GetFilteredDocumentIds(jstStartDate, jstEndDate);
+            return GetDocumentFiles(documentInfos);
         }
 
-        private async IAsyncEnumerable<EdinetXBRLData> GetDocumentFiles(IAsyncEnumerable<(string, string, string)> ids)
+        private async IAsyncEnumerable<EdinetXBRLData> GetDocumentFiles(IAsyncEnumerable<DocumentInfo> documentInfos)
         {
-            await foreach (var (docuemntId, documentType, companyId) in ids)
+            await foreach (var info in documentInfos)
             {
                 var queryParameters = $"type=1";
-                var url = $"{DocumentAPIUrl(docuemntId)}?{queryParameters}";
-                // usingしてしまうとZippedDataStreamもDisposeされてしまうので敢えてやらない
-                var responseMessage = await httpClient.GetAsync(url);
+                var url = $"{DocumentAPIUrl(info.DocID)}?{queryParameters}";
+                using var responseMessage = await httpClient.GetAsync(url);
                 if (!responseMessage.IsSuccessStatusCode)
                 {
                     throw new HttpRequestException("書類API接続処理失敗", null, responseMessage.StatusCode);
                 }
 
-                // 引数でresponseMessageを渡して後でDisposeする(ハック)
-                yield return new EdinetXBRLData(new IDisposable[] { responseMessage })
+                yield return new EdinetXBRLData
                 {
-                    DocumentId = docuemntId,
-                    DocumentType = documentType,
-                    CompanyId = companyId,
-                    ZippedDataStream = await responseMessage.Content.ReadAsStreamAsync()
+                    DocumentId = info.DocID,
+                    DocumentType = info.DocTypeCode,
+                    CompanyId = info.EdinetCode,
+                    ZippedDataStream = await ReadContentStream(responseMessage)
                 };
             }
         }
 
-        protected abstract IAsyncEnumerable<(string documentId, string documentType, string companyId)> GetFilteredDocumentIds(DateTime start, DateTime end);
+        private static async Task<MemoryStream> ReadContentStream(HttpResponseMessage responseMessage)
+        {
+            using var contentStream = await responseMessage.Content.ReadAsStreamAsync();
+            var copiedStream = new MemoryStream();
+            await contentStream.CopyToAsync(copiedStream);
+            return copiedStream;
+        }
+
+        protected abstract IAsyncEnumerable<DocumentInfo> GetFilteredDocumentIds(DateTime start, DateTime end);
 
         protected async IAsyncEnumerable<DocumentInfo> GetAllDocumentInfos(DateTime start, DateTime end)
         {
