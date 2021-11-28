@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ResearchXBRL.Application.FinancialReports
 {
-    public sealed class AquireFinancialReportsInteractor : IAquireFinancialReporsUsecase
+    public sealed class AquireFinancialReportsInteractor : IAquireFinancialReportsUsecase
     {
         private readonly IEdinetXBRLDownloader downloader;
         private readonly IEdinetXBRLParser parser;
