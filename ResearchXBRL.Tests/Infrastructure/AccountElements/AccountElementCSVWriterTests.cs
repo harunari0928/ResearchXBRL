@@ -40,7 +40,8 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
                         Nillable = true,
                         Balance = "aaa",
                         PeriodType = "",
-                        TaxonomyVersion = DateTime.Parse("2021/01/02")
+                        TaxonomyVersion = DateTime.Parse("2021/01/02"),
+                        Classification = "jpigp"
                     },
                 };
                 var (writer, reader) = GetStreamWriterReader();
@@ -72,7 +73,8 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
                         Nillable = true,
                         Balance = "aaa",
                         PeriodType = "",
-                        TaxonomyVersion = DateTime.Parse("2021/01/02")
+                        TaxonomyVersion = DateTime.Parse("2021/01/02"),
+                        Classification = "jpffs"
                     },
                     new AccountElement
                     {
@@ -81,7 +83,8 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
                         Type = "test-type2",
                         Balance = "aaa",
                         PeriodType = "aaa",
-                        TaxonomyVersion = DateTime.Parse("2019/11/12")
+                        TaxonomyVersion = DateTime.Parse("2019/11/12"),
+                        Classification = "jpigp"
                     },
                     new AccountElement
                     {
