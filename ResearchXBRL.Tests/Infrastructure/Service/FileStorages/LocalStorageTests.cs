@@ -44,6 +44,25 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
             }
 
             [Fact]
+            public void 指定したパスのストリームを取得する_引数パスの先頭がスラッシュのとき()
+            {
+                // arrange
+                using var stream = new MemoryStream();
+                using var writer = new StreamWriter(stream) { AutoFlush = true };
+                var expectedStr = "テストです";
+                writer.WriteLine(expectedStr);
+                var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
+                storage.Set(stream, filePath);
+
+                // act
+                var outputStream = storage.Get(string.Concat(filePath.Skip(1)));
+
+                // assert
+                using var reader = new StreamReader(outputStream);
+                Assert.Equal(expectedStr, reader.ReadLine());
+            }
+
+            [Fact]
             public void ディレクトリパスが指定されたとき例外を出す()
             {
                 // act & assert
