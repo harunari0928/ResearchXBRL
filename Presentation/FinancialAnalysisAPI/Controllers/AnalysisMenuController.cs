@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ResearchXBRL.Application.DTO;
+using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus;
 
 namespace FinancialAnalysisAPI.Controllers
 {
@@ -10,17 +12,21 @@ namespace FinancialAnalysisAPI.Controllers
     [Route("[controller]")]
     public class AnalysisMenuController : ControllerBase
     {
-        private readonly ILogger<AnalysisMenuController> _logger;
+        private readonly ILogger<AnalysisMenuController> logger;
+        private readonly ICreateAnalysisMenusUsecase usecase;
 
-        public AnalysisMenuController(ILogger<AnalysisMenuController> logger)
+        public AnalysisMenuController(
+            in ILogger<AnalysisMenuController> logger,
+            ICreateAnalysisMenusUsecase usecase)
         {
-            _logger = logger;
+            this.logger = logger;
+            this.usecase = usecase;
         }
 
         [HttpGet]
-        public IAsyncEnumerable<AnalysisMenuViewModel> Get()
+        public async Task<AnalysisMenuViewModel> Get()
         {
-            throw new NotImplementedException();
+            return await usecase.Handle();
         }
     }
 }
