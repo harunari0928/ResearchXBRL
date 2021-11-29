@@ -14,6 +14,7 @@
 		"files.autoSave": "afterDelay",
 		"files.autoSaveDelay": 500,
 		"omnisharp.useGlobalMono": "never",
+		"omnisharp.path": "latest",
 		"files.eol": "\n"
 	},
 	// Add the IDs of extensions you want installed when the container is created.
