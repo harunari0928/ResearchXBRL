@@ -19,17 +19,17 @@ namespace ResearchXBRL.Domain.FinancialReports
         /// <summary>
         ///  表紙
         /// </summary>
-        public ReportCover Cover { get; init; }
+        public ReportCover Cover { get; init; } = new();
 
         /// <summary>
         /// この報告書で使われている単位一覧
         /// </summary>
-        public IReadOnlySet<IUnit> Units { get; init; }
+        public IReadOnlySet<IUnit> Units { get; init; } = new HashSet<IUnit>();
 
         /// <summary>
         /// この報告書で使われているContext一覧
         /// </summary>
-        public IReadOnlySet<Context> Contexts { get; init; }
+        public IReadOnlySet<Context> Contexts { get; init; } = new HashSet<Context>();
 
         public FinancialReport(IEnumerable<FinancialReportItem> reportItems)
         {
@@ -41,7 +41,8 @@ namespace ResearchXBRL.Domain.FinancialReports
             var iterator = (this as IEnumerable).GetEnumerator();
             while (iterator.MoveNext())
             {
-                yield return iterator.Current as FinancialReportItem;
+                yield return iterator.Current as FinancialReportItem
+                    ?? throw new NullReferenceException();
             }
         }
 
