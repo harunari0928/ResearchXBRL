@@ -61,8 +61,8 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             {
                 Classification = node.Name.Split(':')[0],
                 XBRLName = node.Name.Split(':')[1],
-                ContextName = node.GetAttributeValue("contextRef"),
-                UnitName = node.GetAttributeValue("unitRef"),
+                ContextName = node.GetAttributeValue("contextRef") ?? "",
+                UnitName = node.GetAttributeValue("unitRef") ?? "",
                 NumericalAccuracy = accuraryValue is null ? null : decimal.Parse(accuraryValue),
                 Amounts = string.IsNullOrWhiteSpace(node.InnerText) ? null : decimal.Parse(node.InnerText),
                 Scale = scaleValue is null ? null : decimal.Parse(scaleValue),
@@ -127,21 +127,21 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             {
                 return new DividedUnit
                 {
-                    Name = unitName,
-                    UnitNumerator = child
+                    Name = unitName ?? throw new Exception("単位タグが不正です"),
+                    UnitNumerator = child?
                         .GetChildNodes()
                         .Single(x => x.Name == "xbrli:unitNumerator")
-                        .FirstChild?.InnerText,
-                    UnitDenominator = child
+                        .FirstChild?.InnerText ?? throw new Exception("単位タグが不正です"),
+                    UnitDenominator = child?
                         .GetChildNodes()
                         .Single(x => x.Name == "xbrli:unitDenominator")
-                        .FirstChild?.InnerText
+                        .FirstChild?.InnerText ?? throw new Exception("単位タグが不正です")
                 };
             }
 
             return new NormalUnit
             {
-                Name = unitName,
+                Name = unitName ?? "",
                 Measure = child.InnerText
             };
         }
@@ -152,7 +152,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             var contextName = node.GetAttributeValue("id");
             return new Context
             {
-                Name = contextName,
+                Name = contextName ?? "",
                 Period = CreatePeriod(child)
             };
         }

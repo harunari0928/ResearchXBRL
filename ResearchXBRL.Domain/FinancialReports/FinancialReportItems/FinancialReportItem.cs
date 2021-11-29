@@ -2,12 +2,12 @@
 {
     public sealed class FinancialReportItem
     {
-        public string Classification { get; init; }
+        public string Classification { get; init; } = "";
 
         /// <summary>
         /// XBRLタグ名
         /// </summary>
-        public string XBRLName { get; init; }
+        public string XBRLName { get; init; } = "";
 
         /// <summary>
         /// 数値
@@ -28,11 +28,11 @@
         /// <summary>
         /// 単位
         /// </summary>
-        public string UnitName { get; init; }
+        public string UnitName { get; init; } = "";
 
         /// <summary>
         /// 詳細
         /// </summary>
-        public string ContextName { get; init; }
+        public string ContextName { get; init; } = "";
     }
 }
