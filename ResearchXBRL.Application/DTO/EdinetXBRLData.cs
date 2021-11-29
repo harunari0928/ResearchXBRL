@@ -7,7 +7,6 @@ namespace ResearchXBRL.Application.DTO
 {
     public sealed class EdinetXBRLData : IAsyncDisposable
     {
-        private readonly IEnumerable<IDisposable> disposables;
         public string DocumentId { get; init; } = "";
         public string DocumentType { get; init; } = "";
         public string CompanyId { get; init; } = "";
