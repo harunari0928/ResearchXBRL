@@ -1,6 +1,6 @@
 using System;
 
-namespace ResearchXBRL.Domain.FinancialAnalysis
+namespace ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus
 {
     public sealed class Corporation
     {
