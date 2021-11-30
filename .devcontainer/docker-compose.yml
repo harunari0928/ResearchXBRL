@@ -40,7 +40,7 @@ services:
       DB_SERVERNAME: report_rdb_readonly
       DB_USERID: postgres
       DB_NAME: postgres
-      DB_PORT: 5433
+      DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
       ASPNETCORE_URLS: http://+:80
       ASPNETCORE_ENVIRONMENT: Development
