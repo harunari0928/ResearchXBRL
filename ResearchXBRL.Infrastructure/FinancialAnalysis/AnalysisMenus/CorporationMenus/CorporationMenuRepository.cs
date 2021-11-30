@@ -45,6 +45,10 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.Corporatio
 
         private NpgsqlCommand CreateReadCommand(string keyword)
         {
+            // ほぼ全企業、"株式会社"というワードが入っているのでこれを無視
+            var modifiedKeyword = keyword
+                .Replace("株式", "")
+                .Replace("会社", "");
             var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
@@ -53,17 +57,18 @@ SELECT
 FROM
     company_master
 WHERE
-    submission_type LIKE '%法人%'
+    submission_type LIKE '%法人%' -- 法人のみをサジェストする
 AND (
     submitter_name LIKE @submitterName
 OR
     submitter_name_yomigana LIKE @submitterNameKana
-);
+)
+LIMIT 10;
 ";
             command.Parameters.Add("@submitterName", NpgsqlDbType.Varchar)
-                .Value = $"%{keyword}%";
+                .Value = $"%{modifiedKeyword}%";
             command.Parameters.Add("@submitterNameKana", NpgsqlDbType.Varchar)
-                .Value = $"%{ToKatakana(keyword)}%";
+                .Value = $"%{ToKatakana(modifiedKeyword)}%";
             return command;
         }
         private static async Task<IReadOnlyList<Corporation>> ReadCorporations(NpgsqlCommand command)
@@ -90,7 +95,7 @@ OR
         }
         private static string ToKatakana(string str)
         {
-            return string.Concat(str.Select(c => (c >= 'ぁ' && c <= 'ゖ') ? c + 'ァ' - 'ぁ' : c));
+            return string.Concat(str.Select(c => (c >= 'ぁ' && c <= 'ゖ') ? (char)(c + 'ァ' - 'ぁ') : c));
         }
     }
 }
