@@ -5,7 +5,7 @@ using ResearchXBRL.Domain.AccountElements;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Application.AccountElements
+namespace ResearchXBRL.Application.Interactors.AccountElements.Transfer
 {
     public sealed class TransferAccountElementsInteractor : ITransferAccountElementsUsecase
     {
