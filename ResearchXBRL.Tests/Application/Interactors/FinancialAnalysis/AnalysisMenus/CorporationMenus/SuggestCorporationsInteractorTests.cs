@@ -56,7 +56,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
             foreach (var (e, a) in expected.Zip(actual))
             {
                 Assert.Equal(e.Name, a.Name);
-                Assert.StrictEqual(e.EdinetId, a.EdinetId);
+                Assert.Equal(e.EdinetId, a.EdinetId);
             }
         }
 
