@@ -27,17 +27,17 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                 new Corporation
                 {
                     Name = "企業A",
-                    EdinetId = "test"
+                    CorporationId = "test"
                 },
                 new Corporation
                 {
                     Name = "企業B",
-                    EdinetId = "test2"
+                    CorporationId = "test2"
                 },
                 new Corporation
                 {
                     Name = "企業C",
-                    EdinetId = "test3"
+                    CorporationId = "test3"
                 }
             };
             var keyword = "キーワード";
@@ -56,7 +56,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
             foreach (var (e, a) in expected.Zip(actual))
             {
                 Assert.Equal(e.Name, a.Name);
-                Assert.Equal(e.EdinetId, a.EdinetId);
+                Assert.Equal(e.CorporationId, a.CorporationId);
             }
         }
 
@@ -74,17 +74,17 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                         new Corporation
                         {
                             Name = "企業A",
-                            EdinetId = "test"
+                            CorporationId = "test"
                         },
                         new Corporation
                         {
                             Name = "企業B",
-                            EdinetId = "test2"
+                            CorporationId = "test2"
                         },
                         new Corporation
                         {
                             Name = "企業C",
-                            EdinetId = "test3"
+                            CorporationId = "test3"
                         }
                     }
                 });
@@ -111,17 +111,17 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                         new Corporation
                         {
                             Name = "企業A",
-                            EdinetId = "test"
+                            CorporationId = "test"
                         },
                         new Corporation
                         {
                             Name = "企業B",
-                            EdinetId = "test2"
+                            CorporationId = "test2"
                         },
                         new Corporation
                         {
                             Name = "企業C",
-                            EdinetId = "test3"
+                            CorporationId = "test3"
                         }
                     }
                 });
