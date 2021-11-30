@@ -28,7 +28,7 @@ namespace FinancialAnalysisAPI.Controllers
             this.suggestCorporationUsecase = suggestCorporationUsecase;
         }
 
-        [Route("/suggest/accountItems")]
+        [Route("suggest/accountItems")]
         [HttpGet]
         public async Task<IReadOnlyList<AccountItemViewModel>> SuggestAccountItems(string keyword)
         {
@@ -36,7 +36,7 @@ namespace FinancialAnalysisAPI.Controllers
                 .Handle(keyword);
         }
 
-        [Route("/suggest/corporations")]
+        [Route("suggest/corporations")]
         [HttpGet]
         public async Task<IReadOnlyList<CorporationViewModel>> SuggestCorporations(string keyword)
         {
