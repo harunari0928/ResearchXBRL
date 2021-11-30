@@ -1,7 +1,7 @@
 using System.Reflection.PortableExecutable;
 using System;
 
-namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysisResults.AccountPeriods
+namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.AccountPeriods
 {
     /// <summary>
     /// 貸借対照表項目の決算期

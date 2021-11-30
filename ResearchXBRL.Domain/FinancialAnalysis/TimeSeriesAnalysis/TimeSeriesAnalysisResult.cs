@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 using ResearchXBRL.Domain.FinancialReports.Units;
 
-namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysisResults
+namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis
 {
     /// <summary>
     /// 時系列分析結果
