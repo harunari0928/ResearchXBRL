@@ -10,7 +10,10 @@
             "request": "launch",
             "preLaunchTask": "buildAquireFinancialReports",
             "program": "${workspaceFolder}/Presentation/AquireFinancialReports/bin/Debug/net5.0/AquireFinancialReports.dll",
-            "args": [],
+            "args": [
+                "--from",
+                "2021-10-25"
+            ],
             "cwd": "${workspaceFolder}/Presentation/AquireFinancialReports",
             "console": "internalConsole",
             "stopAtEntry": false

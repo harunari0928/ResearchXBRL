@@ -7,8 +7,6 @@ services:
     volumes:
       - ..:/src:cached
     command: /bin/bash -c "dotnet build; while sleep 1000; do :; done"
-    ports:
-      - "5000:5000"
     container_name: aquire_report_batch
     environment: 
       DB_SERVERNAME: report_rdb_primary
@@ -32,6 +30,26 @@ services:
       POSTGRES_PASSWORD: mysecretpassword
     ports:
       - "5432:5432"
+  api:
+    build: 
+      context: ..
+      dockerfile: Dockerfile.dev
+    command: /bin/bash -c "dotnet run --project /src/Presentation/FinancialAnalysisAPI/FinancialAnalysisAPI.csproj"
+    container_name: analysis_api
+    environment:
+      DB_SERVERNAME: report_rdb_readonly
+      DB_USERID: postgres
+      DB_NAME: postgres
+      DB_PORT: 5433
+      DB_PASSWORD: mysecretpassword
+      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Development
+    expose:
+      - 80
+    ports:
+      - "8080:80"
+    depends_on:
+      - rdb_readonly
   rdb_readonly:
     build:
       context: ../postgres
@@ -46,7 +64,7 @@ services:
     volumes:
       - readonly_database:/var/lib/postgresql/data
     ports:
-      - "5433:5433"
+      - "5433:5432"
     depends_on:
       - rdb_primary
 volumes:
