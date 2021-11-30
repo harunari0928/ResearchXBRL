@@ -1,6 +1,6 @@
 using System;
 
-namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysisResults.AccountPeriods
+namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.AccountPeriods
 {
     /// <summary>
     /// 損益計算書の決算期

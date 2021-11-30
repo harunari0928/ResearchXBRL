@@ -1,7 +1,7 @@
 using System;
-using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysisResults.AccountPeriods;
+using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.AccountPeriods;
 
-namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysisResults
+namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis
 {
     public class AccountValue
     {

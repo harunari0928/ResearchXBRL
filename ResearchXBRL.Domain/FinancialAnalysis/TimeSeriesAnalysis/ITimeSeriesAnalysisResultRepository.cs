@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysisResults
+namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis
 {
     public interface ITimeSeriesAnalysisResultRepository
     {
