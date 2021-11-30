@@ -1,4 +1,3 @@
-using System;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.AccountPeriods;
 
 namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis
