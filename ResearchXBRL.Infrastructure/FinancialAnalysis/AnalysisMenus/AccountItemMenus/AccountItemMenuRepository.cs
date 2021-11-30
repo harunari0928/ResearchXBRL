@@ -56,7 +56,8 @@ FROM
 WHERE
     classification IN ('jppfs', 'jpigp')
 AND
-    account_name LIKE @accountName;
+    account_name LIKE @accountName
+LIMIT 10;
 ";
             command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
                 .Value = $"%{keyword}%";
