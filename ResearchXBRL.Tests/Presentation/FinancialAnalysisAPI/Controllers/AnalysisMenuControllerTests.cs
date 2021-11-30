@@ -1,40 +1,102 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinancialAnalysisAPI.Controllers;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ResearchXBRL.Application.DTO;
-using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus;
+using ResearchXBRL.Application.DTO.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Application.DTO.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 using Xunit;
 
 namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
 {
-    public sealed class AnalysisMenuControllerTests
+    public class AnalysisMenuControllerTests
     {
-        public sealed class GetTests
-        {
-            private readonly Mock<ILogger<AnalysisMenuController>> logger = new();
-            private readonly Mock<ICreateAnalysisMenusUsecase> usecase = new();
+        private readonly Mock<ILogger<AnalysisMenuController>> logger;
+        private readonly Mock<ISuggestAccountItemsUsecase> suggestAccountItemUsecase;
+        private readonly Mock<ISuggestCorporationsUsecase> suggestCorporationUsecase;
 
+        public AnalysisMenuControllerTests()
+        {
+            logger = new();
+            suggestAccountItemUsecase = new();
+            suggestCorporationUsecase = new();
+        }
+
+        public sealed class SuggestAccountItemsTests : AnalysisMenuControllerTests
+        {
             [Fact]
-            public async Task Usecase層から返されたViewModelをそのまま返す()
+            public async Task サジェスト結果を返す()
             {
                 // arrange
-                var expected = new AnalysisMenuViewModel
+                var expected = new List<AccountItemViewModel>
                 {
-                    AccountItems = new string[] { "未払い金", "買掛金", "売掛金" },
-                    Corporations = new string[] { "t", "e", "s", "t" }
+                    new AccountItemViewModel
+                    {
+                        Name = "test1",
+                        XBRLNames = new string[] { "test11", "test12" }
+                    },
+                    new AccountItemViewModel
+                    {
+                        Name = "test1",
+                        XBRLNames = new string[] { "test11", "test12" }
+                    }
                 };
-                usecase
-                    .Setup(x => x.Handle())
+                var keyword = "会計項目";
+                suggestAccountItemUsecase
+                    .Setup(x => x.Handle(keyword))
                     .ReturnsAsync(expected);
-                var controller = new AnalysisMenuController(logger.Object, usecase.Object);
+                var controller = CreateController();
 
                 // act
-                var acutal = await controller.Get();
+                var acutal = await controller.SuggestAccountItems(keyword);
 
-                // assert
+                // actual
                 Assert.StrictEqual(expected, acutal);
             }
+        }
+
+        public sealed class SuggestCorporationsTests : AnalysisMenuControllerTests
+        {
+            [Fact]
+            public async Task サジェスト結果を返す()
+            {
+                // arrange
+                var expected = new List<CorporationViewModel>
+                {
+                    new CorporationViewModel
+                    {
+                        Name = "test1",
+                        EdinetId = "tsetstst"
+                    },
+                    new CorporationViewModel
+                    {
+                        Name = "test1",
+                        EdinetId = "fffff"
+                    }
+                };
+                var keyword = "テスト企業";
+                suggestCorporationUsecase
+                    .Setup(x => x.Handle(keyword))
+                    .ReturnsAsync(expected);
+                var controller = CreateController();
+
+                // act
+                var acutal = await controller.SuggestCorporations(keyword);
+
+                // actual
+                Assert.StrictEqual(expected, acutal);
+            }
+        }
+
+        private AnalysisMenuController CreateController()
+        {
+            return new AnalysisMenuController(
+                        logger.Object,
+                        suggestAccountItemUsecase.Object,
+                        suggestCorporationUsecase.Object);
         }
     }
 }

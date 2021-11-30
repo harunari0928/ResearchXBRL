@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ResearchXBRL.Application.DTO;
-using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus;
+using ResearchXBRL.Application.DTO.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Application.DTO.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 
 namespace FinancialAnalysisAPI.Controllers
 {
@@ -13,20 +15,33 @@ namespace FinancialAnalysisAPI.Controllers
     public class AnalysisMenuController : ControllerBase
     {
         private readonly ILogger<AnalysisMenuController> logger;
-        private readonly ICreateAnalysisMenusUsecase usecase;
+        private readonly ISuggestAccountItemsUsecase suggestAccountItemUsecase;
+        private readonly ISuggestCorporationsUsecase suggestCorporationUsecase;
 
         public AnalysisMenuController(
             ILogger<AnalysisMenuController> logger,
-            ICreateAnalysisMenusUsecase usecase)
+            ISuggestAccountItemsUsecase suggestAccountItemUsecase,
+            ISuggestCorporationsUsecase suggestCorporationUsecase)
         {
             this.logger = logger;
-            this.usecase = usecase;
+            this.suggestAccountItemUsecase = suggestAccountItemUsecase;
+            this.suggestCorporationUsecase = suggestCorporationUsecase;
         }
 
+        [Route("/suggest/accountItems")]
         [HttpGet]
-        public async Task<AnalysisMenuViewModel> Get()
+        public async Task<IReadOnlyList<AccountItemViewModel>> SuggestAccountItems(string keyword)
         {
-            return await usecase.Handle();
+            return await suggestAccountItemUsecase
+                .Handle(keyword);
+        }
+
+        [Route("/suggest/corporations")]
+        [HttpGet]
+        public async Task<IReadOnlyList<CorporationViewModel>> SuggestCorporations(string keyword)
+        {
+            return await suggestCorporationUsecase
+                .Handle(keyword);
         }
     }
 }
