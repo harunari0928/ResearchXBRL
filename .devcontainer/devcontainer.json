@@ -23,10 +23,5 @@
 		"eservice-online.vs-sharper",
 		"k--kato.docomment",
 		"fudge.auto-using"
-	],
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [
-		5000,
-		80
 	]
 }

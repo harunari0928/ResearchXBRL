@@ -1,10 +1,15 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus;
+using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus;
+using ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus;
 
 namespace FinancialAnalysisAPI
 {
@@ -31,6 +36,10 @@ namespace FinancialAnalysisAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FinancialAnalysisAPI", Version = "v1" });
             });
+            services
+                .AddTransient<ICreateAnalysisMenusUsecase, CreateAnalysisMenusInteractor>()
+                .AddTransient<IAnalysisMenuRepository, AnalysisMenuRepository>();
+            services.AddHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +61,11 @@ namespace FinancialAnalysisAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
         }
     }
