@@ -16,7 +16,7 @@ namespace FinancialAnalysisAPI.Controllers
         private readonly ICreateAnalysisMenusUsecase usecase;
 
         public AnalysisMenuController(
-            in ILogger<AnalysisMenuController> logger,
+            ILogger<AnalysisMenuController> logger,
             ICreateAnalysisMenusUsecase usecase)
         {
             this.logger = logger;
