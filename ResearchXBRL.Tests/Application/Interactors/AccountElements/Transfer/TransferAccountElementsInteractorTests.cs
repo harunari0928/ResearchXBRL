@@ -1,9 +1,9 @@
 ﻿using Moq;
 using ResearchXBRL.Domain.AccountElements;
-using ResearchXBRL.Application.AccountElements;
 using System.Threading.Tasks;
 using Xunit;
 using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
+using ResearchXBRL.Application.Interactors.AccountElements.Transfer;
 using System.Text.Json;
 using System.Collections.Generic;
 using System;
@@ -11,7 +11,7 @@ using System.IO;
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
 
-namespace ResearchXBRL.Tests.Application.AccountElements
+namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Transfer
 {
     public sealed class TransferAccountElementsInteractorTests
     {

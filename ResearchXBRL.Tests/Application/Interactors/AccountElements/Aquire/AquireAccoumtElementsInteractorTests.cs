@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Moq;
 using Moq.Language.Flow;
 using ResearchXBRL.Application.DTO;
-using ResearchXBRL.Application.Interactors.AccountElements;
+using ResearchXBRL.Application.Interactors.AccountElements.Aquire;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.Domain.AccountElements;
 using Xunit;
 
-namespace ResearchXBRL.Tests.Application.Interactors.AccountElements
+namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Aquire
 {
     public sealed class AquireAccoumtElementsInteractorTests
     {

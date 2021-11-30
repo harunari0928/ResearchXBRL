@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ResearchXBRL.Application.AccountElements;
+using ResearchXBRL.Application.Interactors.AccountElements.Transfer;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
 using ResearchXBRL.Domain.AccountElements;

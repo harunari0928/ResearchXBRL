@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Application.Usecase.AccountElements;
+using ResearchXBRL.Application.Usecase.AccountElements.Aquire;
 using ResearchXBRL.Domain.AccountElements;
 
-namespace ResearchXBRL.Application.Interactors.AccountElements
+namespace ResearchXBRL.Application.Interactors.AccountElements.Aquire
 {
     public sealed class AquireAccoumtElementsInteractor : IAquireAccoumtElementsUsecase
     {
