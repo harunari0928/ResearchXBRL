@@ -28,8 +28,7 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus.A
             return accountItemMenu.AccountItems
                 .Select(x => new AccountItemViewModel
                 {
-                    Name = x.Name,
-                    XBRLNames = x.XBRLNames
+                    Name = x.Name
                 }).ToArray();
         }
     }

@@ -29,7 +29,7 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus.C
                 .Select(x => new CorporationViewModel
                 {
                     Name = x.Name,
-                    EdinetId = x.EdinetId
+                    CorporationId = x.CorporationId
                 }).ToArray();
         }
     }

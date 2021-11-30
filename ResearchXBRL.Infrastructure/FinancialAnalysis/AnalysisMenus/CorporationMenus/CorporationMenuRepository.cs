@@ -86,7 +86,7 @@ LIMIT 10;
                 {
                     Name = reader[1]?.ToString() ??
                         throw new NullReferenceException(),
-                    EdinetId = reader[0]?.ToString() ??
+                    CorporationId = reader[0]?.ToString() ??
                         throw new NullReferenceException()
                 });
             }

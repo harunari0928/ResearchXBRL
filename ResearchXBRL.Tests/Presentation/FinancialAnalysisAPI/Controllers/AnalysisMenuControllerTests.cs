@@ -35,13 +35,11 @@ namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
                 {
                     new AccountItemViewModel
                     {
-                        Name = "test1",
-                        XBRLNames = new string[] { "test11", "test12" }
+                        Name = "test1"
                     },
                     new AccountItemViewModel
                     {
-                        Name = "test1",
-                        XBRLNames = new string[] { "test11", "test12" }
+                        Name = "test2"
                     }
                 };
                 var keyword = "会計項目";
@@ -69,12 +67,12 @@ namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
                     new CorporationViewModel
                     {
                         Name = "test1",
-                        EdinetId = "tsetstst"
+                        CorporationId = "tsetstst"
                     },
                     new CorporationViewModel
                     {
                         Name = "test1",
-                        EdinetId = "fffff"
+                        CorporationId = "fffff"
                     }
                 };
                 var keyword = "テスト企業";
