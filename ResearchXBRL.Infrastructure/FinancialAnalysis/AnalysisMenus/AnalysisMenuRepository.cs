@@ -49,6 +49,8 @@ SELECT
     account_name
 FROM
     account_elements
+WHERE
+    classification IN ('jppfs', 'jpigp')
 GROUP BY
     account_name
 ";
