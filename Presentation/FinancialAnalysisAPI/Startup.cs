@@ -6,10 +6,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus;
-using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus;
-using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus;
-using ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus;
+using ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 
 namespace FinancialAnalysisAPI
 {
@@ -36,9 +40,11 @@ namespace FinancialAnalysisAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FinancialAnalysisAPI", Version = "v1" });
             });
-            services
-                .AddTransient<ICreateAnalysisMenusUsecase, CreateAnalysisMenusInteractor>()
-                .AddTransient<IAnalysisMenuRepository, AnalysisMenuRepository>();
+            services.AddTransient<ISuggestAccountItemsUsecase, SuggestAccountItemsInteractor>();
+            services.AddTransient<ISuggestCorporationsUsecase, SuggestCorporationsInteractor>();
+            services.AddTransient<IAccountItemMenuRepository, AccountItemMenuRepository>();
+            services.AddTransient<ICorporationMenuRepository, CorporationMenuRepository>();
+
             services.AddHealthChecks();
         }
 
