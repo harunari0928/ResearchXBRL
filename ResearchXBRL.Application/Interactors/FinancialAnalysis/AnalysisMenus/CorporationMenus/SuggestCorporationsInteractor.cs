@@ -19,18 +19,29 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus.C
 
         public async Task<IReadOnlyList<CorporationViewModel>> Handle(string keyword)
         {
-            if (string.IsNullOrWhiteSpace(keyword))
+            var modifiedKeyword = CleansingKeyword(keyword);
+
+            if (string.IsNullOrWhiteSpace(modifiedKeyword))
             {
                 return Enumerable.Empty<CorporationViewModel>().ToArray();
             }
 
-            var corporationsMenu = await repository.GetProposals(keyword);
+            var corporationsMenu = await repository.GetProposals(modifiedKeyword);
             return corporationsMenu.Corporations
                 .Select(x => new CorporationViewModel
                 {
                     Name = x.Name,
                     CorporationId = x.CorporationId
                 }).ToArray();
+        }
+
+        private static string CleansingKeyword(string keyword)
+        {
+            // ほぼ全企業、"株式"や"会社"というワードが入っているのでこれを無視
+            return keyword
+                    .Replace("株式", "")
+                    .Replace("会社", "")
+                    .Trim();
         }
     }
 }
