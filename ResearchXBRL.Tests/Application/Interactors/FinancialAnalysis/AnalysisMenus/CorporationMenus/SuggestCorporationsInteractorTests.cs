@@ -133,5 +133,42 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
             // assert
             Assert.Empty(actual);
         }
+
+        [Fact]
+        public async Task 株式会社というワードではサジェストしない()
+        {
+            // arrange
+            var keyword = "株式会社"; // キーワードが空白
+            repository
+                .Setup(x => x.GetProposals(keyword))
+                .ReturnsAsync(new CorporatonMenu
+                {
+                    Corporations = new List<Corporation>
+                    {
+                        new Corporation
+                        {
+                            Name = "企業A",
+                            CorporationId = "test"
+                        },
+                        new Corporation
+                        {
+                            Name = "企業B",
+                            CorporationId = "test2"
+                        },
+                        new Corporation
+                        {
+                            Name = "企業C",
+                            CorporationId = "test3"
+                        }
+                    }
+                });
+            var interactor = new SuggestCorporationsInteractor(repository.Object);
+
+            // act
+            var actual = await interactor.Handle(keyword);
+
+            // assert
+            Assert.Empty(actual);
+        }
     }
 }
