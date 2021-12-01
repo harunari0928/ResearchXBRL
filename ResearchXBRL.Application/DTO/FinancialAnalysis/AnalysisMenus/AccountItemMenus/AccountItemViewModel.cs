@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace ResearchXBRL.Application.DTO.FinancialAnalysis.AnalysisMenus.AccountItemMenus
 {
     public class AccountItemViewModel

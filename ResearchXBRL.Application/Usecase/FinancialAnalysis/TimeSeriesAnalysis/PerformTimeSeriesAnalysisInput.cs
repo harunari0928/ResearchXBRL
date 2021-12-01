@@ -12,6 +12,6 @@ namespace ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis
         /// <summary>
         /// 会計項目名
         /// </summary>
-        public string AccountNames { get; init; } = "";
+        public string AccountItemName { get; init; } = "";
     }
 }

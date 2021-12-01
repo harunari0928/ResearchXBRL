@@ -1,5 +1,3 @@
-using System;
-
 namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations
 {
     public sealed class Corporation
