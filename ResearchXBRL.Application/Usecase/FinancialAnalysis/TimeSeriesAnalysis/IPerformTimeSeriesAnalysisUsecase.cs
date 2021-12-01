@@ -5,6 +5,6 @@ namespace ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis
 {
     public interface IPerformTimeSeriesAnalysisUseCase
     {
-        Task<TimeSeriesAnalysisViewModel> Handle(in AnalyticalMaterials input);
+        Task<TimeSeriesAnalysisViewModel> Handle(AnalyticalMaterials input);
     }
 }
