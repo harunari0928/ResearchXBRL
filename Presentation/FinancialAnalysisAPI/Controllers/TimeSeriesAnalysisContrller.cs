@@ -9,20 +9,20 @@ namespace FinancialAnalysisAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TimeSeriesAnalysisContrller : ControllerBase
+    public class TimeSeriesAnalysisController : ControllerBase
     {
-        private readonly ILogger<TimeSeriesAnalysisContrller> logger;
+        private readonly ILogger<TimeSeriesAnalysisController> logger;
         private readonly IPerformTimeSeriesAnalysisUseCase usecase;
 
-        public TimeSeriesAnalysisContrller(
-            ILogger<TimeSeriesAnalysisContrller> logger,
+        public TimeSeriesAnalysisController(
+            ILogger<TimeSeriesAnalysisController> logger,
             IPerformTimeSeriesAnalysisUseCase usecase)
         {
             this.logger = logger;
             this.usecase = usecase;
         }
 
-        [Route("timeSeriesAnalysisResult")]
+        [Route("result")]
         [HttpGet]
         public async Task<ActionResult<TimeSeriesAnalysisViewModel>> GetTimeSeriesAnalysisResult(
             string corporationId,

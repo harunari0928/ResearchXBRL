@@ -11,11 +11,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
 {
-    public sealed class TimeSeriesAnalysisContrllerTests
+    public sealed class TimeSeriesAnalysisControllerTests
     {
         public sealed class GetTimeSeriesAnalysisResultTests
         {
-            private readonly Mock<ILogger<TimeSeriesAnalysisContrller>> logger;
+            private readonly Mock<ILogger<TimeSeriesAnalysisController>> logger;
             private readonly Mock<IPerformTimeSeriesAnalysisUseCase> usecase;
 
             public GetTimeSeriesAnalysisResultTests()
@@ -58,7 +58,7 @@ namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
                     a.CorporationId == corporationId
                     && a.AccountItemName == accountItemName)))
                     .ReturnsAsync(expected);
-                var controller = new TimeSeriesAnalysisContrller(
+                var controller = new TimeSeriesAnalysisController(
                     logger.Object,
                     usecase.Object);
 
@@ -78,7 +78,7 @@ namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
                 usecase
                     .Setup(x => x.Handle(It.IsAny<AnalyticalMaterials>()))
                     .ThrowsAsync(new ArgumentException());
-                var controller = new TimeSeriesAnalysisContrller(
+                var controller = new TimeSeriesAnalysisController(
                     logger.Object,
                     usecase.Object);
 
