@@ -1,10 +1,9 @@
-using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.AccountPeriods;
-using ResearchXBRL.Domain.FinancialReports.Units;
-using System.Linq;
+using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Units;
 
 namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
 {
