@@ -1,4 +1,4 @@
-﻿namespace ResearchXBRL.Domain.TimeSeriesAnalysis.Units
+﻿namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Units
 {
     /// <summary>
     /// 分母及び分子を用いたユニット

@@ -1,16 +1,16 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Moq;
+using ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis;
-using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
-using ResearchXBRL.Domain.FinancialReports.Units;
-using Xunit;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.AccountPeriods;
-using System.Linq;
-using ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis;
+using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
+using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Units;
+using Xunit;
 
 namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSeriesAnalysis
 {
@@ -277,6 +277,74 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         Times.Once);
             }
 
+            [Fact]
+            public async Task 引数で指定した企業が存在しなければArgumentExceptionを発生させる()
+            {
+                // arrange
+                var expected = new TimeSeriesAnalysisResult
+                {
+                    AccountName = "会計項目名",
+                    Unit = new NormalUnit
+                    {
+                        Name = "JPY",
+                        Measure = "てきとう"
+                    },
+                    Corporation = new Corporation
+                    {
+                        Name = "変な会社",
+                        CapitalAmount = 114514,
+                        IsLinking = false
+                    },
+                    Values = new List<AccountValue>
+                    {
+                        new AccountValue
+                        {
+                            FinalAccountsPeriod = new DurationPeriod
+                            {
+                                From = new DateTime(2019, 12, 11, 10, 9, 10, 11),
+                                To = new DateTime(2019, 12, 31, 10, 9, 10, 11),
+                            }
+                        },
+                        new AccountValue
+                        {
+                            FinalAccountsPeriod = new DurationPeriod
+                            {
+                                From = new DateTime(2022, 12, 11, 10, 9, 10, 11),
+                                To = new DateTime(2022, 12, 31, 10, 9, 10, 11),
+                            }
+                        },
+                        new AccountValue
+                        {
+                            FinalAccountsPeriod = new DurationPeriod
+                            {
+                                From = new DateTime(2021, 12, 11, 10, 9, 10, 11),
+                                To = new DateTime(2021, 12, 31, 10, 9, 10, 11),
+                            }
+                        }
+                    }
+                };
+                var input = new AnalyticalMaterials
+                {
+                    CorporationId = "testCor",
+                    AccountItemName = "test"
+                };
+                corporationRepository.Setup(x => x.Get(It.IsAny<string>()))
+                    .ReturnsAsync(null as Corporation);
+                analysisResultRepository
+                    .Setup(x => x.GetNonConsolidateResult(
+                        input.CorporationId,
+                        input.AccountItemName))
+                    .ReturnsAsync(expected);
+                analysisResultRepository
+                    .Setup(x => x.GetConsolidateResult(
+                        input.CorporationId,
+                        input.AccountItemName))
+                    .ReturnsAsync(expected);
+                var interactor = CreateInteractor();
+
+                // act & assert
+                await Assert.ThrowsAsync<ArgumentException>(() => interactor.Handle(input));
+            }
             private PerformTimeSeriesAnalysisInteractor CreateInteractor()
             {
                 return new PerformTimeSeriesAnalysisInteractor(

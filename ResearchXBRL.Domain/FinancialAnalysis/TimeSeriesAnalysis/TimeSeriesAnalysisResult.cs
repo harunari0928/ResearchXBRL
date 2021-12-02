@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
-using ResearchXBRL.Domain.FinancialReports.Units;
+using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Units;
 
 namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis
 {

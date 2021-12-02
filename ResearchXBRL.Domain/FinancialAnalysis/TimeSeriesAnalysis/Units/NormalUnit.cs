@@ -1,4 +1,4 @@
-﻿namespace ResearchXBRL.Domain.TimeSeriesAnalysis.Units
+﻿namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Units
 {
     public sealed class NormalUnit : IUnit
     {

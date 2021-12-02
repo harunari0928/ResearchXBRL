@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using FinancialAnalysisAPI.Controllers;
@@ -8,6 +7,7 @@ using ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis;
 using Xunit;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
 {
@@ -63,12 +63,30 @@ namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
                     usecase.Object);
 
                 // act
-                var acutal = await controller.GetTimeSeriesAnalysisResult(
+                var response = await controller.GetTimeSeriesAnalysisResult(
                     corporationId,
                     accountItemName);
 
                 // assert
-                Assert.StrictEqual(expected, acutal);
+                Assert.StrictEqual(expected, response.Value);
+            }
+
+            [Fact]
+            public async Task UsecaseからArgumentExceptionが出力されたときBadRequestを返す()
+            {
+                // arrange
+                usecase
+                    .Setup(x => x.Handle(It.IsAny<AnalyticalMaterials>()))
+                    .ThrowsAsync(new ArgumentException());
+                var controller = new TimeSeriesAnalysisContrller(
+                    logger.Object,
+                    usecase.Object);
+
+                // act
+                var response = await controller.GetTimeSeriesAnalysisResult("", "");
+
+                // assert
+                Assert.IsType<BadRequestObjectResult>(response.Result);
             }
         }
     }

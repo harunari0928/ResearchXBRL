@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis;
@@ -22,6 +23,11 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnaly
         public async Task<TimeSeriesAnalysisViewModel> Handle(AnalyticalMaterials input)
         {
             var corporation = await corporationRepository.Get(input.CorporationId);
+            if (corporation is null)
+            {
+                throw new ArgumentException("指定された企業は存在しません");
+            }
+
             if (corporation.IsLinking)
             {
                 return await GetNonConsolidateResult(input);

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,15 +24,22 @@ namespace FinancialAnalysisAPI.Controllers
 
         [Route("timeSeriesAnalysisResult")]
         [HttpGet]
-        public async Task<TimeSeriesAnalysisViewModel> GetTimeSeriesAnalysisResult(
+        public async Task<ActionResult<TimeSeriesAnalysisViewModel>> GetTimeSeriesAnalysisResult(
             string corporationId,
              string accountItemName)
         {
-            return await usecase.Handle(new AnalyticalMaterials
+            try
             {
-                CorporationId = corporationId,
-                AccountItemName = accountItemName
-            });
+                return await usecase.Handle(new AnalyticalMaterials
+                {
+                    CorporationId = corporationId,
+                    AccountItemName = accountItemName
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
         }
     }
 }
