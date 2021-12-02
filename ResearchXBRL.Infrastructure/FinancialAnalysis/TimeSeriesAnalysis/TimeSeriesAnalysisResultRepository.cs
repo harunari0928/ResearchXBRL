@@ -73,12 +73,12 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
                 Measure = $"{reader[measureColumn]}"
             };
         }
-        private static async Task<(IUnit, IReadOnlyList<AccountValue>)> ReadUnitAndConsolidateAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
+        private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndConsolidateAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
         {
             var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
-    A.amount,
+    A.amounts,
     A.unit_name,
     E.measure,
     E.unit_numerator,
@@ -90,7 +90,7 @@ SELECT
 FROM
     report_items A
 INNER JOIN
-    account_element B
+    account_elements B
 ON
     A.xbrl_name = B.xbrl_name
 INNER JOIN
@@ -98,7 +98,13 @@ INNER JOIN
 ON
     A.report_id = C.report_id
 INNER JOIN
+    report_covers RC
+ON
+    A.report_id = RC.id
+INNER JOIN
     company_master D
+ON
+    RC.company_id = D.code
 INNER JOIN
     units E
 ON
@@ -112,7 +118,7 @@ AND
 AND
     D.code = @corporationId
 ORDER BY
-    period_from, instant_date: 
+    period_from, instant_date;
 ";
             command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
                 .Value = $"%{accountItemName}%";
@@ -120,10 +126,10 @@ ORDER BY
                 .Value = $"%{corporationId}%";
             return await GetAccountValues(await command.ExecuteReaderAsync());
         }
-        private static async Task<(IUnit, IReadOnlyList<AccountValue>)> GetAccountValues(NpgsqlDataReader reader)
+        private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> GetAccountValues(NpgsqlDataReader reader)
         {
             var values = new List<AccountValue>();
-            var amountColumn = reader.GetOrdinal("amount");
+            var amountsColumn = reader.GetOrdinal("amounts");
             var instantDateColumn = reader.GetOrdinal("instant_date");
             var fromDateColumn = reader.GetOrdinal("period_from");
             var toDateColumn = reader.GetOrdinal("period_to");
@@ -134,10 +140,10 @@ ORDER BY
                 values.Add(new AccountValue
                 {
                     FinalAccountsPeriod = GetAccountsPeriod(reader, instantDateColumn, fromDateColumn, toDateColumn),
-                    Amount = decimal.Parse($"{reader[amountColumn]}")
+                    Amount = decimal.Parse($"{reader[amountsColumn]}")
                 });
             }
-            return (unit ?? throw new Exception("単位を特定できませんでした"), values);
+            return (unit, values);
         }
 
         public async Task<TimeSeriesAnalysisResult> GetNonConsolidateResult(string corporationId, string accountItemName)
@@ -153,12 +159,12 @@ ORDER BY
             };
         }
 
-        private static async Task<(IUnit, IReadOnlyList<AccountValue>)> ReadUnitAndNonConsolidateAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
+        private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndNonConsolidateAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
         {
             var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
-    A.amount,
+    A.amounts,
     A.unit_name,
     E.measure,
     E.unit_numerator,
@@ -170,7 +176,7 @@ SELECT
 FROM
     report_items A
 INNER JOIN
-    account_element B
+    account_elements B
 ON
     A.xbrl_name = B.xbrl_name
 INNER JOIN
@@ -178,7 +184,13 @@ INNER JOIN
 ON
     A.report_id = C.report_id
 INNER JOIN
+    report_covers RC
+ON
+    A.report_id = RC.id
+INNER JOIN
     company_master D
+ON
+    RC.company_id = D.code
 INNER JOIN
     units E
 ON
@@ -192,7 +204,7 @@ AND
 AND
     D.code = @corporationId
 ORDER BY
-    period_from, instant_date: 
+    period_from, instant_date;
 ";
             command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
                 .Value = $"%{accountItemName}%";

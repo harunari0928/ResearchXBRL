@@ -17,7 +17,7 @@ namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis
         /// <summary>
         /// 会計項目の単位
         /// </summary>
-        public IUnit Unit { get; init; } = new NormalUnit();
+        public IUnit? Unit { get; init; } = null;
 
         /// <summary>
         /// 企業情報
