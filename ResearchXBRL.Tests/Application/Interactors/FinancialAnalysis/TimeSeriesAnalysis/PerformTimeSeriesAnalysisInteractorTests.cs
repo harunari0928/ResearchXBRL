@@ -97,7 +97,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
 
                 // assert
                 Assert.Equal(expected.AccountName, acutal.AccountName);
-                Assert.Equal(expected.Unit.Name, acutal.Unit.Name);
+                Assert.Equal(expected.Unit.Name, acutal.Unit?.Name);
                 Assert.Equal(expected.Corporation.CapitalAmount, acutal.Corporation.CapitalAmount);
                 Assert.Equal(expected.Corporation.IsLinking, acutal.Corporation.IsLinking);
                 Assert.Equal(expected.Corporation.Name, acutal.Corporation.Name);
