@@ -10,7 +10,7 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
     public sealed class TimeSeriesAnalysisViewModel
     {
         public string AccountName { get; init; } = "";
-        public IUnitViewModel Unit { get; init; } = new NormalUnitViewModel();
+        public IUnitViewModel? Unit { get; init; } = null;
         public CorporationViewModel Corporation { get; init; } = new CorporationViewModel();
         public IReadOnlyList<AccountValueViewModel> Values { get; init; } = new AccountValueViewModel[0];
 
@@ -23,7 +23,7 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
             Values = MapToViewModel(analysis.Values);
         }
 
-        private static IUnitViewModel MapToViewModel(IUnit unit)
+        private static IUnitViewModel? MapToViewModel(IUnit? unit)
         {
             return unit switch
             {
@@ -38,6 +38,7 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
                     UnitNumerator = dividedUnit.UnitNumerator,
                     UnitDenominator = dividedUnit.UnitNumerator
                 },
+                null => null,
                 _ => throw new NotSupportedException()
             };
         }
