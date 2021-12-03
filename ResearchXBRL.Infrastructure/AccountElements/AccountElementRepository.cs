@@ -18,7 +18,7 @@ namespace ResearchXBRL.Infrastructure.AccountElements
             var dbName = Environment.GetEnvironmentVariable("DB_NAME");
             var port = Environment.GetEnvironmentVariable("DB_PORT");
             var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-            var connectionString = $"Server={server};Port={port};Database={dbName};User Id={userId};Password={password};";
+            var connectionString = $"Server={server};Port={port};Database={dbName};User Id={userId};Password={password};Pooling=true;Minimum Pool Size=0;Maximum Pool Size=100";
             connection = new NpgsqlConnection(connectionString);
             connection.Open();
         }

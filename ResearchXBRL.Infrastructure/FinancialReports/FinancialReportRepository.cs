@@ -11,34 +11,24 @@ using NpgsqlTypes;
 
 namespace ResearchXBRL.Infrastructure.FinancialReports
 {
-    public sealed class FinancialReportRepository : IFinancialReportRepository, IDisposable, IAsyncDisposable
+    public sealed class FinancialReportRepository : IFinancialReportRepository
     {
-        private readonly NpgsqlConnection connection;
-
-        public FinancialReportRepository()
+        private NpgsqlConnection CreateConnection()
         {
             var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
             var userId = Environment.GetEnvironmentVariable("DB_USERID");
             var dbName = Environment.GetEnvironmentVariable("DB_NAME");
             var port = Environment.GetEnvironmentVariable("DB_PORT");
             var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-            var connectionString = $"Server={server};Port={port};Database={dbName};User Id={userId};Password={password};";
-            connection = new NpgsqlConnection(connectionString);
+            var connectionString = $"Server={server};Port={port};Database={dbName};User Id={userId};Password={password};Pooling=true;Minimum Pool Size=0;Maximum Pool Size=100";
+            var connection = new NpgsqlConnection(connectionString);
             connection.Open();
-        }
-
-        public void Dispose()
-        {
-            connection.Dispose();
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            await connection.DisposeAsync();
+            return connection;
         }
 
         public async Task<bool> IsExists(string doucmentId)
         {
+            using var connection = CreateConnection();
             using var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
@@ -54,6 +44,7 @@ LIMIT 1";
 
         public async Task Write(FinancialReport reports)
         {
+            using var connection = CreateConnection();
             using var tran = connection.BeginTransaction();
             var reportCoverHelper = new PostgreSQLCopyHelper<ReportCover>("report_covers")
                 .MapVarchar("id", x => x.DocumentId)
