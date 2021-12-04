@@ -30,22 +30,22 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnaly
 
             if (corporation.IsLinking)
             {
-                return await GetNonConsolidateResult(input);
+                return await GetConsolidateResult(input);
             }
 
-            return await GetConsolidateResult(input);
+            return await GetNonConsolidateResult(input);
         }
 
         private async Task<TimeSeriesAnalysisViewModel> GetConsolidateResult(AnalyticalMaterials input)
         {
-            var nonConsolidateResult = await analysisResultRepository.GetNonConsolidateResult(
+            var nonConsolidateResult = await analysisResultRepository.GetConsolidateResult(
                             input.CorporationId,
                             input.AccountItemName);
             return new TimeSeriesAnalysisViewModel(nonConsolidateResult);
         }
         private async Task<TimeSeriesAnalysisViewModel> GetNonConsolidateResult(AnalyticalMaterials input)
         {
-            var consolidateResult = await analysisResultRepository.GetConsolidateResult(
+            var consolidateResult = await analysisResultRepository.GetNonConsolidateResult(
                                     input.CorporationId,
                                     input.AccountItemName);
             return new TimeSeriesAnalysisViewModel(consolidateResult);
