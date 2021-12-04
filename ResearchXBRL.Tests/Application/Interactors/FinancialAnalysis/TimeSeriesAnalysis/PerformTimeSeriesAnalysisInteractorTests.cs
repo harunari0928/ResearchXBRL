@@ -105,18 +105,14 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                 foreach (var (e, a) in expected.Values.Zip(acutal.Values))
                 {
                     Assert.Equal(e.Amount, a.Amount);
-                    Assert.Equal(e.FinancialAccountPeriod is DurationPeriod, a.FinancialAccountPeriod is DurationPeriodViewModel);
-                    Assert.Equal(e.FinancialAccountPeriod is InstantPeriod, a.FinancialAccountPeriod is InstantPeriodViewModel);
-                    if (e.FinancialAccountPeriod is DurationPeriod durationPeriod
-                    && a.FinancialAccountPeriod is DurationPeriodViewModel durationPeriodViewModel)
+                    if (e.FinancialAccountPeriod is DurationPeriod durationPeriod)
                     {
-                        Assert.Equal(durationPeriod.From, durationPeriodViewModel.From);
-                        Assert.Equal(durationPeriod.To, durationPeriodViewModel.To);
+                        Assert.Equal(durationPeriod.From, a.FinancialAccountPeriod.From);
+                        Assert.Equal(durationPeriod.To, a.FinancialAccountPeriod.To);
                     }
-                    else if (e.FinancialAccountPeriod is DurationPeriod instantPeriod
-                    && a.FinancialAccountPeriod is DurationPeriodViewModel instantPeriodViewModel)
+                    else if (e.FinancialAccountPeriod is DurationPeriod instantPeriod)
                     {
-                        Assert.Equal(instantPeriod.From, instantPeriodViewModel.From);
+                        Assert.Equal(instantPeriod.From, a.FinancialAccountPeriod.From);
                     }
                 }
 

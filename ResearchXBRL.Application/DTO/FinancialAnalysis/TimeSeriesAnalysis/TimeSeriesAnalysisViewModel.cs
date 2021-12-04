@@ -10,7 +10,7 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
     public sealed class TimeSeriesAnalysisViewModel
     {
         public string AccountName { get; init; } = "";
-        public IUnitViewModel? Unit { get; init; } = null;
+        public UnitViewModel? Unit { get; init; } = null;
         public CorporationViewModel Corporation { get; init; } = new CorporationViewModel();
         public IReadOnlyList<AccountValueViewModel> Values { get; init; } = new AccountValueViewModel[0];
 
@@ -23,25 +23,22 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
             Values = MapToViewModel(analysis.Values);
         }
 
-        private static IUnitViewModel? MapToViewModel(IUnit? unit)
+        private static UnitViewModel? MapToViewModel(IUnit? unit) => unit switch
         {
-            return unit switch
+            NormalUnit normalUnit => new UnitViewModel
             {
-                NormalUnit normalUnit => new NormalUnitViewModel
-                {
-                    Name = normalUnit.Name,
-                    Measure = normalUnit.Measure
-                },
-                DividedUnit dividedUnit => new DividedUnitViewModel
-                {
-                    Name = dividedUnit.Name,
-                    UnitNumerator = dividedUnit.UnitNumerator,
-                    UnitDenominator = dividedUnit.UnitNumerator
-                },
-                null => null,
-                _ => throw new NotSupportedException()
-            };
-        }
+                Name = normalUnit.Name,
+                Measure = normalUnit.Measure
+            },
+            DividedUnit dividedUnit => new UnitViewModel
+            {
+                Name = dividedUnit.Name,
+                UnitNumerator = dividedUnit.UnitNumerator,
+                UnitDenominator = dividedUnit.UnitNumerator
+            },
+            null => null,
+            _ => throw new NotSupportedException()
+        };
         private static CorporationViewModel MapToViewModel(TimeSeriesAnalysisResult analysis)
         {
             return new CorporationViewModel
@@ -60,15 +57,15 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
                 Amount = x.Amount
             }).ToArray();
         }
-        private static IAccountsPeriodViewModel MapToViewModel(AccountValue value)
+        private static AccountsPeriodViewModel MapToViewModel(AccountValue value)
         {
             return value.FinancialAccountPeriod switch
             {
-                InstantPeriod instantPeriod => new InstantPeriodViewModel
+                InstantPeriod instantPeriod => new AccountsPeriodViewModel
                 {
                     Instant = instantPeriod.Instant
                 },
-                DurationPeriod durationPeriod => new DurationPeriodViewModel
+                DurationPeriod durationPeriod => new AccountsPeriodViewModel
                 {
                     From = durationPeriod.From,
                     To = durationPeriod.To

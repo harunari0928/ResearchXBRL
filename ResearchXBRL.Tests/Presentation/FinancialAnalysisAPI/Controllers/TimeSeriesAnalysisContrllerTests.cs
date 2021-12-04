@@ -33,7 +33,7 @@ namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
                 var expected = new TimeSeriesAnalysisViewModel
                 {
                     AccountName = "test",
-                    Unit = new NormalUnitViewModel
+                    Unit = new UnitViewModel
                     {
                         Name = "testJPY",
                         Measure = "aaa"
