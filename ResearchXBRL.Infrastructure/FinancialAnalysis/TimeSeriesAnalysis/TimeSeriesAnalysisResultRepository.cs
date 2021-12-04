@@ -130,9 +130,9 @@ ORDER BY
     period_from, instant_date;
 ";
             command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
-                .Value = $"%{accountItemName}%";
+                .Value = accountItemName;
             command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
-                .Value = $"%{corporationId}%";
+                .Value = corporationId;
             return await GetAccountValues(await command.ExecuteReaderAsync());
         }
         private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> GetAccountValues(NpgsqlDataReader reader)
@@ -148,7 +148,7 @@ ORDER BY
                 unit ??= GetUnit(reader);
                 values.Add(new AccountValue
                 {
-                    FinalAccountsPeriod = GetAccountsPeriod(reader, instantDateColumn, fromDateColumn, toDateColumn),
+                    FinancialAccountPeriod = GetAccountsPeriod(reader, instantDateColumn, fromDateColumn, toDateColumn),
                     Amount = decimal.Parse($"{reader[amountsColumn]}")
                 });
             }
@@ -225,9 +225,9 @@ ORDER BY
     period_from, instant_date;
 ";
             command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
-                .Value = $"%{accountItemName}%";
+                .Value = accountItemName;
             command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
-                .Value = $"%{corporationId}%";
+                .Value = corporationId;
             return await GetAccountValues(await command.ExecuteReaderAsync());
         }
         private static IAccountsPeriod GetAccountsPeriod(NpgsqlDataReader reader, int instantDateColumn, int fromDateColumn, int toDateColumn)
