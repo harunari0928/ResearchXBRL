@@ -49,7 +49,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                     {
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2019, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2019, 12, 31, 10, 9, 10, 11),
@@ -57,7 +57,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         },
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2022, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2022, 12, 31, 10, 9, 10, 11),
@@ -65,7 +65,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         },
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2021, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2021, 12, 31, 10, 9, 10, 11),
@@ -105,16 +105,16 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                 foreach (var (e, a) in expected.Values.Zip(acutal.Values))
                 {
                     Assert.Equal(e.Amount, a.Amount);
-                    Assert.Equal(e.FinalAccountsPeriod is DurationPeriod, a.FinalAccountsPeriod is DurationPeriodViewModel);
-                    Assert.Equal(e.FinalAccountsPeriod is InstantPeriod, a.FinalAccountsPeriod is InstantPeriodViewModel);
-                    if (e.FinalAccountsPeriod is DurationPeriod durationPeriod
-                    && a.FinalAccountsPeriod is DurationPeriodViewModel durationPeriodViewModel)
+                    Assert.Equal(e.FinancialAccountPeriod is DurationPeriod, a.FinancialAccountPeriod is DurationPeriodViewModel);
+                    Assert.Equal(e.FinancialAccountPeriod is InstantPeriod, a.FinancialAccountPeriod is InstantPeriodViewModel);
+                    if (e.FinancialAccountPeriod is DurationPeriod durationPeriod
+                    && a.FinancialAccountPeriod is DurationPeriodViewModel durationPeriodViewModel)
                     {
                         Assert.Equal(durationPeriod.From, durationPeriodViewModel.From);
                         Assert.Equal(durationPeriod.To, durationPeriodViewModel.To);
                     }
-                    else if (e.FinalAccountsPeriod is DurationPeriod instantPeriod
-                    && a.FinalAccountsPeriod is DurationPeriodViewModel instantPeriodViewModel)
+                    else if (e.FinancialAccountPeriod is DurationPeriod instantPeriod
+                    && a.FinancialAccountPeriod is DurationPeriodViewModel instantPeriodViewModel)
                     {
                         Assert.Equal(instantPeriod.From, instantPeriodViewModel.From);
                     }
@@ -144,7 +144,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                     {
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2019, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2019, 12, 31, 10, 9, 10, 11),
@@ -152,7 +152,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         },
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2022, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2022, 12, 31, 10, 9, 10, 11),
@@ -160,7 +160,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         },
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2021, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2021, 12, 31, 10, 9, 10, 11),
@@ -221,7 +221,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                     {
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2019, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2019, 12, 31, 10, 9, 10, 11),
@@ -229,7 +229,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         },
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2022, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2022, 12, 31, 10, 9, 10, 11),
@@ -237,7 +237,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         },
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2021, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2021, 12, 31, 10, 9, 10, 11),
@@ -299,7 +299,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                     {
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2019, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2019, 12, 31, 10, 9, 10, 11),
@@ -307,7 +307,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         },
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2022, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2022, 12, 31, 10, 9, 10, 11),
@@ -315,7 +315,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         },
                         new AccountValue
                         {
-                            FinalAccountsPeriod = new DurationPeriod
+                            FinancialAccountPeriod = new DurationPeriod
                             {
                                 From = new DateTime(2021, 12, 11, 10, 9, 10, 11),
                                 To = new DateTime(2021, 12, 31, 10, 9, 10, 11),

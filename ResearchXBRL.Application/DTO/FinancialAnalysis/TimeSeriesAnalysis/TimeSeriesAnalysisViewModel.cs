@@ -56,13 +56,13 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
         {
             return accountValues.Select(x => new AccountValueViewModel
             {
-                FinalAccountsPeriod = MapToViewModel(x),
+                FinancialAccountPeriod = MapToViewModel(x),
                 Amount = x.Amount
             }).ToArray();
         }
         private static IAccountsPeriodViewModel MapToViewModel(AccountValue value)
         {
-            return value.FinalAccountsPeriod switch
+            return value.FinancialAccountPeriod switch
             {
                 InstantPeriod instantPeriod => new InstantPeriodViewModel
                 {
