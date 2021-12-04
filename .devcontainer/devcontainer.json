@@ -1,6 +1,6 @@
 {
 	"name": "ResearchXBRL",
-	"service": "batch",
+	"service": "dev",
 	"dockerComposeFile": "docker-compose.yml",
 	"workspaceFolder": "/src",
 	// Set *default* container specific settings.json values on container create.
