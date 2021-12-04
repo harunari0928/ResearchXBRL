@@ -48,11 +48,11 @@ namespace AquireFinancialReports
         }
         private static DateTime GetDateTimeArg(in string[] args, string argKey)
         {
-            if (DateTime.TryParse(args.SkipWhile(x => x == argKey).FirstOrDefault(), out var datetime))
+            if (DateTime.TryParse(args.SkipWhile(x => x != argKey).Skip(1).FirstOrDefault(), out var datetime))
             {
                 return datetime;
             }
-            throw new ArgumentException($"{nameof(argKey)}には、日付を指定してください");
+            throw new ArgumentException($"{argKey}には、日付を指定してください");
         }
         private static int GetMaxParallelism(in string[] args)
         {
@@ -65,11 +65,11 @@ namespace AquireFinancialReports
         }
         private static int GetIntArg(in string[] args, string argKey)
         {
-            if (int.TryParse(args.SkipWhile(x => x == argKey).FirstOrDefault(), out var intValue))
+            if (int.TryParse(args.SkipWhile(x => x != argKey).Skip(1).FirstOrDefault(), out var intValue))
             {
                 return intValue;
             }
-            throw new ArgumentException($"{nameof(argKey)}には、数値を指定してください");
+            throw new ArgumentException($"{argKey}には、数値を指定してください");
         }
         private static ServiceProvider CreateServiceProvider(int maxParallelism)
         {
