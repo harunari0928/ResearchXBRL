@@ -41,6 +41,17 @@
             "stopAtEntry": false
         },
         {
+            "name": "FinancialAnalysisAPI",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "buildFinancialAnalysisAPI",
+            "program": "${workspaceFolder}/Presentation/FinancialAnalysisAPI/bin/Debug/net5.0/FinancialAnalysisAPI.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Presentation/FinancialAnalysisAPI",
+            "console": "internalConsole",
+            "stopAtEntry": true
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
