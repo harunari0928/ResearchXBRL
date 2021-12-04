@@ -89,14 +89,23 @@ SELECT
     C.instant_date
 FROM
     report_items A
-INNER JOIN
-    account_elements B
+INNER JOIN (
+    SELECT
+        xbrl_name,
+        MAX(account_name) AS account_name
+    FROM
+        account_elements
+    GROUP BY
+        xbrl_name
+) B
 ON
     A.xbrl_name = B.xbrl_name
 INNER JOIN
     contexts C
 ON
     A.report_id = C.report_id
+AND
+    A.context_name = c.context_name
 INNER JOIN
     report_covers RC
 ON
@@ -109,12 +118,12 @@ INNER JOIN
     units E
 ON
     A.unit_name = E.unit_name
+AND
+    A.report_id = E.report_id
 WHERE
     B.account_name = @accountName
 AND
-    C.context_name LIKE 'CurrentYearInstant%'
-AND
-    C.context_name NOT LIKE '%_NonConsolidateMember' -- 非連結は除外
+    C.context_name IN ('CurrentYearInstant', 'CurrentYearDuration')
 AND
     D.code = @corporationId
 ORDER BY
@@ -175,14 +184,23 @@ SELECT
     C.instant_date
 FROM
     report_items A
-INNER JOIN
-    account_elements B
+INNER JOIN (
+    SELECT
+        xbrl_name,
+        MAX(account_name) AS account_name
+    FROM
+        account_elements
+    GROUP BY
+        xbrl_name
+) B
 ON
     A.xbrl_name = B.xbrl_name
 INNER JOIN
     contexts C
 ON
     A.report_id = C.report_id
+AND
+    A.context_name = c.context_name
 INNER JOIN
     report_covers RC
 ON
@@ -195,12 +213,12 @@ INNER JOIN
     units E
 ON
     A.unit_name = E.unit_name
+AND
+    A.report_id = E.report_id
 WHERE
     B.account_name = @accountName
 AND
-    C.context_name LIKE 'CurrentYearInstant%'
-AND
-    C.context_name LIKE '%_NonConsolidateMember' -- 非連結のみ
+    C.context_name IN ('CurrentYearInstant_NonConsolidateMember', 'CurrentYearDuration_NonConsolidateMember')
 AND
     D.code = @corporationId
 ORDER BY
