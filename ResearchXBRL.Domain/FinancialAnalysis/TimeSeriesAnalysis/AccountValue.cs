@@ -7,7 +7,7 @@ namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis
         /// <summary>
         /// 決算期
         /// </summary>
-        public IAccountsPeriod FinalAccountsPeriod { get; init; } = new InstantPeriod();
+        public IAccountsPeriod FinancialAccountPeriod { get; init; } = new InstantPeriod();
 
         /// <summary>
         /// 金額
