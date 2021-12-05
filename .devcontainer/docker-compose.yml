@@ -23,7 +23,6 @@ services:
     container_name: report_rdb_primary
     volumes:
       - primary_database:/var/lib/postgresql/data
-      - ../postgres/init/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
