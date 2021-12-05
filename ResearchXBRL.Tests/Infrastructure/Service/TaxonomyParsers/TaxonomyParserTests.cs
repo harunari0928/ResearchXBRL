@@ -47,6 +47,31 @@ namespace ResearchXBRL.Tests.Infrastructure.Service
                 label.Dispose();
             }
 
+            [Fact]
+            public void 内閣府令項目を取らない()
+            {
+                // arrange
+                var (schema, label) = GetStreams();
+                var accountElementReader = new TaxonomyParser();
+
+                // act
+                var source = new EdinetTaxonomyData
+                {
+                    LabelDataStream = label,
+                    SchemaDataStream = schema,
+                    TaxonomyVersion = DateTime.Parse("2011/01/05"),
+                    Classification = "jpigp"
+                };
+                var accountElements = accountElementReader.Parse(source)
+                    ?? throw new Exception("XML読み込み失敗");
+
+                // assert
+                Assert.Empty(accountElements.Where(x => x.Classification == "jpcrp"));
+
+                schema.Dispose();
+                label.Dispose();
+            }
+
             private (Stream schema, Stream label) GetStreams()
             {
                 return (new StreamReader("jppfs_cor_2019-11-01.xsd").BaseStream,

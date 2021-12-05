@@ -72,10 +72,6 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
                     var data = downloader.Download();
 
                     // assert
-                    var acutal1 = data // 分類: jpcrpに関して全てのバージョンが存在することを確認
-                        .Where(x => x.Classification == "jpcrp")
-                        .Select(x => $"{x.TaxonomyVersion:yyyy-MM-dd}");
-                    Assert.True(await acutal1.SequenceEqualAsync(expectedVersions.ToAsyncEnumerable()));
                     var acutal2 = data // 分類: jppfsに関して全てのバージョンが存在することを確認
                         .Where(x => x.Classification == "jppfs")
                         .Select(x => $"{x.TaxonomyVersion:yyyy-MM-dd}");
@@ -84,6 +80,56 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
                         .Where(x => x.Classification == "jpigp")
                         .Select(x => $"{x.TaxonomyVersion:yyyy-MM-dd}");
                     Assert.True(await acutal3.SequenceEqualAsync(expectedVersions.ToAsyncEnumerable()));
+                }
+
+                [Fact]
+                public async Task 内閣府令は取得しない()
+                {
+                    // arrange
+                    // ダウンロードしたファイル内に存在するタクソノミバージョン
+                    var expectedVersions = new string[]
+                    {
+                        "2014-03-31",
+                        "2017-02-28",
+                        "2019-11-01",
+                    };
+                    storage
+                        .Setup(x => x.GetDirectoryNames("/unzipped/data/EDINET/taxonomy",
+                            It.IsAny<string>()))
+                        .Returns(expectedVersions);
+                    foreach (var version in expectedVersions)
+                    {
+                        var classifications = new string[] { "jpcrp", "jppfs", "jpigp" };
+                        storage
+                          .Setup(x => x.GetDirectoryNames($"/unzipped/data/EDINET/taxonomy/{version}/taxonomy/",
+                              It.IsAny<string>()))
+                          // 全てのバージョンにおいて以下3つの分類が存在するとする
+                          .Returns(classifications);
+                        foreach (var classification in classifications)
+                        {
+                            storage
+                               .Setup(x => x.GetDirectoryNames($"/unzipped/data/EDINET/taxonomy/{version}/taxonomy/{classification}",
+                                   It.IsAny<string>()))
+                               .Returns(new string[] { version });
+                        }
+                    }
+                    mockHttpHandler
+                        .When(HttpMethod.Get,
+                        $"http://lang.main.jp/xbrl/data.zip")
+                        .Respond(_ => new HttpResponseMessage
+                        {
+                            StatusCode = HttpStatusCode.OK
+                        });
+                    var downloader = CreateDownloader();
+
+                    // act
+                    var data = downloader.Download();
+
+                    // assert
+                    var acutal1 = data // 分類: jpcrpは取得しない
+                        .Where(x => x.Classification == "jpcrp")
+                        .Select(x => $"{x.TaxonomyVersion:yyyy-MM-dd}");
+                    Assert.Empty(acutal1.ToEnumerable());
                 }
 
                 [Fact]
