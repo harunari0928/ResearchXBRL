@@ -83,7 +83,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
                 }
 
                 [Fact]
-                public async Task 内閣府令は取得しない()
+                public void 内閣府令は取得しない()
                 {
                     // arrange
                     // ダウンロードしたファイル内に存在するタクソノミバージョン
