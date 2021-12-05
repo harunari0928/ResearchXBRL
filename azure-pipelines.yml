@@ -46,4 +46,4 @@ steps:
     containerRegistry: 'dockerRegistryServiceConnection'
     repository: 'harunari/financial_analysis_api'
     command: 'buildAndPush'
-    Dockerfile: '**/Presentation/FinancialAnalysisAPI/Dockerfile'
+    Dockerfile: './Presentation/FinancialAnalysisAPI/Dockerfile'
