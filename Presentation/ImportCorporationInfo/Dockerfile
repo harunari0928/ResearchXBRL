@@ -21,5 +21,5 @@ RUN dotnet publish "ImportCorporationInfo.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY EdinetcodeDlInfo.csv ./
+COPY Presentation/ImportCorporationInfo/EdinetcodeDlInfo.csv ./
 ENTRYPOINT ["dotnet", "ImportCorporationInfo.dll"]
