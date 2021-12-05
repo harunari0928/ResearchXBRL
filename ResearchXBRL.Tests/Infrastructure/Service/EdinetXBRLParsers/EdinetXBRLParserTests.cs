@@ -121,18 +121,19 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 var report = await CreateReport();
 
                 // assert
-                Assert.Equal(397, report.Where(x => x.Classification == "jpcrp_cor").Count());
-                Assert.Equal(688, report.Where(x => x.Classification == "jppfs_cor").Count());
-                Assert.Equal(397 + 688, report.Count);
+                // 内閣府令項目は取らない
+                Assert.Equal(0, report.Where(x => x.Classification == "jpcrp").Count());
+                Assert.Equal(688, report.Where(x => x.Classification == "jppfs").Count());
+                Assert.Equal(0 + 688, report.Count);
 
                 // 最初の勘定科目
                 var first = report[0];
-                Assert.Equal("jpcrp_cor", first.Classification);
-                Assert.Equal("NetSalesSummaryOfBusinessResults", first.XBRLName);
-                Assert.Equal("Prior4YearDuration", first.ContextName);
+                Assert.Equal("jppfs", first.Classification);
+                Assert.Equal("CashAndDeposits", first.XBRLName);
+                Assert.Equal("Prior1YearInstant", first.ContextName);
                 Assert.Equal("JPY", first.UnitName);
                 Assert.Equal(-6, first.NumericalAccuracy);
-                Assert.Equal(4722000000, first.Amounts);
+                Assert.Equal(3282000000, first.Amounts);
                 Assert.Null(first.Scale);
             }
 
