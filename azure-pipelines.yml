@@ -84,5 +84,5 @@ steps:
     containerRegistry: 'dockerRegistryServiceConnection'
     repository: 'harunari/financial_report_primary_database'
     command: 'buildAndPush'
-    Dockerfile: 'Dockerfile.primary'
+    Dockerfile: './postgres/Dockerfile.primary'
     buildContext: './postgres'
