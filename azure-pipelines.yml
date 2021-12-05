@@ -27,7 +27,7 @@ steps:
   inputs:
     command: 'test'
     projects: '**/*.csproj'
-    arguments: '--collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./MyCoverage/'
+    arguments: '--collect:"XPlat Code Coverage"'
     testRunTitle: 'Run Tests'
 
 - task: PublishCodeCoverageResults@1
