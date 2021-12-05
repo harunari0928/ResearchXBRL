@@ -29,10 +29,3 @@ steps:
     projects: '**/*.csproj'
     arguments: '--collect:"XPlat Code Coverage"'
     testRunTitle: 'Run Tests'
-
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish Code Coverage Results'
-  inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '**/coverage.cobertura.xml'
-    failIfCoverageEmpty: true
