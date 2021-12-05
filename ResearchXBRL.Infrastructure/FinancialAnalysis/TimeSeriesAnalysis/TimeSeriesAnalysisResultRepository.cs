@@ -126,6 +126,16 @@ AND
     C.context_name IN ('CurrentYearInstant', 'CurrentYearDuration')
 AND
     D.code = @corporationId
+GROUP BY
+    A.amounts,
+    A.unit_name,
+    E.measure,
+    E.unit_numerator,
+    E.unit_denominator,
+    C.context_name,
+    C.period_from,
+    C.period_to,
+    C.instant_date
 ORDER BY
     period_from, instant_date;
 ";
@@ -218,9 +228,19 @@ AND
 WHERE
     B.account_name = @accountName
 AND
-    C.context_name IN ('CurrentYearInstant_NonConsolidateMember', 'CurrentYearDuration_NonConsolidateMember')
+    C.context_name IN ('CurrentYearInstant_NonConsolidatedMember', 'CurrentYearDuration_NonConsolidatedMember')
 AND
     D.code = @corporationId
+GROUP BY
+    A.amounts,
+    A.unit_name,
+    E.measure,
+    E.unit_numerator,
+    E.unit_denominator,
+    C.context_name,
+    C.period_from,
+    C.period_to,
+    C.instant_date
 ORDER BY
     period_from, instant_date;
 ";
