@@ -35,3 +35,15 @@ steps:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '/home/vsts/work/_temp/**/coverage.cobertura.xml'
     failIfCoverageEmpty: true
+
+- task: Docker@2
+  inputs:
+    containerRegistry: 'dockerRegistryServiceConnection'
+    command: 'login'
+
+- task: Docker@2
+  inputs:
+    containerRegistry: 'dockerRegistryServiceConnection'
+    repository: 'harunari/financial_analysis_api'
+    command: 'buildAndPush'
+    Dockerfile: '**/Presentation/FinancialAnalysisAPI/Dockerfile'
