@@ -35,7 +35,7 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders
             var basePath = "/unzipped/data/EDINET/taxonomy";
             foreach (var taxonomyVersion in storage.GetDirectoryNames(basePath))
             {
-                foreach (var classification in new string[] { "jpcrp", "jppfs", "jpigp" })
+                foreach (var classification in new string[] { "jppfs", "jpigp" })
                 {
                     if (!storage.GetDirectoryNames($"{basePath}/{taxonomyVersion}/taxonomy/")
                         .Contains(classification))
