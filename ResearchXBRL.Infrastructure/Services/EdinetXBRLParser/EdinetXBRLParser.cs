@@ -59,7 +59,8 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             var scaleValue = node.GetAttributeValue("scale");
             return new FinancialReportItem
             {
-                Classification = node.Name.Split(':')[0],
+                // jppfs_cor:CashAndDeposits → jppfs
+                Classification = node.Name.Split(':')[0].Replace("_cor", ""),
                 XBRLName = node.Name.Split(':')[1],
                 ContextName = node.GetAttributeValue("contextRef") ?? "",
                 UnitName = node.GetAttributeValue("unitRef") ?? "",
