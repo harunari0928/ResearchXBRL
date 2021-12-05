@@ -37,13 +37,16 @@ steps:
     failIfCoverageEmpty: true
 
 - task: Docker@2
+  displayName: 'Login Dockerhub'
   inputs:
     containerRegistry: 'dockerRegistryServiceConnection'
     command: 'login'
 
 - task: Docker@2
+  displayName: 'Build and Push FinancialAnalysisAPI Image'
   inputs:
     containerRegistry: 'dockerRegistryServiceConnection'
     repository: 'harunari/financial_analysis_api'
     command: 'buildAndPush'
     Dockerfile: './Presentation/FinancialAnalysisAPI/Dockerfile'
+    buildContext: '.'
