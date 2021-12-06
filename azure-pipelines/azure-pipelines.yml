@@ -15,11 +15,11 @@ variables:
 steps:
 - template: buildAndTest.yml
 
-- ${{ if eq(variables['Build.SourceBranch'], 'main') }}:
+- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
   - template: main.yml
 
 - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/release/') }}:
   - template: release.yml
 
-- ${{ if eq(variables['Build.SourceBranch'], 'develop') }}:
+- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
   - template: develop.yml
