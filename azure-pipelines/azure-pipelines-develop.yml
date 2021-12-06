@@ -51,8 +51,8 @@ steps:
     Dockerfile: './Presentation/FinancialAnalysisAPI/Dockerfile'
     buildContext: '.'
     tags: |
-      beta-$(Build.BuildId)
-      beta
+      alpha-$(Build.BuildId)
+      alpha
 
 - task: Docker@2
   displayName: 'Build and Push AquireAccountItems Batch Image'
@@ -63,8 +63,8 @@ steps:
     Dockerfile: './Presentation/AquireAccountItems/Dockerfile'
     buildContext: '.'
     tags: |
-      beta-$(Build.BuildId)
-      beta
+      alpha-$(Build.BuildId)
+      alpha
 
 - task: Docker@2
   displayName: 'Build and Push AquireFinancialReports Batch Image'
@@ -75,8 +75,8 @@ steps:
     Dockerfile: './Presentation/AquireFinancialReports/Dockerfile'
     buildContext: '.'
     tags: |
-      beta-$(Build.BuildId)
-      beta
+      alpha-$(Build.BuildId)
+      alpha
 
 - task: Docker@2
   displayName: 'Build and Push ImportCorporationInfo Batch Image'
@@ -87,8 +87,8 @@ steps:
     Dockerfile: './Presentation/ImportCorporationInfo/Dockerfile'
     buildContext: '.'
     tags: |
-      beta-$(Build.BuildId)
-      beta
+      alpha-$(Build.BuildId)
+      alpha
 
 - task: Docker@2
   displayName: 'Build and Push Financial Report Primary Database Image'
@@ -99,5 +99,5 @@ steps:
     Dockerfile: './postgres/Dockerfile.primary'
     buildContext: './postgres'
     tags: |
-      beta-$(Build.BuildId)
-      beta
+      alpha-$(Build.BuildId)
+      alpha
