@@ -9,7 +9,7 @@ services:
     command: /bin/bash -c "dotnet build; while sleep 1000; do :; done"
     container_name: aquire_report_batch
     environment: 
-      DB_SERVERNAME: report_rdb_primary
+      DB_SERVERNAME: report_rdb_primary_backend_dev
       DB_USERID: postgres
       DB_NAME: postgres
       DB_PORT: 5432
@@ -20,7 +20,7 @@ services:
     build:
       context: ../postgres
       dockerfile: Dockerfile.primary
-    container_name: report_rdb_primary
+    container_name: report_rdb_primary_backend_dev
     volumes:
       - primary_database:/var/lib/postgresql/data
     environment:
@@ -28,7 +28,7 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: mysecretpassword
     ports:
-      - "5432:5432"
+      - "5432"
   rdb_readonly:
     build:
       context: ../postgres
@@ -39,11 +39,11 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: mysecretpassword
       PGPASSFILE: /.pgpass
-    container_name: report_rdb_readonly
+    container_name: report_rdb_readonly_backend_dev
     volumes:
       - readonly_database:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5432"
     depends_on:
       - rdb_primary
 volumes:
