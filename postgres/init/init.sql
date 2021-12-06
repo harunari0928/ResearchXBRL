@@ -114,3 +114,5 @@ CREATE TABLE account_elements (
   account_name VARCHAR NOT NULL,
   PRIMARY KEY (xbrl_name, taxonomy_version, classification)
 );
+
+--test
