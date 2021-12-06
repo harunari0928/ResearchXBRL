@@ -1,14 +1,3 @@
-trigger:
-- feature/*
-
-pool:
-  vmImage: 'ubuntu-20.04'
-
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-
 steps:
 - task: NuGetToolInstaller@1
 
