@@ -12,7 +12,7 @@ RUN wget https://github.com/progrium/entrykit/releases/download/v${ENTRYKIT_VERS
   && chmod +x /bin/entrykit \
   && entrykit --symlink
 
-COPY .init/setup-readonly.sh /setup-readonly.sh
+COPY ./init/setup-readonly.sh /setup-readonly.sh
 RUN chmod +x /setup-readonly.sh
 
 ENTRYPOINT [ \
