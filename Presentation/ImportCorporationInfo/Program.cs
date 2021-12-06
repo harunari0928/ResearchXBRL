@@ -15,7 +15,7 @@ namespace ImportCorporationInfo
     {
         static async Task Main(string[] _)
         {
-            var storage = new LocalStorage("/src/Presentation/ImportCorporationInfo/");
+            var storage = new LocalStorage(AppDomain.CurrentDomain.BaseDirectory);
             var fileStream = storage.Get("EdinetcodeDlInfo.csv");
             using var streamReader = new StreamReader(fileStream);
             using var reader = new CsvReader(streamReader, CultureInfo.CurrentCulture);
