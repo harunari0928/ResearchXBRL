@@ -1,5 +1,5 @@
 trigger:
-- main
+- develop
 
 pool:
   vmImage: 'ubuntu-20.04'
@@ -50,6 +50,9 @@ steps:
     command: 'buildAndPush'
     Dockerfile: './Presentation/FinancialAnalysisAPI/Dockerfile'
     buildContext: '.'
+    tags: |
+      beta-$(Build.BuildId)
+      beta
 
 - task: Docker@2
   displayName: 'Build and Push AquireAccountItems Batch Image'
@@ -59,6 +62,9 @@ steps:
     command: 'buildAndPush'
     Dockerfile: './Presentation/AquireAccountItems/Dockerfile'
     buildContext: '.'
+    tags: |
+      beta-$(Build.BuildId)
+      beta
 
 - task: Docker@2
   displayName: 'Build and Push AquireFinancialReports Batch Image'
@@ -68,6 +74,9 @@ steps:
     command: 'buildAndPush'
     Dockerfile: './Presentation/AquireFinancialReports/Dockerfile'
     buildContext: '.'
+    tags: |
+      beta-$(Build.BuildId)
+      beta
 
 - task: Docker@2
   displayName: 'Build and Push ImportCorporationInfo Batch Image'
@@ -77,6 +86,9 @@ steps:
     command: 'buildAndPush'
     Dockerfile: './Presentation/ImportCorporationInfo/Dockerfile'
     buildContext: '.'
+    tags: |
+      beta-$(Build.BuildId)
+      beta
 
 - task: Docker@2
   displayName: 'Build and Push Financial Report Primary Database Image'
@@ -84,5 +96,8 @@ steps:
     containerRegistry: 'dockerRegistryServiceConnection'
     repository: 'harunari/financial_report_primary_database'
     command: 'buildAndPush'
-    Dockerfile: 'Dockerfile.primary'
+    Dockerfile: './postgres/Dockerfile.primary'
     buildContext: './postgres'
+    tags: |
+      beta-$(Build.BuildId)
+      beta
