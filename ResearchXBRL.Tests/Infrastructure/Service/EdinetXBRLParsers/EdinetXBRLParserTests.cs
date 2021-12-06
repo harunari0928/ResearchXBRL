@@ -122,7 +122,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
 
                 // assert
                 // 内閣府令項目は取らない
-                Assert.Equal(0, report.Where(x => x.Classification == "jpcrp").Count());
+                Assert.Empty(report.Where(x => x.Classification == "jpcrp"));
                 Assert.Equal(688, report.Where(x => x.Classification == "jppfs").Count());
                 Assert.Equal(0 + 688, report.Count);
 
