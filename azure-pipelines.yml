@@ -1,4 +1,14 @@
 trigger:
+- task: Docker@2
+  inputs:
+    containerRegistry: 'dockerRegistryServiceConnection'
+    repository: 'harunari/financial_report_primary_database'
+    command: 'buildAndPush'
+    Dockerfile: 'Dockerfile.primary'
+    buildContext: './postgres'
+    tags: |
+      stable-$(Build.BuildId)
+      stable
 - main
 
 pool:
@@ -50,6 +60,9 @@ steps:
     command: 'buildAndPush'
     Dockerfile: './Presentation/FinancialAnalysisAPI/Dockerfile'
     buildContext: '.'
+    tags: |
+      stable-$(Build.BuildId)
+      stable
 
 - task: Docker@2
   displayName: 'Build and Push AquireAccountItems Batch Image'
@@ -59,6 +72,9 @@ steps:
     command: 'buildAndPush'
     Dockerfile: './Presentation/AquireAccountItems/Dockerfile'
     buildContext: '.'
+    tags: |
+      stable-$(Build.BuildId)
+      stable
 
 - task: Docker@2
   displayName: 'Build and Push AquireFinancialReports Batch Image'
@@ -68,6 +84,9 @@ steps:
     command: 'buildAndPush'
     Dockerfile: './Presentation/AquireFinancialReports/Dockerfile'
     buildContext: '.'
+    tags: |
+      stable-$(Build.BuildId)
+      stable
 
 - task: Docker@2
   displayName: 'Build and Push ImportCorporationInfo Batch Image'
@@ -77,6 +96,9 @@ steps:
     command: 'buildAndPush'
     Dockerfile: './Presentation/ImportCorporationInfo/Dockerfile'
     buildContext: '.'
+    tags: |
+      stable-$(Build.BuildId)
+      stable
 
 - task: Docker@2
   displayName: 'Build and Push Financial Report Primary Database Image'
@@ -86,3 +108,6 @@ steps:
     command: 'buildAndPush'
     Dockerfile: './postgres/Dockerfile.primary'
     buildContext: './postgres'
+    tags: |
+      stable-$(Build.BuildId)
+      stable
