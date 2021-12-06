@@ -1,0 +1,103 @@
+trigger:
+- release/*
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build'
+  inputs:
+    command: 'build'
+    projects: '**/*.sln'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Unit Test'
+  inputs:
+    command: 'test'
+    projects: '**/*.csproj'
+    arguments: '--collect:"XPlat Code Coverage"'
+    testRunTitle: 'Run Tests'
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '/home/vsts/work/_temp/**/coverage.cobertura.xml'
+    failIfCoverageEmpty: true
+
+- task: Docker@2
+  displayName: 'Login Dockerhub'
+  inputs:
+    containerRegistry: 'dockerRegistryServiceConnection'
+    command: 'login'
+
+- task: Docker@2
+  displayName: 'Build and Push FinancialAnalysisAPI Image'
+  inputs:
+    containerRegistry: 'dockerRegistryServiceConnection'
+    repository: 'harunari/financial_analysis_api'
+    command: 'buildAndPush'
+    Dockerfile: './Presentation/FinancialAnalysisAPI/Dockerfile'
+    buildContext: '.'
+    tags: |
+      beta-$(Build.BuildId)
+      beta
+
+- task: Docker@2
+  displayName: 'Build and Push AquireAccountItems Batch Image'
+  inputs:
+    containerRegistry: 'dockerRegistryServiceConnection'
+    repository: 'harunari/aquire_account_items_batch'
+    command: 'buildAndPush'
+    Dockerfile: './Presentation/AquireAccountItems/Dockerfile'
+    buildContext: '.'
+    tags: |
+      beta-$(Build.BuildId)
+      beta
+
+- task: Docker@2
+  displayName: 'Build and Push AquireFinancialReports Batch Image'
+  inputs:
+    containerRegistry: 'dockerRegistryServiceConnection'
+    repository: 'harunari/aquire_financial_reports_batch'
+    command: 'buildAndPush'
+    Dockerfile: './Presentation/AquireFinancialReports/Dockerfile'
+    buildContext: '.'
+    tags: |
+      beta-$(Build.BuildId)
+      beta
+
+- task: Docker@2
+  displayName: 'Build and Push ImportCorporationInfo Batch Image'
+  inputs:
+    containerRegistry: 'dockerRegistryServiceConnection'
+    repository: 'harunari/import_corporation_info_batch'
+    command: 'buildAndPush'
+    Dockerfile: './Presentation/ImportCorporationInfo/Dockerfile'
+    buildContext: '.'
+    tags: |
+      beta-$(Build.BuildId)
+      beta
+
+- task: Docker@2
+  displayName: 'Build and Push Financial Report Primary Database Image'
+  inputs:
+    containerRegistry: 'dockerRegistryServiceConnection'
+    repository: 'harunari/financial_report_primary_database'
+    command: 'buildAndPush'
+    Dockerfile: './postgres/Dockerfile.primary'
+    buildContext: './postgres'
+    tags: |
+      beta-$(Build.BuildId)
+      beta
