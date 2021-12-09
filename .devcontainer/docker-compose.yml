@@ -14,6 +14,8 @@ services:
       DB_NAME: postgres
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
+      ASPNETCORE_URLS: http://+:45612
+      ASPNETCORE_ENVIRONMENT: Development
     depends_on:
       - rdb_primary
   rdb_primary:
