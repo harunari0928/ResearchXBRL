@@ -33,7 +33,7 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnaly
 
         private async Task<TimeSeriesAnalysisViewModel> GetConsolidateResult(AnalyticalMaterials input)
         {
-            var nonConsolidateResult = await analysisResultRepository.GetConsolidateResult(
+            var nonConsolidateResult = await analysisResultRepository.GetResult(
                             input.CorporationId,
                             input.AccountItemName);
             return new TimeSeriesAnalysisViewModel(nonConsolidateResult);

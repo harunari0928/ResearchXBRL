@@ -71,6 +71,23 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                                 To = new DateTime(2021, 12, 31, 10, 9, 10, 11),
                             }
                         }
+                    },
+                    NonConsolidatedValues = new List<AccountValue>
+                    {
+                        new AccountValue
+                        {
+                            FinancialAccountPeriod = new InstantPeriod {
+                                Instant = new DateTime(2016, 01, 3, 10, 19, 40)
+                            }
+                        },
+                        new AccountValue
+                        {
+                            FinancialAccountPeriod = new DurationPeriod
+                            {
+                                From = new DateTime(2022, 12, 11, 10, 9, 10, 11),
+                                To = new DateTime(2022, 12, 31, 10, 9, 10, 11),
+                            }
+                        }
                     }
                 };
                 var input = new AnalyticalMaterials
@@ -81,7 +98,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                 corporationRepository.Setup(x => x.Get(It.IsAny<string>()))
                     .ReturnsAsync(expected.Corporation);
                 analysisResultRepository
-                    .Setup(x => x.GetConsolidateResult(
+                    .Setup(x => x.GetResult(
                         input.CorporationId,
                         input.AccountItemName))
                     .ReturnsAsync(expected);
@@ -97,7 +114,13 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                 Assert.Equal(expected.Corporation.IsLinking, acutal.Corporation.IsLinking);
                 Assert.Equal(expected.Corporation.Name, acutal.Corporation.Name);
                 Assert.Equal(expected.Corporation.TypeOfIndustry, acutal.Corporation.TypeOfIndustry);
-                foreach (var (e, a) in expected.ConsolidatedValues.Zip(acutal.ConsolidatedValues))
+                AssertAccountValues(expected.ConsolidatedValues, acutal.ConsolidatedValues);
+                AssertAccountValues(expected.NonConsolidatedValues, acutal.NonConsolidatedValues);
+            }
+
+            private static void AssertAccountValues(IReadOnlyList<AccountValue> expected, IReadOnlyList<AccountValueViewModel> acutal)
+            {
+                foreach (var (e, a) in expected.Zip(acutal))
                 {
                     Assert.Equal(e.Amount, a.Amount);
                     if (e.FinancialAccountPeriod is DurationPeriod durationPeriod)
@@ -105,9 +128,9 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         Assert.Equal(durationPeriod.From, a.FinancialAccountPeriod.From);
                         Assert.Equal(durationPeriod.To, a.FinancialAccountPeriod.To);
                     }
-                    else if (e.FinancialAccountPeriod is DurationPeriod instantPeriod)
+                    else if (e.FinancialAccountPeriod is InstantPeriod instantPeriod)
                     {
-                        Assert.Equal(instantPeriod.From, a.FinancialAccountPeriod.From);
+                        Assert.Equal(instantPeriod.Instant, a.FinancialAccountPeriod.Instant);
                     }
                 }
             }
@@ -166,7 +189,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                 corporationRepository.Setup(x => x.Get(It.IsAny<string>()))
                     .ReturnsAsync(null as Corporation);
                 analysisResultRepository
-                    .Setup(x => x.GetConsolidateResult(
+                    .Setup(x => x.GetResult(
                         input.CorporationId,
                         input.AccountItemName))
                     .ReturnsAsync(expected);
