@@ -45,7 +45,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         CapitalAmount = 114514,
                         IsLinking = false
                     },
-                    Values = new List<AccountValue>
+                    ConsolidatedValues = new List<AccountValue>
                     {
                         new AccountValue
                         {
@@ -71,6 +71,23 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                                 To = new DateTime(2021, 12, 31, 10, 9, 10, 11),
                             }
                         }
+                    },
+                    NonConsolidatedValues = new List<AccountValue>
+                    {
+                        new AccountValue
+                        {
+                            FinancialAccountPeriod = new InstantPeriod {
+                                Instant = new DateTime(2016, 01, 3, 10, 19, 40)
+                            }
+                        },
+                        new AccountValue
+                        {
+                            FinancialAccountPeriod = new DurationPeriod
+                            {
+                                From = new DateTime(2022, 12, 11, 10, 9, 10, 11),
+                                To = new DateTime(2022, 12, 31, 10, 9, 10, 11),
+                            }
+                        }
                     }
                 };
                 var input = new AnalyticalMaterials
@@ -81,12 +98,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                 corporationRepository.Setup(x => x.Get(It.IsAny<string>()))
                     .ReturnsAsync(expected.Corporation);
                 analysisResultRepository
-                    .Setup(x => x.GetNonConsolidateResult(
-                        input.CorporationId,
-                        input.AccountItemName))
-                    .ReturnsAsync(expected);
-                analysisResultRepository
-                    .Setup(x => x.GetConsolidateResult(
+                    .Setup(x => x.GetResult(
                         input.CorporationId,
                         input.AccountItemName))
                     .ReturnsAsync(expected);
@@ -102,7 +114,13 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                 Assert.Equal(expected.Corporation.IsLinking, acutal.Corporation.IsLinking);
                 Assert.Equal(expected.Corporation.Name, acutal.Corporation.Name);
                 Assert.Equal(expected.Corporation.TypeOfIndustry, acutal.Corporation.TypeOfIndustry);
-                foreach (var (e, a) in expected.Values.Zip(acutal.Values))
+                AssertAccountValues(expected.ConsolidatedValues, acutal.ConsolidatedValues);
+                AssertAccountValues(expected.NonConsolidatedValues, acutal.NonConsolidatedValues);
+            }
+
+            private static void AssertAccountValues(IReadOnlyList<AccountValue> expected, IReadOnlyList<AccountValueViewModel> acutal)
+            {
+                foreach (var (e, a) in expected.Zip(acutal))
                 {
                     Assert.Equal(e.Amount, a.Amount);
                     if (e.FinancialAccountPeriod is DurationPeriod durationPeriod)
@@ -110,167 +128,11 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         Assert.Equal(durationPeriod.From, a.FinancialAccountPeriod.From);
                         Assert.Equal(durationPeriod.To, a.FinancialAccountPeriod.To);
                     }
-                    else if (e.FinancialAccountPeriod is DurationPeriod instantPeriod)
+                    else if (e.FinancialAccountPeriod is InstantPeriod instantPeriod)
                     {
-                        Assert.Equal(instantPeriod.From, a.FinancialAccountPeriod.From);
+                        Assert.Equal(instantPeriod.Instant, a.FinancialAccountPeriod.Instant);
                     }
                 }
-
-            }
-
-            [Fact]
-            public async Task 企業が非連結の場合単体財務諸表の分析結果を取得する()
-            {
-                // arrange
-                var expected = new TimeSeriesAnalysisResult
-                {
-                    AccountName = "会計項目名",
-                    Unit = new NormalUnit
-                    {
-                        Name = "JPY",
-                        Measure = "てきとう"
-                    },
-                    Corporation = new Corporation
-                    {
-                        Name = "変な会社",
-                        CapitalAmount = 114514,
-                        IsLinking = false // 非連結
-                    },
-                    Values = new List<AccountValue>
-                    {
-                        new AccountValue
-                        {
-                            FinancialAccountPeriod = new DurationPeriod
-                            {
-                                From = new DateTime(2019, 12, 11, 10, 9, 10, 11),
-                                To = new DateTime(2019, 12, 31, 10, 9, 10, 11),
-                            }
-                        },
-                        new AccountValue
-                        {
-                            FinancialAccountPeriod = new DurationPeriod
-                            {
-                                From = new DateTime(2022, 12, 11, 10, 9, 10, 11),
-                                To = new DateTime(2022, 12, 31, 10, 9, 10, 11),
-                            }
-                        },
-                        new AccountValue
-                        {
-                            FinancialAccountPeriod = new DurationPeriod
-                            {
-                                From = new DateTime(2021, 12, 11, 10, 9, 10, 11),
-                                To = new DateTime(2021, 12, 31, 10, 9, 10, 11),
-                            }
-                        }
-                    }
-                };
-                var input = new AnalyticalMaterials
-                {
-                    CorporationId = "testCor",
-                    AccountItemName = "test"
-                };
-                corporationRepository.Setup(x => x.Get(It.IsAny<string>()))
-                    .ReturnsAsync(expected.Corporation);
-                analysisResultRepository
-                    .Setup(x => x.GetNonConsolidateResult(
-                        input.CorporationId,
-                        input.AccountItemName))
-                    .ReturnsAsync(expected);
-                analysisResultRepository
-                    .Setup(x => x.GetConsolidateResult(
-                        input.CorporationId,
-                        input.AccountItemName))
-                    .ReturnsAsync(expected);
-                var interactor = CreateInteractor();
-
-                // act
-                var acutal = await interactor.Handle(input);
-
-                // assert
-                analysisResultRepository
-                    .Verify(x => x.GetNonConsolidateResult(It.IsAny<string>(), It.IsAny<string>()),
-                        Times.Once);
-                analysisResultRepository
-                    .Verify(x => x.GetConsolidateResult(It.IsAny<string>(), It.IsAny<string>()),
-                        Times.Never);
-            }
-
-            [Fact]
-            public async Task 企業が連結の場合連結財務諸表の分析結果を取得する()
-            {
-                // arrange
-                var expected = new TimeSeriesAnalysisResult
-                {
-                    AccountName = "会計項目名",
-                    Unit = new NormalUnit
-                    {
-                        Name = "JPY",
-                        Measure = "てきとう"
-                    },
-                    Corporation = new Corporation
-                    {
-                        Name = "変な会社",
-                        CapitalAmount = 114514,
-                        IsLinking = true // 連結
-                    },
-                    Values = new List<AccountValue>
-                    {
-                        new AccountValue
-                        {
-                            FinancialAccountPeriod = new DurationPeriod
-                            {
-                                From = new DateTime(2019, 12, 11, 10, 9, 10, 11),
-                                To = new DateTime(2019, 12, 31, 10, 9, 10, 11),
-                            }
-                        },
-                        new AccountValue
-                        {
-                            FinancialAccountPeriod = new DurationPeriod
-                            {
-                                From = new DateTime(2022, 12, 11, 10, 9, 10, 11),
-                                To = new DateTime(2022, 12, 31, 10, 9, 10, 11),
-                            }
-                        },
-                        new AccountValue
-                        {
-                            FinancialAccountPeriod = new DurationPeriod
-                            {
-                                From = new DateTime(2021, 12, 11, 10, 9, 10, 11),
-                                To = new DateTime(2021, 12, 31, 10, 9, 10, 11),
-                            }
-                        }
-                    }
-                };
-                var input = new AnalyticalMaterials
-                {
-                    CorporationId = "testCor",
-                    AccountItemName = "test"
-                };
-
-                corporationRepository.Setup(x => x.Get(It.IsAny<string>()))
-                    .ReturnsAsync(expected.Corporation);
-                analysisResultRepository
-                    .Setup(x => x.GetNonConsolidateResult(
-                        input.CorporationId,
-                        input.AccountItemName))
-                    .ReturnsAsync(expected);
-                analysisResultRepository
-                    .Setup(x => x.GetConsolidateResult(
-                        input.CorporationId,
-                        input.AccountItemName))
-                    .ReturnsAsync(expected);
-                var interactor = CreateInteractor();
-
-                // act
-                var acutal = await interactor.Handle(input);
-
-                // assert
-                analysisResultRepository
-                    .Verify(x => x.GetNonConsolidateResult(It.IsAny<string>(), It.IsAny<string>()),
-                        Times.Never);
-                analysisResultRepository
-                    .Verify(x => x.GetConsolidateResult(It.IsAny<string>(), It.IsAny<string>()),
-                        Times.Once);
             }
 
             [Fact]
@@ -291,7 +153,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         CapitalAmount = 114514,
                         IsLinking = false
                     },
-                    Values = new List<AccountValue>
+                    ConsolidatedValues = new List<AccountValue>
                     {
                         new AccountValue
                         {
@@ -327,12 +189,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                 corporationRepository.Setup(x => x.Get(It.IsAny<string>()))
                     .ReturnsAsync(null as Corporation);
                 analysisResultRepository
-                    .Setup(x => x.GetNonConsolidateResult(
-                        input.CorporationId,
-                        input.AccountItemName))
-                    .ReturnsAsync(expected);
-                analysisResultRepository
-                    .Setup(x => x.GetConsolidateResult(
+                    .Setup(x => x.GetResult(
                         input.CorporationId,
                         input.AccountItemName))
                     .ReturnsAsync(expected);
