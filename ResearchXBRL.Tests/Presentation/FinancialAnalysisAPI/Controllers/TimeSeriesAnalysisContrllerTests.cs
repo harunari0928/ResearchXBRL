@@ -42,7 +42,7 @@ namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
                     {
                         Name = "test",
                     },
-                    Values = new List<AccountValueViewModel>
+                    ConsolidatedValues = new List<AccountValueViewModel>
                     {
                         new AccountValueViewModel
                         {
