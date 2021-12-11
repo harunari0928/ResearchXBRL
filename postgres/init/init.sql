@@ -39,6 +39,7 @@ create table report_items (
   unit_name varchar not null,
   context_name varchar not null
 );
+CREATE INDEX ON report_items (report_id);
 
 create table document_type_master (
   code varchar primary key,
