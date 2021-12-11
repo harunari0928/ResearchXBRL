@@ -20,7 +20,7 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
             AccountName = analysis.AccountName;
             Unit = MapToViewModel(analysis.Unit);
             Corporation = MapToViewModel(analysis);
-            ConsolidatedValues = MapToViewModel(analysis.Values);
+            ConsolidatedValues = MapToViewModel(analysis.ConsolidatedValues);
         }
 
         private static UnitViewModel? MapToViewModel(IUnit? unit) => unit switch
