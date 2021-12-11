@@ -25,9 +25,15 @@ namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis
         public Corporation Corporation { get; init; } = new Corporation();
 
         /// <summary>
-        /// 会計項目の時系列データ
+        /// 連結財務諸表の勘定項目時系列データ
         /// </summary>
         /// <typeparam name="AccountValue">会計項目値</typeparam>
-        public IReadOnlyList<AccountValue> Values { get; init; } = new List<AccountValue>(0);
+        public IReadOnlyList<AccountValue> ConsolidatedValues { get; init; } = new List<AccountValue>(0);
+
+        /// <summary>
+        /// 単体財務諸表の勘定項目時系列データ
+        /// </summary>
+        /// <typeparam name="AccountValue">会計項目値</typeparam>
+        public IReadOnlyList<AccountValue> NonConsolidatedValues { get; init; } = new List<AccountValue>(0);
     }
 }
