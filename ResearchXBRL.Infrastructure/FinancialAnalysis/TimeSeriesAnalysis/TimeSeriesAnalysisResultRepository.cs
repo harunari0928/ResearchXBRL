@@ -77,7 +77,7 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
         }
         private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndConsolidatedAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
         {
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
     A.amounts,
@@ -169,7 +169,7 @@ ORDER BY
 
         private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndNonConsolidatedAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
         {
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
     A.amounts,
