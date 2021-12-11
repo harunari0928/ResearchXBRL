@@ -12,7 +12,8 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
         public string AccountName { get; init; } = "";
         public UnitViewModel? Unit { get; init; } = null;
         public CorporationViewModel Corporation { get; init; } = new CorporationViewModel();
-        public IReadOnlyList<AccountValueViewModel> Values { get; init; } = new AccountValueViewModel[0];
+        public IReadOnlyList<AccountValueViewModel> ConsolidatedValues { get; init; } = new AccountValueViewModel[0];
+        public IReadOnlyList<AccountValueViewModel> NonConsolidatedValues { get; init; } = new AccountValueViewModel[0];
 
         public TimeSeriesAnalysisViewModel() { }
         public TimeSeriesAnalysisViewModel(TimeSeriesAnalysisResult analysis)
@@ -20,7 +21,8 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
             AccountName = analysis.AccountName;
             Unit = MapToViewModel(analysis.Unit);
             Corporation = MapToViewModel(analysis);
-            Values = MapToViewModel(analysis.Values);
+            ConsolidatedValues = MapToViewModel(analysis.ConsolidatedValues);
+            NonConsolidatedValues = MapToViewModel(analysis.NonConsolidatedValues);
         }
 
         private static UnitViewModel? MapToViewModel(IUnit? unit) => unit switch

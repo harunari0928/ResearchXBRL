@@ -38,14 +38,16 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
             await connection.DisposeAsync();
         }
 
-        public async Task<TimeSeriesAnalysisResult> GetConsolidateResult(string corporationId, string accountItemName)
+        public async Task<TimeSeriesAnalysisResult> GetResult(string corporationId, string accountItemName)
         {
-            var (unit, accountValues) = await ReadUnitAndConsolidateAccountValues(connection, corporationId, accountItemName);
+            var (unit, consolidatedAccountValues) = await ReadUnitAndConsolidatedAccountValues(connection, corporationId, accountItemName);
+            var (_, nonConsolidatedAccountValues) = await ReadUnitAndNonConsolidatedAccountValues(connection, corporationId, accountItemName);
             return new TimeSeriesAnalysisResult
             {
                 AccountName = accountItemName,
                 Unit = unit,
-                Values = accountValues,
+                ConsolidatedValues = consolidatedAccountValues,
+                NonConsolidatedValues = nonConsolidatedAccountValues,
                 Corporation = await corporationRepository.Get(corporationId)
                     ?? throw new ArgumentException("指定された企業は存在しません")
             };
@@ -73,9 +75,9 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
                 Measure = $"{reader[measureColumn]}"
             };
         }
-        private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndConsolidateAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
+        private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndConsolidatedAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
         {
-            var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
     A.amounts,
@@ -143,7 +145,8 @@ ORDER BY
                 .Value = accountItemName;
             command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
                 .Value = corporationId;
-            return await GetAccountValues(await command.ExecuteReaderAsync());
+            using var reader = await command.ExecuteReaderAsync();
+            return await GetAccountValues(reader);
         }
         private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> GetAccountValues(NpgsqlDataReader reader)
         {
@@ -165,22 +168,9 @@ ORDER BY
             return (unit, values);
         }
 
-        public async Task<TimeSeriesAnalysisResult> GetNonConsolidateResult(string corporationId, string accountItemName)
+        private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndNonConsolidatedAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
         {
-            var (unit, accountValues) = await ReadUnitAndNonConsolidateAccountValues(connection, corporationId, accountItemName);
-            return new TimeSeriesAnalysisResult
-            {
-                AccountName = accountItemName,
-                Unit = unit,
-                Values = accountValues,
-                Corporation = await corporationRepository.Get(corporationId)
-                    ?? throw new ArgumentException("指定された企業は存在しません")
-            };
-        }
-
-        private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndNonConsolidateAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
-        {
-            var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
     A.amounts,
@@ -248,7 +238,8 @@ ORDER BY
                 .Value = accountItemName;
             command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
                 .Value = corporationId;
-            return await GetAccountValues(await command.ExecuteReaderAsync());
+            using var reader = await command.ExecuteReaderAsync();
+            return await GetAccountValues(reader);
         }
         private static IAccountsPeriod GetAccountsPeriod(NpgsqlDataReader reader, int instantDateColumn, int fromDateColumn, int toDateColumn)
         {
