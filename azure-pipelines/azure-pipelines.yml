@@ -2,7 +2,6 @@ trigger:
 - main
 - release/*
 - develop
-- feature/*
 
 pool:
   vmImage: 'ubuntu-20.04'
@@ -16,10 +15,16 @@ steps:
 - template: buildAndTest.yml
 
 - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-  - template: main.yml
+  - template: pushImages.yml
+    parameters:
+      imageTag: 'stable'
 
 - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/release/') }}:
-  - template: release.yml
+  - template: pushImages.yml
+    parameters:
+      imageTag: 'beta'
 
 - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-  - template: develop.yml
+  - template: pushImages.yml
+    parameters:
+      imageTag: 'alpha'
