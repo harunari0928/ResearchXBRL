@@ -49,7 +49,7 @@
             "args": [],
             "cwd": "${workspaceFolder}/Presentation/FinancialAnalysisAPI",
             "console": "internalConsole",
-            "stopAtEntry": true
+            "stopAtEntry": false
         },
         {
             "name": ".NET Core Attach",
