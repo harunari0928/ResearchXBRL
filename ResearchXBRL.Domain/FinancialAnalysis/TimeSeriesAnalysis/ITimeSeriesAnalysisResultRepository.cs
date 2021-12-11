@@ -10,6 +10,6 @@ namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis
         /// <param name="corporationId">企業コード</param>
         /// <param name="accountItemName">会計項目名</param>
         /// <returns>時系列分析データ</returns>
-        public Task<TimeSeriesAnalysisResult> GetConsolidateResult(string corporationId, string accountItemName);
+        public Task<TimeSeriesAnalysisResult> GetResult(string corporationId, string accountItemName);
     }
 }
