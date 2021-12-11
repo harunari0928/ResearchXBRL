@@ -77,7 +77,7 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
         }
         private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndConsolidatedAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
         {
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
     A.amounts,
@@ -145,7 +145,8 @@ ORDER BY
                 .Value = accountItemName;
             command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
                 .Value = corporationId;
-            return await GetAccountValues(await command.ExecuteReaderAsync());
+            using var reader = await command.ExecuteReaderAsync();
+            return await GetAccountValues(reader);
         }
         private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> GetAccountValues(NpgsqlDataReader reader)
         {
@@ -169,7 +170,7 @@ ORDER BY
 
         private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndNonConsolidatedAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
         {
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
     A.amounts,
@@ -237,7 +238,8 @@ ORDER BY
                 .Value = accountItemName;
             command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
                 .Value = corporationId;
-            return await GetAccountValues(await command.ExecuteReaderAsync());
+            using var reader = await command.ExecuteReaderAsync();
+            return await GetAccountValues(reader);
         }
         private static IAccountsPeriod GetAccountsPeriod(NpgsqlDataReader reader, int instantDateColumn, int fromDateColumn, int toDateColumn)
         {
