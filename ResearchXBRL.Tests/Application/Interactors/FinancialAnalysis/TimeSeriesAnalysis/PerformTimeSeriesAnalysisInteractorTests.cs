@@ -45,7 +45,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         CapitalAmount = 114514,
                         IsLinking = false
                     },
-                    Values = new List<AccountValue>
+                    ConsolidatedValues = new List<AccountValue>
                     {
                         new AccountValue
                         {
@@ -97,7 +97,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                 Assert.Equal(expected.Corporation.IsLinking, acutal.Corporation.IsLinking);
                 Assert.Equal(expected.Corporation.Name, acutal.Corporation.Name);
                 Assert.Equal(expected.Corporation.TypeOfIndustry, acutal.Corporation.TypeOfIndustry);
-                foreach (var (e, a) in expected.Values.Zip(acutal.ConsolidatedValues))
+                foreach (var (e, a) in expected.ConsolidatedValues.Zip(acutal.ConsolidatedValues))
                 {
                     Assert.Equal(e.Amount, a.Amount);
                     if (e.FinancialAccountPeriod is DurationPeriod durationPeriod)
@@ -130,7 +130,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         CapitalAmount = 114514,
                         IsLinking = false
                     },
-                    Values = new List<AccountValue>
+                    ConsolidatedValues = new List<AccountValue>
                     {
                         new AccountValue
                         {

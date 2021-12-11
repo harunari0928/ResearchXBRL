@@ -45,7 +45,7 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
             {
                 AccountName = accountItemName,
                 Unit = unit,
-                Values = accountValues,
+                ConsolidatedValues = accountValues,
                 Corporation = await corporationRepository.Get(corporationId)
                     ?? throw new ArgumentException("指定された企業は存在しません")
             };
@@ -172,7 +172,7 @@ ORDER BY
             {
                 AccountName = accountItemName,
                 Unit = unit,
-                Values = accountValues,
+                ConsolidatedValues = accountValues,
                 Corporation = await corporationRepository.Get(corporationId)
                     ?? throw new ArgumentException("指定された企業は存在しません")
             };
