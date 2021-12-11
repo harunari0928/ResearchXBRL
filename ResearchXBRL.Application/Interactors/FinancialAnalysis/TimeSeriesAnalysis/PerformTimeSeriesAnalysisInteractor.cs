@@ -28,27 +28,15 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnaly
                 throw new ArgumentException("指定された企業は存在しません");
             }
 
-            if (corporation.IsLinking)
-            {
-                return await GetConsolidateResult(input);
-            }
-
-            return await GetNonConsolidateResult(input);
+            return await GetConsolidateResult(input);
         }
 
         private async Task<TimeSeriesAnalysisViewModel> GetConsolidateResult(AnalyticalMaterials input)
         {
-            var nonConsolidateResult = await analysisResultRepository.GetConsolidateResult(
+            var nonConsolidateResult = await analysisResultRepository.GetResult(
                             input.CorporationId,
                             input.AccountItemName);
             return new TimeSeriesAnalysisViewModel(nonConsolidateResult);
-        }
-        private async Task<TimeSeriesAnalysisViewModel> GetNonConsolidateResult(AnalyticalMaterials input)
-        {
-            var consolidateResult = await analysisResultRepository.GetNonConsolidateResult(
-                                    input.CorporationId,
-                                    input.AccountItemName);
-            return new TimeSeriesAnalysisViewModel(consolidateResult);
         }
     }
 }
