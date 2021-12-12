@@ -41,11 +41,11 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
         public async Task<TimeSeriesAnalysisResult> GetResult(string corporationId, string accountItemName)
         {
             var (unit, consolidatedAccountValues) = await ReadUnitAndConsolidatedAccountValues(connection, corporationId, accountItemName);
-            var (_, nonConsolidatedAccountValues) = await ReadUnitAndNonConsolidatedAccountValues(connection, corporationId, accountItemName);
+            var (unitFromNonConsolidated, nonConsolidatedAccountValues) = await ReadUnitAndNonConsolidatedAccountValues(connection, corporationId, accountItemName);
             return new TimeSeriesAnalysisResult
             {
                 AccountName = accountItemName,
-                Unit = unit,
+                Unit = unit ?? unitFromNonConsolidated,
                 ConsolidatedValues = consolidatedAccountValues,
                 NonConsolidatedValues = nonConsolidatedAccountValues,
                 Corporation = await corporationRepository.Get(corporationId)
