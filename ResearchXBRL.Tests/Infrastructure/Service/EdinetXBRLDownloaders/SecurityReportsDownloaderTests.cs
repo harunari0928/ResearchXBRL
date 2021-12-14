@@ -10,7 +10,7 @@ using Xunit;
 
 namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
 {
-    public sealed class SecuritiesReportDownloaderTests
+    public sealed class SecurityReportsDownloaderTests
     {
         public class DownloadTests
         {
@@ -274,12 +274,12 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 }
             }
 
-            private SecuritiesReportDownloader CreateDownloader(MockHttpMessageHandler mockHttpHandler, string apiVersion)
+            private SecurityReportsDownloader CreateDownloader(MockHttpMessageHandler mockHttpHandler, string apiVersion)
             {
                 httpClientFactory
                     .Setup(x => x.CreateClient(typeof(EdinetXBRLDownloader).Name))
                     .Returns(mockHttpHandler.ToHttpClient());
-                return new SecuritiesReportDownloader(httpClientFactory.Object, apiVersion);
+                return new SecurityReportsDownloader(httpClientFactory.Object, apiVersion);
             }
         }
     }
