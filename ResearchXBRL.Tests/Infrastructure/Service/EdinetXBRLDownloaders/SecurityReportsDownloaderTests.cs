@@ -77,7 +77,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 public async Task 取得開始日から終了日までの全ての日付の書類一覧を取得する()
                 {
                     // arrange
-                    var startDay = new DateTimeOffset(2018, 4, 15, 10, 10, 10, TimeSpan.FromHours(9));
+                    var startDay = new DateTimeOffset(2019, 3, 15, 10, 10, 10, TimeSpan.FromHours(9));
                     var endDay = new DateTimeOffset(2019, 4, 15, 10, 10, 10, TimeSpan.FromHours(9));
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
 
@@ -97,7 +97,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
 
                     // act
                     await downloader
-                        // 2018/4/15 ~ 2019/4/15の365日間の書類一覧を取得する
+                        // 2019/3/15 ~ 2019/4/15の30日間の書類一覧を取得する
                         .Download(startDay, endDay)
                         .ForEachAsync(_ => { });
 
