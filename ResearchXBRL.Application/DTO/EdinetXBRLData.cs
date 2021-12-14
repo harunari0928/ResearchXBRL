@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -11,11 +10,16 @@ namespace ResearchXBRL.Application.DTO
         public string DocumentType { get; init; } = "";
         public string CompanyId { get; init; } = "";
         public DateTime DocumentDateTime { get; init; }
-        public Stream ZippedDataStream { get; init; } = new MemoryStream(0);
+        public Lazy<Task<MemoryStream>> LazyZippedDataStream { get; init; } = new();
 
         public async ValueTask DisposeAsync()
         {
-            await ZippedDataStream.DisposeAsync();
+            if (!LazyZippedDataStream.IsValueCreated)
+            {
+                return;
+            }
+            var value = await LazyZippedDataStream.Value;
+            await value.DisposeAsync();
         }
     }
 }

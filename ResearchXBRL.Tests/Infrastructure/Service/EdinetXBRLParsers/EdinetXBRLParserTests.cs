@@ -164,7 +164,12 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                     DocumentId = documentId,
                     CompanyId = companyId,
                     DocumentType = documentType,
-                    ZippedDataStream = stream
+                    LazyZippedDataStream = new Lazy<Task<MemoryStream>>(async () =>
+                    {
+                        var memoryStream = new MemoryStream();
+                        await stream.CopyToAsync(memoryStream);
+                        return memoryStream;
+                    }, true)
                 });
             }
 

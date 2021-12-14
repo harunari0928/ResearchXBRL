@@ -5,9 +5,12 @@ using System.Net.Http;
 
 namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
 {
-    public sealed class SecuritiesReportDownloader : EdinetXBRLDownloader
+    /// <summary>
+    /// 有価証券報告書のみをダウンロードする
+    /// </summary>
+    public sealed class SecurityReportsDownloader : EdinetXBRLDownloader
     {
-        public SecuritiesReportDownloader(IHttpClientFactory httpClientFactory, string apiVersion) : base(httpClientFactory, apiVersion)
+        public SecurityReportsDownloader(IHttpClientFactory httpClientFactory, string apiVersion) : base(httpClientFactory, apiVersion)
         {
         }
 
