@@ -77,17 +77,17 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
         {{
             ""docID"": ""{documentId4}"",
             ""ordinanceCode"": ""010"",
-            ""formCode"": ""030000"",
+            ""formCode"": ""043000"",
             ""docTypeCode"": ""140"",
-            ""edinetCode"": ""aaaa"",
+            ""edinetCode"": ""aaaa2"",
             ""submitDateTime"": ""2021-08-27""
         }},
         {{
             ""docID"": ""{documentId5}"",
             ""ordinanceCode"": ""010"",
-            ""formCode"": ""030000"",
+            ""formCode"": ""050000"",
             ""docTypeCode"": ""160"",
-            ""edinetCode"": ""aaaa"",
+            ""edinetCode"": ""aaaa3"",
             ""submitDateTime"": ""2021-08-27""
         }}
     ]
@@ -114,12 +114,12 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 }
             }
 
-            private SecurityReportsDownloader CreateDownloader(MockHttpMessageHandler mockHttpHandler, string apiVersion)
+            private AllSecurityReportsDownloader CreateDownloader(MockHttpMessageHandler mockHttpHandler, string apiVersion)
             {
                 httpClientFactory
                     .Setup(x => x.CreateClient(typeof(EdinetXBRLDownloader).Name))
                     .Returns(mockHttpHandler.ToHttpClient());
-                return new SecurityReportsDownloader(httpClientFactory.Object, apiVersion);
+                return new AllSecurityReportsDownloader(httpClientFactory.Object, apiVersion);
             }
         }
     }
