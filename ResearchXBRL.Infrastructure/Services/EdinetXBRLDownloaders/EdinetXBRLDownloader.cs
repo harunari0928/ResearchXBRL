@@ -94,6 +94,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
                 {
                     yield return documentInfo;
                 }
+                await Task.Delay(1000);
             }
         }
 
