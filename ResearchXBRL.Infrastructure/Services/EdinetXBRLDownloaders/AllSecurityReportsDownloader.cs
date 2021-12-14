@@ -17,11 +17,10 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
         protected override IAsyncEnumerable<DocumentInfo> GetFilteredDocumentIds(DateTime start, DateTime end)
         {
             return GetAllDocumentInfos(start, end)
-                .Where(x => x.OrdinanceCode == "010"
-                    || x.OrdinanceCode == "140"
-                    || x.OrdinanceCode == "160")
-                .Where(x =>
-                    x.FormCode == "030000");
+                .Where(x => x.OrdinanceCode == "010")
+                .Where(x => x.FormCode == "030000"
+                         || x.FormCode == "043000"
+                         || x.FormCode == "050000");
         }
     }
 }
