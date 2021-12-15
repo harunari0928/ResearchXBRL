@@ -10,8 +10,9 @@ namespace AquireFinancialReports
             Console.WriteLine("Aquire reportsTask is completed.");
         }
 
-        public void Progress(double percentage)
+        public void Progress(DateTimeOffset start, DateTimeOffset end, DateTimeOffset current)
         {
+            var percentage = (current - start).TotalDays / (end - start).TotalDays * 100;
             Console.WriteLine($"progress: {percentage:F2}%");
         }
 
