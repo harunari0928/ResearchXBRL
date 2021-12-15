@@ -47,7 +47,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
         {
             return xbrlNodes
                 .Where(x => x.GetAttributeValue("unitRef") is not null)
-                .Where(x => 
+                .Where(x =>
                     x.Name.StartsWith("jppfs_cor:")
                  || x.Name.StartsWith("jpigp_cor:"))
                 .Select(CreateReportItem);
@@ -104,7 +104,8 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
 
         private XmlDocument GetXBRL(IReadOnlyList<string> files)
         {
-            var xbrlFile = files.Single(x => x.EndsWith(".xbrl"));
+            // .xbrlファイルが複数存在する場合がある
+            var xbrlFile = files.First(x => x.EndsWith(".xbrl"));
             using var xbrlFileStream = fileStorage.Get(xbrlFile);
             var xbrl = new XmlDocument();
             xbrl.Load(xbrlFileStream);
@@ -180,7 +181,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
         {
             var zipFilePath = $"./{data.DocumentId}.zip";
             var unzippedFolderPath = $"./{data.DocumentId}";
-            fileStorage.Set(data.ZippedDataStream, zipFilePath);
+            fileStorage.Set(await data.LazyZippedDataStream.Value, zipFilePath);
             fileStorage.Unzip(zipFilePath, unzippedFolderPath);
             fileStorage.Delete(zipFilePath);
             await data.DisposeAsync();

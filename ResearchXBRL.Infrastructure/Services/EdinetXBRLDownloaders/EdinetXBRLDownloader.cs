@@ -41,23 +41,32 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
         {
             await foreach (var info in documentInfos)
             {
-                var queryParameters = $"type=1";
-                var url = $"{DocumentAPIUrl(info.DocID)}?{queryParameters}";
-                using var responseMessage = await httpClient.GetAsync(url);
-                if (!responseMessage.IsSuccessStatusCode)
-                {
-                    throw new HttpRequestException("書類API接続処理失敗", null, responseMessage.StatusCode);
-                }
-
                 yield return new EdinetXBRLData
                 {
                     DocumentId = info.DocID,
                     DocumentType = info.DocTypeCode,
                     CompanyId = info.EdinetCode,
                     DocumentDateTime = DateTime.Parse(info.SubmitDateTime),
-                    ZippedDataStream = await ReadContentStream(responseMessage)
+                    LazyZippedDataStream = GetLazyZippedDataStream(info)
                 };
             }
+        }
+
+        private Lazy<Task<MemoryStream>> GetLazyZippedDataStream(DocumentInfo info)
+        {
+            return new Lazy<Task<MemoryStream>>(() => GetZippedDataStream(info), true);
+        }
+
+        private async Task<MemoryStream> GetZippedDataStream(DocumentInfo info)
+        {
+            var queryParameters = $"type=1";
+            var url = $"{DocumentAPIUrl(info.DocID)}?{queryParameters}";
+            using var responseMessage = await httpClient.GetAsync(url);
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException("書類API接続処理失敗", null, responseMessage.StatusCode);
+            }
+            return await ReadContentStream(responseMessage);
         }
 
         private static async Task<MemoryStream> ReadContentStream(HttpResponseMessage responseMessage)
@@ -85,6 +94,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
                 {
                     yield return documentInfo;
                 }
+                await Task.Delay(100);
             }
         }
 

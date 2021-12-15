@@ -10,7 +10,7 @@ using Xunit;
 
 namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
 {
-    public sealed class SecuritiesReportDownloaderTests
+    public sealed class SecurityReportsDownloaderTests
     {
         public class DownloadTests
         {
@@ -67,7 +67,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                     // act
                     await downloader
                         .Download(startDay, endDay)
-                        .ForEachAsync(_ => { });
+                        .ForEachAsync(async data => await data.LazyZippedDataStream.Value);
 
                     // assert
                     mockHttpHandler.VerifyNoOutstandingExpectation();
@@ -77,7 +77,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 public async Task 取得開始日から終了日までの全ての日付の書類一覧を取得する()
                 {
                     // arrange
-                    var startDay = new DateTimeOffset(2018, 4, 15, 10, 10, 10, TimeSpan.FromHours(9));
+                    var startDay = new DateTimeOffset(2019, 3, 15, 10, 10, 10, TimeSpan.FromHours(9));
                     var endDay = new DateTimeOffset(2019, 4, 15, 10, 10, 10, TimeSpan.FromHours(9));
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
 
@@ -97,7 +97,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
 
                     // act
                     await downloader
-                        // 2018/4/15 ~ 2019/4/15の365日間の書類一覧を取得する
+                        // 2019/3/15 ~ 2019/4/15の30日間の書類一覧を取得する
                         .Download(startDay, endDay)
                         .ForEachAsync(_ => { });
 
@@ -229,7 +229,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 }
 
                 [Fact]
-                public async Task 書類API接続処理失敗例外を出す()
+                public async Task 書類API接続処理に失敗した場合例外を出す()
                 {
                     // arrange
                     var startDay = new DateTimeOffset(2018, 4, 15, 10, 10, 10, TimeSpan.FromHours(9));
@@ -267,19 +267,19 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                         });
 
                     // act & assert
-                    await Assert.ThrowsAsync<HttpRequestException>(() =>
-                        downloader
-                            .Download(startDay, startDay)
-                            .ForEachAsync(_ => { }));
+                    await foreach (var data in downloader.Download(startDay, startDay))
+                    {
+                        await Assert.ThrowsAsync<HttpRequestException>(async () => await data.LazyZippedDataStream.Value);
+                    }
                 }
             }
 
-            private SecuritiesReportDownloader CreateDownloader(MockHttpMessageHandler mockHttpHandler, string apiVersion)
+            private SecurityReportsDownloader CreateDownloader(MockHttpMessageHandler mockHttpHandler, string apiVersion)
             {
                 httpClientFactory
                     .Setup(x => x.CreateClient(typeof(EdinetXBRLDownloader).Name))
                     .Returns(mockHttpHandler.ToHttpClient());
-                return new SecuritiesReportDownloader(httpClientFactory.Object, apiVersion);
+                return new SecurityReportsDownloader(httpClientFactory.Object, apiVersion);
             }
         }
     }

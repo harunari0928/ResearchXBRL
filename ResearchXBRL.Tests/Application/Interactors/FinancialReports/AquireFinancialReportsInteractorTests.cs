@@ -169,7 +169,10 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                         .Handle(DateTimeOffset.Now, DateTimeOffset.Now);
 
                     // assert
-                    presenter.Verify(x => x.Progress(It.IsAny<double>()),
+                    presenter.Verify(x => x.Progress(
+                        It.IsAny<DateTimeOffset>(),
+                        It.IsAny<DateTimeOffset>(),
+                        It.IsAny<DateTimeOffset>()),
                         Times.Exactly(expectedDownloadResult.Length));
                 }
 

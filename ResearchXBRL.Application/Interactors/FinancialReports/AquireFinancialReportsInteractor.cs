@@ -63,8 +63,7 @@ namespace ResearchXBRL.Application.FinancialReports
 
         private async Task SaveReport(DateTimeOffset start, DateTimeOffset end, EdinetXBRLData data)
         {
-            var progress = CalculateProgress(start, end, data.DocumentDateTime);
-            presenter.Progress(progress);
+            presenter.Progress(start.DateTime, end.DateTime, data.DocumentDateTime);
             try
             {
                 if (await reportRepository.IsExists(data.DocumentId))
@@ -87,12 +86,6 @@ document_date_time: {data.DocumentDateTime}
             {
                 semaphore.Release();
             }
-        }
-
-        private static double CalculateProgress(DateTimeOffset start, DateTimeOffset end, DateTime documentDateTime)
-        {
-            return (documentDateTime - start).TotalDays
-                             / (end - start).TotalDays * 100;
         }
     }
 }
