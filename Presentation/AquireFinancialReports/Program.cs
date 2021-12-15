@@ -82,7 +82,7 @@ namespace AquireFinancialReports
                         x.GetService<IAquireFinancialReportsPresenter>(),
                         maxParallelism
                     ))
-                .AddTransient<IEdinetXBRLDownloader>(x => new AllSecurityReportsDownloader(x.GetService<IHttpClientFactory>(), "v1"))
+                .AddTransient<IEdinetXBRLDownloader>(x => new SecurityReportsDownloader(x.GetService<IHttpClientFactory>(), "v1"))
                 .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
                 .AddTransient<IFinancialReportRepository, FinancialReportRepository>()
                 .AddSingleton<IFileStorage>(_ => new LocalStorage(".tmp"))
