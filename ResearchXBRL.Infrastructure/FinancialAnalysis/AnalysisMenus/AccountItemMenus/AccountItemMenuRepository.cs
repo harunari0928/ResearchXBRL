@@ -36,7 +36,7 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountIte
 
         public async Task<AccountItemMenu> GetProposals(string keyword)
         {
-            var command = CreateReadCommand(keyword);
+            using var command = CreateReadCommand(keyword);
             return new AccountItemMenu
             {
                 AccountItems = await ReadAccountItems(command)
@@ -64,7 +64,7 @@ LIMIT 10;
         }
         private static async Task<IReadOnlyList<AccountItem>> ReadAccountItems(NpgsqlCommand command)
         {
-            var reader = await command.ExecuteReaderAsync();
+            using var reader = await command.ExecuteReaderAsync();
             var tmpDic = await ReadAccountElementsTable(reader);
             return ParseAccountItems(tmpDic).ToArray();
         }
