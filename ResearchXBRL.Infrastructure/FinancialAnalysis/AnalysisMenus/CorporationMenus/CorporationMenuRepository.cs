@@ -36,7 +36,7 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.Corporatio
 
         public async Task<CorporatonMenu> GetProposals(string keyword)
         {
-            var command = CreateReadCommand(keyword);
+            using var command = CreateReadCommand(keyword);
             return new CorporatonMenu
             {
                 Corporations = await ReadCorporations(command)
@@ -69,7 +69,7 @@ LIMIT 10;
         }
         private static async Task<IReadOnlyList<Corporation>> ReadCorporations(NpgsqlCommand command)
         {
-            var reader = await command.ExecuteReaderAsync();
+            using var reader = await command.ExecuteReaderAsync();
             var corporations = new List<Corporation>();
             while (await reader.ReadAsync())
             {
