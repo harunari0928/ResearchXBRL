@@ -77,7 +77,7 @@ LIMIT 1";
                 .MapVarchar("context_name", x => x.Name)
                 .MapInteger("period_type", x => x.Period is InstantPeriod ? 0 : 1)
                 .MapDate("period_from", x => x.Period is DurationPeriod p ? p.From.Date : null)
-                .MapDate("period_to", x => x.Period is DurationPeriod p ? p.From.Date : null)
+                .MapDate("period_to", x => x.Period is DurationPeriod p ? p.To.Date : null)
                 .MapDate("instant_date", x => x.Period is InstantPeriod p ? p.InstantDate.Date : null);
 
             await contextsHelper.SaveAllAsync(connection, reports.Contexts);

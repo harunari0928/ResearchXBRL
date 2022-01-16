@@ -15,7 +15,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
     {
         public sealed class ParseTests : IDisposable
         {
-            private readonly string documentId = "S100MMP3";
+            private readonly string documentId = "S100AJZW";
             private readonly string companyId = "test";
             private readonly string documentType = "testtype";
             private readonly LocalStorage storage = new("./work");
@@ -39,7 +39,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 Assert.Equal(documentType, report.Cover.DocumentType);
                 Assert.Equal(companyId, report.Cover.CompanyId);
                 Assert.Equal("jppfs", report.Cover.AccountingStandards);
-                Assert.Equal("2021-10-20", $"{report.Cover.SubmissionDate:yyyy-MM-dd}");
+                Assert.Equal("2017-06-23", $"{report.Cover.SubmissionDate:yyyy-MM-dd}");
             }
 
             [Fact]
@@ -86,31 +86,32 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 var report = await CreateReport();
 
                 // assert
-                Assert.Equal(195, report.Contexts.Count);
+                Assert.Equal(104, report.Contexts.Count);
 
-                // 一番先頭のコンテキスト
-                var firstContext = report.Contexts.Single(x => x.Name == "FilingDateInstant_jpcrp030000-asr_E02484-000MasudaKazuyukiMember");
+                // よくあるコンテキスト
+                var firstContext = report.Contexts.Single(x => x.Name == "CurrentYearInstant");
                 Assert.IsType<InstantPeriod>(firstContext.Period);
                 if (firstContext.Period is InstantPeriod instantPeriod1)
                 {
-                    Assert.Equal("2021-10-20", $"{instantPeriod1.InstantDate:yyyy-MM-dd}");
+                    Assert.Equal("2017-03-31", $"{instantPeriod1.InstantDate:yyyy-MM-dd}");
                 }
 
-                // 中間のコンテキスト
-                var intermediateContext = report.Contexts.Single(x => x.Name == "Prior1YearDuration_NonConsolidatedMember_CapitalStockMember");
+                // 期間のコンテキスト
+                var intermediateContext = report.Contexts.Single(x => x.Name == "Prior1YearDuration_NonConsolidatedMember_SubscriptionRightsToSharesMember");
                 Assert.IsType<DurationPeriod>(intermediateContext.Period);
                 if (intermediateContext.Period is DurationPeriod durationPeriod1)
                 {
-                    Assert.Equal("2019-08-01", $"{durationPeriod1.From:yyyy-MM-dd}");
-                    Assert.Equal("2020-07-31", $"{durationPeriod1.To:yyyy-MM-dd}");
+                    Assert.Equal("2015-04-01", $"{durationPeriod1.From:yyyy-MM-dd}");
+                    Assert.Equal("2016-03-31", $"{durationPeriod1.To:yyyy-MM-dd}");
                 }
 
                 // 一番最後のコンテキスト
-                var lastContext = report.Contexts.Single(x => x.Name == "FilingDateInstant_jpcrp030000-asr_E02484-000UedaTaroMember");
-                Assert.IsType<InstantPeriod>(lastContext.Period);
-                if (firstContext.Period is InstantPeriod instantPeriod2)
+                var lastContext = report.Contexts.Single(x => x.Name == "Prior4YearDuration_NonConsolidatedMember");
+                Assert.IsType<DurationPeriod>(lastContext.Period);
+                if (firstContext.Period is DurationPeriod durationPeriod2)
                 {
-                    Assert.Equal("2021-10-20", $"{instantPeriod2.InstantDate:yyyy-MM-dd}");
+                    Assert.Equal("2012-04-01", $"{durationPeriod2.From:yyyy-MM-dd}");
+                    Assert.Equal("2013-03-31", $"{durationPeriod2.To:yyyy-MM-dd}");
                 }
             }
 
@@ -123,17 +124,17 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 // assert
                 // 内閣府令項目は取らない
                 Assert.Empty(report.Where(x => x.Classification == "jpcrp"));
-                Assert.Equal(688, report.Where(x => x.Classification == "jppfs").Count());
-                Assert.Equal(0 + 688, report.Count);
+                Assert.Equal(365, report.Where(x => x.Classification == "jppfs").Count());
+                Assert.Equal(365, report.Count);
 
                 // 最初の勘定科目
                 var first = report[0];
                 Assert.Equal("jppfs", first.Classification);
                 Assert.Equal("CashAndDeposits", first.XBRLName);
-                Assert.Equal("Prior1YearInstant", first.ContextName);
+                Assert.Equal("Prior1YearInstant_NonConsolidatedMember", first.ContextName);
                 Assert.Equal("JPY", first.UnitName);
                 Assert.Equal(-6, first.NumericalAccuracy);
-                Assert.Equal(3282000000, first.Amounts);
+                Assert.Equal(83078000000, first.Amounts);
                 Assert.Null(first.Scale);
             }
 
