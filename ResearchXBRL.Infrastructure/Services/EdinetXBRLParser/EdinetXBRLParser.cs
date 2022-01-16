@@ -17,6 +17,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
     public sealed class EdinetXBRLParser : IEdinetXBRLParser
     {
         private readonly IFileStorage fileStorage;
+        private const string xbrlDirectoryPath = "XBRL/PublicDoc/";
 
         public EdinetXBRLParser(IFileStorage fileStorage)
         {
@@ -104,8 +105,10 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
 
         private XmlDocument GetXBRL(IReadOnlyList<string> files)
         {
-            // .xbrlファイルが複数存在する場合がある
-            var xbrlFile = files.First(x => x.EndsWith(".xbrl"));
+            // ファイル名先頭jpcrpかつ拡張子xbrlのファイルを取る
+            // EDINETのXBRLインスタンスファイル規則
+            // https://www.fsa.go.jp/search/20180228/2b_InstanceGuide.pdf 22ページ
+            var xbrlFile = files.Single(x => x.Contains($"{xbrlDirectoryPath}jpcrp") && x.EndsWith(".xbrl"));
             using var xbrlFileStream = fileStorage.Get(xbrlFile);
             var xbrl = new XmlDocument();
             xbrl.Load(xbrlFileStream);
@@ -114,7 +117,8 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
 
         private string GetAccountingStandards(IReadOnlyList<string> files)
         {
-            var xbrlFile = files.Single(x => x.EndsWith(".xsd"));
+            // ファイル名先頭jpcrpかつ拡張子.xsdのファイルを取る
+            var xbrlFile = files.Single(x => x.Contains($"{xbrlDirectoryPath}jpcrp") && x.EndsWith(".xsd"));
             using var xbrlFileStream = fileStorage.Get(xbrlFile);
             using var streamReader = new StreamReader(xbrlFileStream);
             var isJppfs = streamReader.ReadToEnd().Contains("jppfs");
@@ -186,7 +190,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
             fileStorage.Delete(zipFilePath);
             await data.DisposeAsync();
             return (unzippedFolderPath, fileStorage
-                .GetFiles(Path.Combine(unzippedFolderPath, $"XBRL/PublicDoc/"),
+                .GetFiles(Path.Combine(unzippedFolderPath, xbrlDirectoryPath),
                 "*"));
         }
     }
