@@ -26,17 +26,14 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                 new AccountItem
                 {
                     Name = "売掛金",
-                    XBRLNames = new string[] { "URIKAKE1", "URIKAKE2" }
                 },
                 new AccountItem
                 {
                     Name = "買掛金",
-                    XBRLNames = new string[] { "KAIKAKE1", "KAIKAKE2", "KAIKAKE3" }
                 },
                 new AccountItem
                 {
                     Name = "雑費",
-                    XBRLNames = new string[] { "ZAPPI1", "ZAPPI2", "ZAPPI3" }
                 }
             };
             var keyword = "キーワード";
@@ -72,17 +69,14 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                         new AccountItem
                         {
                             Name = "売掛金",
-                            XBRLNames = new string[] { "URIKAKE1", "URIKAKE2" }
                         },
                         new AccountItem
                         {
                             Name = "買掛金",
-                            XBRLNames = new string[] { "KAIKAKE1", "KAIKAKE2", "KAIKAKE3" }
                         },
                         new AccountItem
                         {
                             Name = "雑費",
-                            XBRLNames = new string[] { "ZAPPI1", "ZAPPI2", "ZAPPI3" }
                         }
                     }
                 });
@@ -109,17 +103,14 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                         new AccountItem
                         {
                             Name = "売掛金",
-                            XBRLNames = new string[] { "URIKAKE1", "URIKAKE2" }
                         },
                         new AccountItem
                         {
                             Name = "買掛金",
-                            XBRLNames = new string[] { "KAIKAKE1", "KAIKAKE2", "KAIKAKE3" }
                         },
                         new AccountItem
                         {
                             Name = "雑費",
-                            XBRLNames = new string[] { "ZAPPI1", "ZAPPI2", "ZAPPI3" }
                         }
                     }
                 });
