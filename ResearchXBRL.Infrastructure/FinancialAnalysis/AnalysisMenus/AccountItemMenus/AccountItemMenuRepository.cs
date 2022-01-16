@@ -39,7 +39,7 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountIte
             var command = CreateReadCommand(keyword);
             return new AccountItemMenu
             {
-                AccountItems = await ReadAccountItems(command)
+                AccountItems = await ReadAccountItems(command).ToListAsync()
             };
         }
 
@@ -48,60 +48,35 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountIte
             var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
-    account_name,
-    xbrl_name
+    account_name
 FROM
     account_elements
 WHERE
     classification IN ('jppfs', 'jpigp')
 AND
     account_name LIKE @accountName
+GROUP BY
+    account_name
 LIMIT 10;
 ";
             command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
                 .Value = $"%{keyword}%";
             return command;
         }
-        private static async Task<IReadOnlyList<AccountItem>> ReadAccountItems(NpgsqlCommand command)
+
+        private static async IAsyncEnumerable<AccountItem> ReadAccountItems(NpgsqlCommand command)
         {
             var reader = await command.ExecuteReaderAsync();
-            var tmpDic = await ReadAccountElementsTable(reader);
-            return ParseAccountItems(tmpDic).ToArray();
-        }
-        private static IEnumerable<AccountItem> ParseAccountItems(IReadOnlyDictionary<string, HashSet<string>> dic)
-        {
-            foreach (var key in dic.Keys)
-            {
-                yield return new AccountItem
-                {
-                    Name = key,
-                    XBRLNames = dic[key].ToArray()
-                };
-            }
-        }
-        private static async Task<Dictionary<string, HashSet<string>>> ReadAccountElementsTable(NpgsqlDataReader reader)
-        {
-            var tmpDic = new Dictionary<string, HashSet<string>>();
             while (await reader.ReadAsync())
             {
                 var accountName = reader[reader.GetOrdinal("account_name")].ToString();
-                var xbrlName = reader[reader.GetOrdinal("xbrl_name")].ToString();
-                if (accountName is null || xbrlName is null)
+                if (accountName is null)
                 {
                     continue;
                 }
 
-                if (tmpDic.ContainsKey(accountName))
-                {
-                    tmpDic[accountName].Add(xbrlName);
-                }
-                else
-                {
-                    tmpDic.Add(accountName, new HashSet<string> { xbrlName });
-                }
+                yield return new AccountItem { Name = accountName };
             }
-
-            return tmpDic;
         }
     }
 }

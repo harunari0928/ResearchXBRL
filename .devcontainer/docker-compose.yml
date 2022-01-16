@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ..:/src:cached
+    ports:
+      - "45612:45612"
     command: /bin/bash -c "dotnet build; while sleep 1000; do :; done"
     container_name: aquire_report_batch
     environment: 
