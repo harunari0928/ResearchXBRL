@@ -25,11 +25,11 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus.A
             }
 
             var accountItemMenu = await repository.GetProposals(keyword);
-            return accountItemMenu.AccountItems
-                .Select(x => new AccountItemViewModel
-                {
-                    Name = x.Name
-                }).ToArray();
+            return accountItemMenu.SuggestedAccountItems
+                .Prepend(accountItemMenu.SearchedAccountItem)
+                .OfType<AccountItem>()
+                .Select(x => new AccountItemViewModel { Name = x.Name })
+                .ToArray();
         }
     }
 }
