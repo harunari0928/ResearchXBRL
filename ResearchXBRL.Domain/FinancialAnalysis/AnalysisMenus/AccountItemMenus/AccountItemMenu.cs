@@ -4,6 +4,7 @@ namespace ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItemMenus
 {
     public sealed class AccountItemMenu
     {
-        public IReadOnlyList<AccountItem> AccountItems { get; init; } = new AccountItem[0];
+        public AccountItem? SearchedAccountItem { get; init; }
+        public IReadOnlyList<AccountItem> SuggestedAccountItems { get; init; } = new AccountItem[0];
     }
 }
