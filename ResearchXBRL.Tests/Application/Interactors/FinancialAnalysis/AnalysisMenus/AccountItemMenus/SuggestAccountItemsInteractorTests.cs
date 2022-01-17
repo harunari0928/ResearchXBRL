@@ -18,7 +18,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
         }
 
         [Fact]
-        public async Task 渡されたキーワードをもとにサジェスト対象会計項目を返す()
+        public async Task 渡されたキーワードをもとにサジェスト対象勘定項目を返す()
         {
             // arrange
             var expected = new List<AccountItem>
@@ -36,12 +36,88 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                     Name = "雑費",
                 }
             };
-            var keyword = "キーワード";
+            var keyword = "売掛金";
             repository
                 .Setup(x => x.GetProposals(keyword))
                 .ReturnsAsync(new AccountItemMenu
                 {
-                    AccountItems = expected
+                    SearchedAccountItem = expected.First(),
+                    SuggestedAccountItems = expected.Skip(1).ToArray()
+                });
+            var interactor = new SuggestAccountItemsInteractor(repository.Object);
+
+            // act
+            var actual = await interactor.Handle(keyword);
+
+            // assert
+            foreach (var (e, a) in expected.Zip(actual))
+            {
+                Assert.Equal(e.Name, a.Name);
+            }
+        }
+
+        [Fact]
+        public async Task 渡されたキーワードと同じ名前の勘定項目がサジェストの先頭にくる()
+        {
+            // arrange
+            var expected = new List<AccountItem>
+            {
+                new AccountItem
+                {
+                    Name = "売掛金",
+                },
+                new AccountItem
+                {
+                    Name = "買掛金",
+                },
+                new AccountItem
+                {
+                    Name = "雑費",
+                }
+            };
+            var keyword = "売掛金";
+            repository
+                .Setup(x => x.GetProposals(keyword))
+                .ReturnsAsync(new AccountItemMenu
+                {
+                    SearchedAccountItem = expected.First(),
+                    SuggestedAccountItems = expected.Skip(1).ToArray()
+                });
+            var interactor = new SuggestAccountItemsInteractor(repository.Object);
+
+            // act
+            var actual = await interactor.Handle(keyword);
+
+            // assert
+            Assert.Equal(keyword, actual.First().Name);
+        }
+
+        [Fact]
+        public async Task 渡されたキーワードと同じ勘定項目が存在しない場合でもサジェスト対象会計項目を返す()
+        {
+            // arrange
+            var expected = new List<AccountItem>
+            {
+                new AccountItem
+                {
+                    Name = "売掛金",
+                },
+                new AccountItem
+                {
+                    Name = "買掛金",
+                },
+                new AccountItem
+                {
+                    Name = "雑費",
+                }
+            };
+            var keyword = "売掛";
+            repository
+                .Setup(x => x.GetProposals(keyword))
+                .ReturnsAsync(new AccountItemMenu
+                {
+                    SearchedAccountItem = null,
+                    SuggestedAccountItems = expected.ToArray()
                 });
             var interactor = new SuggestAccountItemsInteractor(repository.Object);
 
@@ -64,7 +140,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                 .Setup(x => x.GetProposals(keyword))
                 .ReturnsAsync(new AccountItemMenu
                 {
-                    AccountItems = new List<AccountItem>
+                    SuggestedAccountItems = new List<AccountItem>
                     {
                         new AccountItem
                         {
@@ -98,7 +174,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                 .Setup(x => x.GetProposals(keyword))
                 .ReturnsAsync(new AccountItemMenu
                 {
-                    AccountItems = new List<AccountItem>
+                    SuggestedAccountItems = new List<AccountItem>
                     {
                         new AccountItem
                         {

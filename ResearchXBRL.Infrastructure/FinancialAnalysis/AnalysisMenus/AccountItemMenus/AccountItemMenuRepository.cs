@@ -36,14 +36,14 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountIte
 
         public async Task<AccountItemMenu> GetProposals(string keyword)
         {
-            using var command = CreateReadCommand(keyword);
             return new AccountItemMenu
             {
-                AccountItems = await ReadAccountItems(command).ToListAsync()
+                SearchedAccountItem = await ReadSearchedAccountItems(keyword),
+                SuggestedAccountItems = await ReadSuggestedAccountItems(keyword).ToListAsync()
             };
         }
 
-        private NpgsqlCommand CreateReadCommand(string keyword)
+        private NpgsqlCommand CreateReadSearchedCommand(string keyword)
         {
             var command = connection.CreateCommand();
             command.CommandText = @"
@@ -54,18 +54,57 @@ FROM
 WHERE
     classification IN ('jppfs', 'jpigp')
 AND
-    account_name LIKE @accountName
+    account_name = '売上高'
+LIMIT 1;
+";
+            command.Parameters.Add("@searchedAccountName", NpgsqlDbType.Varchar)
+                .Value = keyword;
+            return command;
+        }
+
+        private NpgsqlCommand CreateReadSuggestedCommand(string keyword)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+SELECT
+    account_name
+FROM
+    account_elements
+WHERE
+    classification IN ('jppfs', 'jpigp')
+AND
+    account_name <> @searchedAccountName
+AND
+    account_name LIKE @likeSearchedAccountName
 GROUP BY
     account_name
 LIMIT 10;
 ";
-            command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
+            command.Parameters.Add("@searchedAccountName", NpgsqlDbType.Varchar)
+                .Value = keyword;
+            command.Parameters.Add("@likeSearchedAccountName", NpgsqlDbType.Varchar)
                 .Value = $"%{keyword}%";
             return command;
         }
 
-        private static async IAsyncEnumerable<AccountItem> ReadAccountItems(NpgsqlCommand command)
+        private async Task<AccountItem?> ReadSearchedAccountItems(string keyword)
         {
+            using var command = CreateReadSearchedCommand(keyword);
+            var accountName = await command.ExecuteScalarAsync() as string;
+            if (accountName is null)
+            {
+                return null;
+            }
+
+            return new AccountItem
+            {
+                Name = accountName
+            };
+        }
+
+        private async IAsyncEnumerable<AccountItem> ReadSuggestedAccountItems(string keyword)
+        {
+            using var command = CreateReadSuggestedCommand(keyword);
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
