@@ -54,7 +54,7 @@ FROM
 WHERE
     classification IN ('jppfs', 'jpigp')
 AND
-    account_name = '売上高'
+    account_name = @searchedAccountName
 LIMIT 1;
 ";
             command.Parameters.Add("@searchedAccountName", NpgsqlDbType.Varchar)
