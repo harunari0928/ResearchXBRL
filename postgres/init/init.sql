@@ -40,6 +40,7 @@ create table report_items (
   context_name varchar not null
 );
 CREATE INDEX ON report_items (report_id);
+CREATE INDEX ON report_items (classification);
 
 create table document_type_master (
   code varchar primary key,
