@@ -8,13 +8,12 @@ using System.Linq;
 
 namespace ResearchXBRL.Domain.FinancialReports
 {
-    public sealed class FinancialReport : IReadOnlyList<FinancialReportItem>
+    public sealed class FinancialReport : IReadOnlyCollection<FinancialReportItem>
     {
-        private readonly FinancialReportItem[] reportItems;
-
-        public FinancialReportItem this[int index] => reportItems[index];
-
-        public int Count => reportItems.Length;
+        private readonly FinancialReportItem[] reportedAccountItems;
+        private readonly FinancialReportItem[] cabinetOfficeOrdinanceItems;
+        
+        public int Count => reportedAccountItems.Length + cabinetOfficeOrdinanceItems.Length;
 
         /// <summary>
         ///  表紙
@@ -31,9 +30,12 @@ namespace ResearchXBRL.Domain.FinancialReports
         /// </summary>
         public IReadOnlySet<Context> Contexts { get; init; } = new HashSet<Context>();
 
-        public FinancialReport(IEnumerable<FinancialReportItem> reportItems)
+        public FinancialReport(
+            IEnumerable<FinancialReportItem> reportedAccountItems,
+            IEnumerable<FinancialReportItem> reportedCabinetOfficeOrdinanceItems)
         {
-            this.reportItems = reportItems.ToArray();
+            this.reportedAccountItems = reportedAccountItems.ToArray();
+            this.cabinetOfficeOrdinanceItems = reportedCabinetOfficeOrdinanceItems.ToArray();
         }
 
         public IEnumerator<FinancialReportItem> GetEnumerator()
@@ -48,7 +50,7 @@ namespace ResearchXBRL.Domain.FinancialReports
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            foreach (var item in reportItems)
+            foreach (var item in reportedAccountItems)
             {
                 yield return item;
             }

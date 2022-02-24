@@ -35,7 +35,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser
 
             fileStorage.Delete(directory);
 
-            return new FinancialReport(CreateReportItems(xbrlNodes))
+            return new FinancialReport(CreateReportItems(xbrlNodes), new FinancialReportItem[] { })
             {
                 Cover = CreateReortCover(data, xbrlNodes, accountingStandards),
                 Units = CreateUnits(xbrlNodes),

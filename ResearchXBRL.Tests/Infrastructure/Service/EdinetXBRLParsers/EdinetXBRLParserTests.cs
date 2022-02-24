@@ -127,7 +127,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 Assert.Equal(0 + 688, report.Count);
 
                 // 最初の勘定科目
-                var first = report[0];
+                var first = report.First();
                 Assert.Equal("jppfs", first.Classification);
                 Assert.Equal("CashAndDeposits", first.XBRLName);
                 Assert.Equal("Prior1YearInstant", first.ContextName);

@@ -282,7 +282,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
                     .Returns(reports);
                 parser
                     .Setup(x => x.Parse(It.IsAny<EdinetXBRLData>()))
-                    .ReturnsAsync(new FinancialReport(Enumerable.Empty<FinancialReportItem>())
+                    .ReturnsAsync(new FinancialReport(Enumerable.Empty<FinancialReportItem>(), Enumerable.Empty<FinancialReportItem>())
                     {
                         Cover = new ReportCover
                         {

@@ -12,7 +12,7 @@ namespace ResearchXBRL.Tests.Domain.FinancialReports
         public void 報告書内の勘定項目個数を返す()
         {
             // arrange
-            var items = new FinancialReportItem[]
+            var items1 = new FinancialReportItem[]
             {
                 new FinancialReportItem
                 {
@@ -27,12 +27,19 @@ namespace ResearchXBRL.Tests.Domain.FinancialReports
 
                 },
             };
+            var items2 = new FinancialReportItem[]
+            {
+                new FinancialReportItem
+                {
+
+                },
+            };
 
             // act
-            var report = new FinancialReport(items);
+            var report = new FinancialReport(items1, items2);
 
             // assert
-            Assert.Equal(items.Length, report.Count);
+            Assert.Equal(items1.Length + items2.Length, report.Count);
         }
 
         [Fact]
@@ -54,7 +61,7 @@ namespace ResearchXBRL.Tests.Domain.FinancialReports
                     XBRLName = "3"
                 },
             };
-            var report = new FinancialReport(items);
+            var report = new FinancialReport(items, items);
 
             // act
             var expected = string.Join(',', report.Select(x => x.XBRLName));
