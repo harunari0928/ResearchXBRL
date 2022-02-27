@@ -116,3 +116,101 @@ CREATE TABLE account_elements (
   account_name VARCHAR NOT NULL,
   PRIMARY KEY (xbrl_name, taxonomy_version, classification)
 );
+
+CREATE TABLE aggregation_of_names_list (
+  aggregate_target VARCHAR NOT NULL,
+  aggregate_result VARCHAR NOT NULL,
+  PRIMARY KEY (aggregate_target)
+);
+
+INSERT INTO aggregation_of_names_list
+  (aggregate_target, aggregate_result)
+VALUES
+  -- 売上高
+  ('NetSalesSummaryOfBusinessResults', 'NetSales'),
+  ('OperatingRevenue1', 'NetSales'),
+  ('ShippingBusinessRevenueWAT', 'NetSales'),
+  ('ShippingBusinessRevenueAndOtherOperatingRevenueWAT', 'NetSales'),
+  ('ShippingBusinessRevenueAndOtherServiceRevenueWAT', 'NetSales'),
+  ('OperatingRevenueELE', 'NetSales'),
+  ('OperatingRevenueRWY', 'NetSales'),
+  ('OperatingRevenueSEC', 'NetSales'),
+  ('ContractsCompletedRevOA', 'NetSales'),
+  ('NetSalesNS', 'NetSales'),
+  ('PLJHFDAKJHGF', 'NetSales'),
+  ('SalesAllSegments', 'NetSales'),
+  ('SalesDetails', 'NetSales'),
+  ('TotalSales', 'NetSales'),
+  ('SalesAndOtherOperatingRevenueSummaryOfBusinessResults', 'NetSales'),
+  ('NetSalesAndOtherOperatingRevenueSummaryOfBusinessResults', 'NetSales'),
+  ('NetSalesAndServiceRevenueSummaryOfBusinessResults', 'NetSales'),
+  ('NetSalesAndOperatingRevenueSummaryOfBusinessResults', 'NetSales'),
+  ('NetSalesAndOperatingRevenue2SummaryOfBusinessResults', 'NetSales'),
+  ('NetSalesAndOperatingRevenue', 'NetSales'),
+  ('NetSalesOfFinishedGoodsRevOA', 'NetSales'),
+  ('NetSalesOfMerchandiseAndFinishedGoodsRevOA', 'NetSales'),
+  ('RevenuesUSGAAPSummaryOfBusinessResults', 'NetSales'),
+  ('NetSalesIFRSSummaryOfBusinessResults', 'NetSales'),
+  ('TotalTradingTransactionIFRSSummaryOfBusinessResults', 'NetSales'),
+  ('TotalTradingTransactionsIFRSSummaryOfBusinessResults', 'NetSales'),
+  ('Revenue', 'NetSales'),
+  ('RevenueIFRSSummaryOfBusinessResults', 'NetSales'),
+  ('RevenueSummaryOfBusinessResults', 'NetSales'),
+  ('OperatingRevenue2', 'NetSales'),
+  ('OperatingRevenue2SummaryOfBusinessResults', 'NetSales'),
+  ('GrossOperatingRevenue', 'NetSales'),
+  ('GrossOperatingRevenueSummaryOfBusinessResults', 'NetSales'),
+  ('NetSalesRevOA', 'NetSales'),
+  ('InsurancePremiumsAndOtherOIINS', 'NetSales'),
+  ('PremiumAndOtherIncomeSummaryOfBusinessResults', 'NetSales'),
+  ('InsurancePremiumsAndOtherIncomeSummaryOfBusinessResults', 'NetSales'),
+  ('InsurancePremiumsAndOthersSummaryOfBusinessResults', 'NetSales'),
+  ('InsurancePremiumsAndOtherSummaryOfBusinessResults', 'NetSales'),
+  ('WholeChainStoreSalesSummaryOfBusinessResults', 'NetSales'),
+  ('NetSalesOfCompletedConstructionContractsCNS', 'NetSales'),
+  ('NetSalesOfCompletedConstructionContractsSummaryOfBusinessResults', 'NetSales'),
+  ('ContractsCompletedSummaryOfBusinessResults', 'NetSales'),
+  ('RentIncomeOfRealEstateRevOA', 'NetSales'),
+  ('OperatingRevenueSPF', 'NetSales'),
+  ('OperatingRevenueIVT', 'NetSales'),
+  ('OperatingRevenueCMD', 'NetSales'),
+  ('OperatingRevenueOILTelecommunications', 'NetSales'),
+  ('OperatingRevenue1SummaryOfBusinessResults', 'NetSales'),
+  ('OrdinaryIncomeBNK', 'NetSales'),
+  ('OperatingIncomeINS', 'NetSales'),
+  ('OrdinaryIncomeSummaryOfBusinessResults', 'NetSales'),
+  ('BusinessRevenues', 'NetSales'),
+  ('BusinessRevenue', 'NetSales'),
+  ('BusinessRevenueRevOA', 'NetSales'),
+  ('OperatingRevenue', 'NetSales'),
+  ('SummaryOfSalesBusinessResults', 'NetSales'),
+  ('OperatingRevenuesSummaryOfBusinessResults', 'NetSales'),
+  ('BusinessRevenueSummaryOfBusinessResults', 'NetSales'),
+  ('OperatingRevenueSummaryOfBusinessResults', 'NetSales'),
+  -- 営業利益
+  ('ProfitLossFromOperatingActivities', 'OperatingIncome'),
+  ('OperatingIncomeLoss', 'OperatingIncome'),
+  ('OperatingIncomeLossUSGAAPSummaryOfBusinessResults', 'OperatingIncome'),
+  ('OperatingProfitLossIFRSSummaryOfBusinessResults', 'OperatingIncome'),
+  ('OperatingProfitIFRSSummaryOfBusinessResults', 'OperatingIncome'),
+  ('OperatingIncomeLossIFRSSummaryOfBusinessResults', 'OperatingIncome'),
+  ('OperatingIncomeIFRSSummaryOfBusinessResults', 'OperatingIncome'),
+  -- 経常利益
+  ('OrdinaryIncomeLossSummaryOfBusinessResults', 'OrdinaryIncome'),
+  -- 親会社の所有者に帰属する利益
+  ('ProfitLossAttributableToOwnersOfParentSummaryOfBusinessResults', 'ProfitLossAttributableToOwnersOfParent'),
+  ('ProfitLossAndAttributableToOwnersOfParent', 'ProfitLossAttributableToOwnersOfParent'),
+  -- ROE
+  ('RateOfReturnOnEquityUSGAAPSummaryOfBusinessResults', 'RateOfReturnOnEquitySummaryOfBusinessResults'),
+  ('NetIncomeToSalesBelongingToShareholdersSummaryOfBusinessResults', 'RateOfReturnOnEquitySummaryOfBusinessResults'),
+  ('RateOfReturnOnEquityIFRSSummaryOfBusinessResults', 'RateOfReturnOnEquitySummaryOfBusinessResults'),
+  -- EPS
+  ('BasicEarningsLossPerShareUSGAAPSummaryOfBusinessResults', 'BasicEarningsLossPerShareSummaryOfBusinessResults'),
+  ('BasicEarningsLossPerShareIFRSSummaryOfBusinessResults', 'BasicEarningsLossPerShareSummaryOfBusinessResults'),
+  -- 潜在株式調整後ＥＰＳ
+  ('DilutedEarningsLossPerShareUSGAAPSummaryOfBusinessResults', 'DilutedEarningsPerShareSummaryOfBusinessResults'),
+  ('DilutedEarningsLossPerShareIFRSSummaryOfBusinessResults', 'DilutedEarningsPerShareSummaryOfBusinessResults'),
+  -- １株当たり配当
+  ('DividendPaidPerShareFirstSeriesModelAAClassSharesSummaryOfBusinessResults', 'DividendPaidPerShareSummaryOfBusinessResults'),
+  ('InterimDividendPaidPerShareSummaryOfBusinessResults', 'DividendPaidPerShareSummaryOfBusinessResults'),
+  ('InterimDividendPaidPerShareFirstSeriesModelAAClassSharesSummaryOfBusinessResults', 'DividendPaidPerShareSummaryOfBusinessResults');
