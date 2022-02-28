@@ -20,11 +20,6 @@ namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis
         public IUnit? Unit { get; init; } = null;
 
         /// <summary>
-        /// 企業情報
-        /// </summary>
-        public Corporation Corporation { get; init; } = new Corporation();
-
-        /// <summary>
         /// 連結財務諸表の勘定項目時系列データ
         /// </summary>
         /// <typeparam name="AccountValue">会計項目値</typeparam>

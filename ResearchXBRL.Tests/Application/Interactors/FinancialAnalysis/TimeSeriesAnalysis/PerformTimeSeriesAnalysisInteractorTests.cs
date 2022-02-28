@@ -39,12 +39,6 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                         Name = "JPY",
                         Measure = "てきとう"
                     },
-                    Corporation = new Corporation
-                    {
-                        Name = "変な会社",
-                        CapitalAmount = 114514,
-                        IsLinking = false
-                    },
                     ConsolidatedValues = new List<AccountValue>
                     {
                         new AccountValue
@@ -95,8 +89,8 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                     CorporationId = "testCor",
                     AccountItemName = "test"
                 };
-                corporationRepository.Setup(x => x.Get(It.IsAny<string>()))
-                    .ReturnsAsync(expected.Corporation);
+                corporationRepository.Setup(x => x.Exists(It.IsAny<string>()))
+                    .ReturnsAsync(true);
                 analysisResultRepository
                     .Setup(x => x.GetResult(
                         input.CorporationId,
@@ -110,10 +104,6 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                 // assert
                 Assert.Equal(expected.AccountName, acutal.AccountName);
                 Assert.Equal(expected.Unit.Name, acutal.Unit?.Name);
-                Assert.Equal(expected.Corporation.CapitalAmount, acutal.Corporation.CapitalAmount);
-                Assert.Equal(expected.Corporation.IsLinking, acutal.Corporation.IsLinking);
-                Assert.Equal(expected.Corporation.Name, acutal.Corporation.Name);
-                Assert.Equal(expected.Corporation.TypeOfIndustry, acutal.Corporation.TypeOfIndustry);
                 AssertAccountValues(expected.ConsolidatedValues, acutal.ConsolidatedValues);
                 AssertAccountValues(expected.NonConsolidatedValues, acutal.NonConsolidatedValues);
             }
@@ -146,12 +136,6 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                     {
                         Name = "JPY",
                         Measure = "てきとう"
-                    },
-                    Corporation = new Corporation
-                    {
-                        Name = "変な会社",
-                        CapitalAmount = 114514,
-                        IsLinking = false
                     },
                     ConsolidatedValues = new List<AccountValue>
                     {
@@ -186,8 +170,8 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                     CorporationId = "testCor",
                     AccountItemName = "test"
                 };
-                corporationRepository.Setup(x => x.Get(It.IsAny<string>()))
-                    .ReturnsAsync(null as Corporation);
+                corporationRepository.Setup(x => x.Exists(It.IsAny<string>()))
+                    .ReturnsAsync(false);
                 analysisResultRepository
                     .Setup(x => x.GetResult(
                         input.CorporationId,

@@ -32,7 +32,7 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis.Corpo
             await connection.DisposeAsync();
         }
 
-        public async Task<Corporation?> Get(string corporationId)
+        public async Task<bool> Exists(string corporationId)
         {
             using var command = connection.CreateCommand();
             command.CommandText = @"
@@ -50,17 +50,7 @@ LIMIT 1
             command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
                 .Value = corporationId;
             using var reader = await command.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-            {
-                return null;
-            }
-            return new Corporation
-            {
-                IsLinking = bool.Parse($"{reader["is_linking"]}"),
-                CapitalAmount = decimal.Parse($"{reader["capital_amount"]}"),
-                Name = $"{reader["submitter_name"]}",
-                TypeOfIndustry = $"{reader["type_of_industry"]}"
-            };
+            return await reader.ReadAsync();
         }
     }
 }
