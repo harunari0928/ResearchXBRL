@@ -4,6 +4,6 @@ namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations
 {
     public interface ICorporationRepository
     {
-        Task<bool> Exists(string corporationId);
+        ValueTask<bool> Exists(string corporationId);
     }
 }

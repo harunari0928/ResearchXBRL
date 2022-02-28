@@ -32,8 +32,13 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis.Corpo
             await connection.DisposeAsync();
         }
 
-        public async Task<bool> Exists(string corporationId)
+        public async ValueTask<bool> Exists(string corporationId)
         {
+            if (string.IsNullOrWhiteSpace(corporationId))
+            {
+                return false;
+            }
+
             using var command = connection.CreateCommand();
             command.CommandText = @"
 SELECT
