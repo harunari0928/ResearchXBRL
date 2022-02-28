@@ -13,11 +13,9 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
     public sealed class TimeSeriesAnalysisResultRepository : ITimeSeriesAnalysisResultRepository, IDisposable, IAsyncDisposable
     {
         private readonly NpgsqlConnection connection;
-        private readonly ICorporationRepository corporationRepository;
 
         public TimeSeriesAnalysisResultRepository(ICorporationRepository corporationRepository)
         {
-            this.corporationRepository = corporationRepository;
             var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
             var userId = Environment.GetEnvironmentVariable("DB_USERID");
             var dbName = Environment.GetEnvironmentVariable("DB_NAME");
@@ -48,8 +46,6 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
                 Unit = unit ?? unitFromNonConsolidated,
                 ConsolidatedValues = consolidatedAccountValues,
                 NonConsolidatedValues = nonConsolidatedAccountValues,
-                Corporation = await corporationRepository.Get(corporationId)
-                    ?? throw new ArgumentException("指定された企業は存在しません")
             };
         }
 

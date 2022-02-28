@@ -22,8 +22,8 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnaly
 
         public async Task<TimeSeriesAnalysisViewModel> Handle(AnalyticalMaterials input)
         {
-            var corporation = await corporationRepository.Get(input.CorporationId);
-            if (corporation is null)
+            var corporationExists = await corporationRepository.Exists(input.CorporationId);
+            if (!corporationExists)
             {
                 throw new ArgumentException("指定された企業は存在しません");
             }

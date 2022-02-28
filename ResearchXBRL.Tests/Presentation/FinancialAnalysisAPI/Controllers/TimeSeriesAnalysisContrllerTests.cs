@@ -38,10 +38,6 @@ namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
                         Name = "testJPY",
                         Measure = "aaa"
                     },
-                    Corporation = new CorporationViewModel
-                    {
-                        Name = "test",
-                    },
                     ConsolidatedValues = new List<AccountValueViewModel>
                     {
                         new AccountValueViewModel
