@@ -118,10 +118,9 @@ CREATE TABLE account_elements (
 );
 
 CREATE TABLE aggregation_of_names_list (
-  aggregate_target VARCHAR NOT NULL,
+  aggregate_target VARCHAR PRIMARY KEY,
   aggregate_result VARCHAR NOT NULL,
   priority_of_use INT NOT NULL -- 名寄せ元が複数存在したときの優先順位 数字が若いほど優先される
-  PRIMARY KEY (aggregate_target)
 );
 
 INSERT INTO aggregation_of_names_list
