@@ -6,7 +6,7 @@ using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis.Corporations
 {
-    public sealed class CorporationRepository : ICorporationRepository, IDisposable, IAsyncDisposable
+    public sealed class CorporationRepository : ICorporationsRepository, IDisposable, IAsyncDisposable
     {
         private readonly NpgsqlConnection connection;
 

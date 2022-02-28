@@ -51,7 +51,7 @@ namespace FinancialAnalysisAPI
             services.AddTransient<ISuggestCorporationsUsecase, SuggestCorporationsInteractor>();
             services.AddTransient<IAccountItemMenuRepository, AccountItemMenuRepository>();
             services.AddTransient<ICorporationMenuRepository, CorporationMenuRepository>();
-            services.AddTransient<ICorporationRepository, CorporationRepository>();
+            services.AddTransient<ICorporationsRepository, CorporationRepository>();
             services.AddTransient<ITimeSeriesAnalysisResultRepository, TimeSeriesAnalysisResultRepository>();
             services.AddTransient<IPerformTimeSeriesAnalysisUseCase, PerformTimeSeriesAnalysisInteractor>();
 
