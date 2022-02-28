@@ -71,8 +71,8 @@ namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Transfer
                 // assert                
                 accountElementWriter
                     .Verify(x => x.Write(It.Is<IEnumerable<AccountElement>>(x =>
-                    JsonSerializer.Serialize(expectedAccountElements, default)
-                    == JsonSerializer.Serialize(x, default)))
+                    JsonSerializer.Serialize(expectedAccountElements, new JsonSerializerOptions())
+                    == JsonSerializer.Serialize(x, new JsonSerializerOptions())))
                     , Times.Once);
             }
 
