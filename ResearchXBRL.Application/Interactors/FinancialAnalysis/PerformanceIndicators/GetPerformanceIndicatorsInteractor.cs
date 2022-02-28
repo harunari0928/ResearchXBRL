@@ -1,12 +1,13 @@
 using System;
 using System.Threading.Tasks;
 using ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators;
+using ResearchXBRL.Application.Usecase.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Corporations;
 
 namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.PerformanceIndicators;
 
-public class GetPerformanceIndicatorsInteractor
+public sealed class GetPerformanceIndicatorsInteractor : IGetPerformanceIndicatorsUsecase
 {
     private readonly IPerformanceIndicatorsRepository repository;
     private readonly ICorporationsRepository corporationRepository;
