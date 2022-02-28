@@ -5,7 +5,6 @@ using Npgsql;
 using NpgsqlTypes;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.AccountPeriods;
-using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Units;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
@@ -14,7 +13,7 @@ namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
     {
         private readonly NpgsqlConnection connection;
 
-        public TimeSeriesAnalysisResultRepository(ICorporationRepository corporationRepository)
+        public TimeSeriesAnalysisResultRepository(ICorporationsRepository corporationRepository)
         {
             var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
             var userId = Environment.GetEnvironmentVariable("DB_USERID");

@@ -19,7 +19,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
         public sealed class HandleTests
         {
             private readonly Mock<ITimeSeriesAnalysisResultRepository> analysisResultRepository;
-            private readonly Mock<ICorporationRepository> corporationRepository;
+            private readonly Mock<ICorporationsRepository> corporationRepository;
 
             public HandleTests()
             {

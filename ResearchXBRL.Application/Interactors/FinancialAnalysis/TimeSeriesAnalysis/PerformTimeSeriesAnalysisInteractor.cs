@@ -10,11 +10,11 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnaly
     public sealed class PerformTimeSeriesAnalysisInteractor : IPerformTimeSeriesAnalysisUseCase
     {
         private readonly ITimeSeriesAnalysisResultRepository analysisResultRepository;
-        private readonly ICorporationRepository corporationRepository;
+        private readonly ICorporationsRepository corporationRepository;
 
         public PerformTimeSeriesAnalysisInteractor(
             ITimeSeriesAnalysisResultRepository analysisResultRepository,
-            ICorporationRepository corporationRepository)
+            ICorporationsRepository corporationRepository)
         {
             this.analysisResultRepository = analysisResultRepository;
             this.corporationRepository = corporationRepository;
