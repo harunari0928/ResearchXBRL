@@ -7,6 +7,8 @@ using ResearchXBRL.Application.Interactors.FinancialAnalysis.PerformanceIndicato
 
 namespace FinancialAnalysisAPI.Controllers;
 
+[ApiController]
+[Route("[controller]")]
 public sealed class PerformanceIndicatorsController
 {
     private readonly ILogger<PerformanceIndicatorsController> logger;
