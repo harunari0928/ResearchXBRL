@@ -1,9 +1,12 @@
 using System;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+
 using ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Application.Interactors.FinancialAnalysis.PerformanceIndicators;
+using ResearchXBRL.Application.Usecase.FinancialAnalysis.PerformanceIndicators;
 
 namespace FinancialAnalysisAPI.Controllers;
 
@@ -12,11 +15,11 @@ namespace FinancialAnalysisAPI.Controllers;
 public sealed class PerformanceIndicatorsController
 {
     private readonly ILogger<PerformanceIndicatorsController> logger;
-    private readonly GetPerformanceIndicatorsInteractor usecase;
+    private readonly IGetPerformanceIndicatorsUsecase usecase;
 
     public PerformanceIndicatorsController(
         ILogger<PerformanceIndicatorsController> logger,
-        GetPerformanceIndicatorsInteractor usecase)
+        IGetPerformanceIndicatorsUsecase usecase)
     {
         this.logger = logger;
         this.usecase = usecase;
