@@ -86,8 +86,7 @@ public class PerformanceIndicatorsRepository : IPerformanceIndicatorsRepository,
             throw new NullReferenceException("日付データがnullです");
         }
 
-        var date = DateOnly.Parse(dateString);
-        return date;
+        return DateOnly.FromDateTime(DateTime.Parse(dateString));
     }
     private static void SetSQLQuery(NpgsqlCommand command, string corporationId, IndicatorType indicatorType)
     {
@@ -128,10 +127,10 @@ GROUP BY
     C.period_to,
     C.instant_date,
     priority_of_use
-ORDER BY
-    period_from, instant_date
 HAVING
     priority_of_use = MIN(priority_of_use)
+ORDER BY
+    period_to, instant_date;
 ";
         command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
             .Value = corporationId;
