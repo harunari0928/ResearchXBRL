@@ -7,7 +7,7 @@ using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 
 namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnalysis
 {
-    public sealed class PerformTimeSeriesAnalysisInteractor : IPerformTimeSeriesAnalysisUseCase
+    public sealed class PerformTimeSeriesAnalysisInteractor : IPerformTimeSeriesAnalysisUsecase
     {
         private readonly ITimeSeriesAnalysisResultRepository analysisResultRepository;
         private readonly ICorporationsRepository corporationRepository;
