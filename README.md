@@ -87,7 +87,7 @@ EDINETのXBRL情報で勘定項目を分析するためのツール
    cd ResearchXBRL.Frontend
    docker-compose -f ./devcontainer/docker-compose.yml up
    ```
-3. Usageのアプリケーションを上から順に起動する
+3. [Usage](https://github.com/Seibi0928/ResearchXBRL/blob/main/README.md#usage)のアプリケーションを上から順に起動する
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
