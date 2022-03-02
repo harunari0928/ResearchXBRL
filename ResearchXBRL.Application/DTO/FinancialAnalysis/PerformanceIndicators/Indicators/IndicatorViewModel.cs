@@ -7,7 +7,7 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators.I
     {
         public IndicatorTypeViewModel IndicatorType { get; init; }
 
-        public IReadOnlyDictionary<DateOnly, decimal> Values { get; init; } = new Dictionary<DateOnly, decimal>();
+        public IReadOnlyDictionary<DateTime, decimal> Values { get; init; } = new Dictionary<DateTime, decimal>();
     }
 
     public enum IndicatorTypeViewModel

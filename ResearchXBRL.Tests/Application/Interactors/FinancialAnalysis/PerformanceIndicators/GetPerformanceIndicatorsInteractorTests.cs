@@ -122,7 +122,7 @@ public sealed class GetPerformanceIndicatorsInteractorTests
                 Assert.Equal((int)expectedIndicators.IndicatorType, (int)actualIndicators.IndicatorType);
                 foreach (var (expectedValues, actualValues) in expectedIndicators.Values.Zip(actualIndicators.Values))
                 {
-                    Assert.Equal(expectedValues.Key, actualValues.Key);
+                    Assert.Equal(expectedValues.Key.ToDateTime(TimeOnly.MinValue), actualValues.Key);
                     Assert.Equal(expectedValues.Value, actualValues.Value);
                 }
             }
