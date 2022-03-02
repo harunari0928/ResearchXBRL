@@ -11,7 +11,6 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
     {
         public string AccountName { get; init; } = "";
         public UnitViewModel? Unit { get; init; } = null;
-        public CorporationViewModel Corporation { get; init; } = new CorporationViewModel();
         public IReadOnlyList<AccountValueViewModel> ConsolidatedValues { get; init; } = new AccountValueViewModel[0];
         public IReadOnlyList<AccountValueViewModel> NonConsolidatedValues { get; init; } = new AccountValueViewModel[0];
 
@@ -20,7 +19,6 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
         {
             AccountName = analysis.AccountName;
             Unit = MapToViewModel(analysis.Unit);
-            Corporation = MapToViewModel(analysis);
             ConsolidatedValues = MapToViewModel(analysis.ConsolidatedValues);
             NonConsolidatedValues = MapToViewModel(analysis.NonConsolidatedValues);
         }
@@ -41,16 +39,6 @@ namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
             null => null,
             _ => throw new NotSupportedException()
         };
-        private static CorporationViewModel MapToViewModel(TimeSeriesAnalysisResult analysis)
-        {
-            return new CorporationViewModel
-            {
-                Name = analysis.Corporation.Name,
-                CapitalAmount = analysis.Corporation.CapitalAmount,
-                IsLinking = analysis.Corporation.IsLinking,
-                TypeOfIndustry = analysis.Corporation.TypeOfIndustry
-            };
-        }
         private static IReadOnlyList<AccountValueViewModel> MapToViewModel(IEnumerable<AccountValue> accountValues)
         {
             return accountValues.Select(x => new AccountValueViewModel
