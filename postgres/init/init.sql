@@ -40,6 +40,7 @@ create table report_items (
   context_name varchar not null
 );
 CREATE INDEX ON report_items (report_id);
+CREATE INDEX ON report_items (classification);
 
 create table document_type_master (
   code varchar primary key,
@@ -115,3 +116,101 @@ CREATE TABLE account_elements (
   account_name VARCHAR NOT NULL,
   PRIMARY KEY (xbrl_name, taxonomy_version, classification)
 );
+
+CREATE TABLE aggregation_of_names_list (
+  aggregate_target VARCHAR PRIMARY KEY,
+  aggregate_result VARCHAR NOT NULL,
+  priority_of_use INT NOT NULL -- 名寄せ元が複数存在したときの優先順位 数字が若いほど優先される
+);
+
+INSERT INTO aggregation_of_names_list
+  (aggregate_target, aggregate_result, priority_of_use)
+VALUES
+  -- 売上高
+  ('NetSalesSummaryOfBusinessResults', 'NetSales', 1),
+  ('OperatingRevenue1', 'NetSales', 2),
+  ('ShippingBusinessRevenueWAT', 'NetSales', 3),
+  ('ShippingBusinessRevenueAndOtherOperatingRevenueWAT', 'NetSales', 4),
+  ('ShippingBusinessRevenueAndOtherServiceRevenueWAT', 'NetSales', 5),
+  ('OperatingRevenueELE', 'NetSales', 6),
+  ('OperatingRevenueRWY', 'NetSales', 7),
+  ('OperatingRevenueSEC', 'NetSales', 8),
+  ('ContractsCompletedRevOA', 'NetSales', 9),
+  ('NetSalesNS', 'NetSales', 10),
+  ('PLJHFDAKJHGF', 'NetSales', 11),
+  ('SalesAllSegments', 'NetSales', 12),
+  ('SalesDetails', 'NetSales', 13),
+  ('TotalSales', 'NetSales', 14),
+  ('SalesAndOtherOperatingRevenueSummaryOfBusinessResults', 'NetSales', 15),
+  ('NetSalesAndOtherOperatingRevenueSummaryOfBusinessResults', 'NetSales', 16),
+  ('NetSalesAndServiceRevenueSummaryOfBusinessResults', 'NetSales', 17),
+  ('NetSalesAndOperatingRevenueSummaryOfBusinessResults', 'NetSales', 18),
+  ('NetSalesAndOperatingRevenue2SummaryOfBusinessResults', 'NetSales', 19),
+  ('NetSalesAndOperatingRevenue', 'NetSales', 20),
+  ('NetSalesOfFinishedGoodsRevOA', 'NetSales', 21),
+  ('NetSalesOfMerchandiseAndFinishedGoodsRevOA', 'NetSales', 22),
+  ('RevenuesUSGAAPSummaryOfBusinessResults', 'NetSales', 23),
+  ('NetSalesIFRSSummaryOfBusinessResults', 'NetSales', 24),
+  ('TotalTradingTransactionIFRSSummaryOfBusinessResults', 'NetSales', 25),
+  ('TotalTradingTransactionsIFRSSummaryOfBusinessResults', 'NetSales', 26),
+  ('Revenue', 'NetSales', 27),
+  ('RevenueIFRSSummaryOfBusinessResults', 'NetSales', 28),
+  ('RevenueSummaryOfBusinessResults', 'NetSales', 29),
+  ('OperatingRevenue2', 'NetSales', 30),
+  ('OperatingRevenue2SummaryOfBusinessResults', 'NetSales', 31),
+  ('GrossOperatingRevenue', 'NetSales', 32),
+  ('GrossOperatingRevenueSummaryOfBusinessResults', 'NetSales', 33),
+  ('NetSalesRevOA', 'NetSales', 34),
+  ('InsurancePremiumsAndOtherOIINS', 'NetSales', 34),
+  ('PremiumAndOtherIncomeSummaryOfBusinessResults', 'NetSales', 35),
+  ('InsurancePremiumsAndOtherIncomeSummaryOfBusinessResults', 'NetSales', 36),
+  ('InsurancePremiumsAndOthersSummaryOfBusinessResults', 'NetSales', 37),
+  ('InsurancePremiumsAndOtherSummaryOfBusinessResults', 'NetSales', 38),
+  ('WholeChainStoreSalesSummaryOfBusinessResults', 'NetSales', 39),
+  ('NetSalesOfCompletedConstructionContractsCNS', 'NetSales', 40),
+  ('NetSalesOfCompletedConstructionContractsSummaryOfBusinessResults', 'NetSales', 41),
+  ('ContractsCompletedSummaryOfBusinessResults', 'NetSales', 42),
+  ('RentIncomeOfRealEstateRevOA', 'NetSales', 43),
+  ('OperatingRevenueSPF', 'NetSales', 44),
+  ('OperatingRevenueIVT', 'NetSales', 45),
+  ('OperatingRevenueCMD', 'NetSales', 46),
+  ('OperatingRevenueOILTelecommunications', 'NetSales', 47),
+  ('OperatingRevenue1SummaryOfBusinessResults', 'NetSales', 48),
+  ('OrdinaryIncomeBNK', 'NetSales', 49),
+  ('OperatingIncomeINS', 'NetSales', 50),
+  ('OrdinaryIncomeSummaryOfBusinessResults', 'NetSales', 51),
+  ('BusinessRevenues', 'NetSales', 52),
+  ('BusinessRevenue', 'NetSales', 53),
+  ('BusinessRevenueRevOA', 'NetSales', 54),
+  ('OperatingRevenue', 'NetSales', 55),
+  ('SummaryOfSalesBusinessResults', 'NetSales', 56),
+  ('OperatingRevenuesSummaryOfBusinessResults', 'NetSales', 57),
+  ('BusinessRevenueSummaryOfBusinessResults', 'NetSales', 58),
+  ('OperatingRevenueSummaryOfBusinessResults', 'NetSales', 59),
+  -- 営業利益
+  ('ProfitLossFromOperatingActivities', 'OperatingIncome', 1),
+  ('OperatingIncomeLoss', 'OperatingIncome', 2),
+  ('OperatingIncomeLossUSGAAPSummaryOfBusinessResults', 'OperatingIncome', 3),
+  ('OperatingProfitLossIFRSSummaryOfBusinessResults', 'OperatingIncome', 4),
+  ('OperatingProfitIFRSSummaryOfBusinessResults', 'OperatingIncome', 5),
+  ('OperatingIncomeLossIFRSSummaryOfBusinessResults', 'OperatingIncome', 6),
+  ('OperatingIncomeIFRSSummaryOfBusinessResults', 'OperatingIncome', 7),
+  -- 経常利益
+  ('OrdinaryIncomeLossSummaryOfBusinessResults', 'OrdinaryIncome', 1),
+  -- 親会社の所有者に帰属する利益
+  ('ProfitLossAttributableToOwnersOfParentSummaryOfBusinessResults', 'ProfitLossAttributableToOwnersOfParent', 1),
+  ('ProfitLossAndAttributableToOwnersOfParent', 'ProfitLossAttributableToOwnersOfParent', 2),
+  -- ROE
+  ('RateOfReturnOnEquityUSGAAPSummaryOfBusinessResults', 'RateOfReturnOnEquitySummaryOfBusinessResults', 1),
+  ('NetIncomeToSalesBelongingToShareholdersSummaryOfBusinessResults', 'RateOfReturnOnEquitySummaryOfBusinessResults', 2),
+  ('RateOfReturnOnEquityIFRSSummaryOfBusinessResults', 'RateOfReturnOnEquitySummaryOfBusinessResults', 3),
+  -- EPS
+  ('BasicEarningsLossPerShareUSGAAPSummaryOfBusinessResults', 'BasicEarningsLossPerShareSummaryOfBusinessResults', 1),
+  ('BasicEarningsLossPerShareIFRSSummaryOfBusinessResults', 'BasicEarningsLossPerShareSummaryOfBusinessResults', 2),
+  -- 潜在株式調整後EPS
+  ('DilutedEarningsLossPerShareUSGAAPSummaryOfBusinessResults', 'DilutedEarningsPerShareSummaryOfBusinessResults', 1),
+  ('DilutedEarningsLossPerShareIFRSSummaryOfBusinessResults', 'DilutedEarningsPerShareSummaryOfBusinessResults', 2),
+  -- 1株当たり配当
+  ('DividendPaidPerShareFirstSeriesModelAAClassSharesSummaryOfBusinessResults', 'DividendPaidPerShareSummaryOfBusinessResults', 1),
+  ('InterimDividendPaidPerShareSummaryOfBusinessResults', 'DividendPaidPerShareSummaryOfBusinessResults', 2),
+  ('InterimDividendPaidPerShareFirstSeriesModelAAClassSharesSummaryOfBusinessResults', 'DividendPaidPerShareSummaryOfBusinessResults', 3);

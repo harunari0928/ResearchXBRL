@@ -122,13 +122,12 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 var report = await CreateReport();
 
                 // assert
-                // 内閣府令項目は取らない
-                Assert.Empty(report.Where(x => x.Classification == "jpcrp"));
+                Assert.Equal(234, report.Where(x => x.Classification == "jpcrp").Count());
                 Assert.Equal(365, report.Where(x => x.Classification == "jppfs").Count());
-                Assert.Equal(365, report.Count);
+                Assert.Equal(234 + 365, report.Count);
 
                 // 最初の勘定科目
-                var first = report[0];
+                var first = report.Where(x => x.Classification == "jppfs").First();
                 Assert.Equal("jppfs", first.Classification);
                 Assert.Equal("CashAndDeposits", first.XBRLName);
                 Assert.Equal("Prior1YearInstant_NonConsolidatedMember", first.ContextName);

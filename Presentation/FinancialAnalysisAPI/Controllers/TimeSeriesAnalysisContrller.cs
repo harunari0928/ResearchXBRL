@@ -12,11 +12,11 @@ namespace FinancialAnalysisAPI.Controllers
     public class TimeSeriesAnalysisController : ControllerBase
     {
         private readonly ILogger<TimeSeriesAnalysisController> logger;
-        private readonly IPerformTimeSeriesAnalysisUseCase usecase;
+        private readonly IPerformTimeSeriesAnalysisUsecase usecase;
 
         public TimeSeriesAnalysisController(
             ILogger<TimeSeriesAnalysisController> logger,
-            IPerformTimeSeriesAnalysisUseCase usecase)
+            IPerformTimeSeriesAnalysisUsecase usecase)
         {
             this.logger = logger;
             this.usecase = usecase;

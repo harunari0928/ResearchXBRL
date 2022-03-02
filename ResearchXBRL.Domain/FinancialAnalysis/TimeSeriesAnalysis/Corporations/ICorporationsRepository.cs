@@ -2,8 +2,8 @@ using System.Threading.Tasks;
 
 namespace ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations
 {
-    public interface ICorporationRepository
+    public interface ICorporationsRepository
     {
-        Task<Corporation?> Get(string corporationId);
+        ValueTask<bool> Exists(string corporationId);
     }
 }

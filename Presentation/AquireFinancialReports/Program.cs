@@ -22,7 +22,7 @@ namespace AquireFinancialReports
             var maxParallelism = GetMaxParallelism(args);
             using var serviceProvider = CreateServiceProvider(maxParallelism);
             var usecase = serviceProvider
-                .GetService<IAquireFinancialReportsUsecase>();
+                .GetService<IAquireFinancialReportsUsecase>() ?? throw new Exception($"{nameof(IAquireFinancialReportsUsecase)}のDIに失敗しました");
 
             var (from, to) = GetAquireSpan(args);
 
@@ -76,13 +76,16 @@ namespace AquireFinancialReports
             return new ServiceCollection()
                 .AddTransient<IAquireFinancialReportsUsecase>(x
                     => new AquireFinancialReportsInteractor(
-                        x.GetService<IEdinetXBRLDownloader>(),
-                        x.GetService<IEdinetXBRLParser>(),
-                        x.GetService<IFinancialReportRepository>(),
-                        x.GetService<IAquireFinancialReportsPresenter>(),
+                        x.GetService<IEdinetXBRLDownloader>() ?? throw new Exception($"{nameof(IEdinetXBRLDownloader)}のDIに失敗しました"),
+                        x.GetService<IEdinetXBRLParser>() ?? throw new Exception($"{nameof(IEdinetXBRLParser)}のDIに失敗しました"),
+                        x.GetService<IFinancialReportRepository>() ?? throw new Exception($"{nameof(IFinancialReportRepository)}のDIに失敗しました"),
+                        x.GetService<IAquireFinancialReportsPresenter>() ?? throw new Exception($"{nameof(IAquireFinancialReportsPresenter)}のDIに失敗しました"),
                         maxParallelism
                     ))
-                .AddTransient<IEdinetXBRLDownloader>(x => new SecurityReportsDownloader(x.GetService<IHttpClientFactory>(), "v1"))
+                .AddTransient<IEdinetXBRLDownloader>(x =>
+                    new SecurityReportsDownloader(
+                        x.GetService<IHttpClientFactory>() ?? throw new Exception($"{nameof(IHttpClientFactory)}のDIに失敗しました"),
+                 "v1"))
                 .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
                 .AddTransient<IFinancialReportRepository, FinancialReportRepository>()
                 .AddSingleton<IFileStorage>(_ => new LocalStorage(".tmp"))

@@ -16,7 +16,7 @@ namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
         public sealed class GetTimeSeriesAnalysisResultTests
         {
             private readonly Mock<ILogger<TimeSeriesAnalysisController>> logger;
-            private readonly Mock<IPerformTimeSeriesAnalysisUseCase> usecase;
+            private readonly Mock<IPerformTimeSeriesAnalysisUsecase> usecase;
 
             public GetTimeSeriesAnalysisResultTests()
             {
@@ -37,10 +37,6 @@ namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers
                     {
                         Name = "testJPY",
                         Measure = "aaa"
-                    },
-                    Corporation = new CorporationViewModel
-                    {
-                        Name = "test",
                     },
                     ConsolidatedValues = new List<AccountValueViewModel>
                     {
