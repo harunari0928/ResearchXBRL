@@ -57,7 +57,7 @@ public class Startup
         services.AddTransient<ICorporationMenuRepository, CorporationMenuRepository>();
         services.AddTransient<ICorporationsRepository, CorporationRepository>();
         services.AddTransient<ITimeSeriesAnalysisResultRepository, TimeSeriesAnalysisResultRepository>();
-        services.AddTransient<IPerformTimeSeriesAnalysisUseCase, PerformTimeSeriesAnalysisInteractor>();
+        services.AddTransient<IPerformTimeSeriesAnalysisUsecase, PerformTimeSeriesAnalysisInteractor>();
         services.AddTransient<IPerformanceIndicatorsRepository, PerformanceIndicatorsRepository>();
         services.AddTransient<ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Corporations.ICorporationsRepository, ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators.Corporations.CorporationRepository>();
         services.AddTransient<IGetPerformanceIndicatorsUsecase, GetPerformanceIndicatorsInteractor>();

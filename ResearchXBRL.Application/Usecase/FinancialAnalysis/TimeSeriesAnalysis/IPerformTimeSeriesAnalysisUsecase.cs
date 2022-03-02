@@ -3,7 +3,7 @@ using ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis;
 
 namespace ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis
 {
-    public interface IPerformTimeSeriesAnalysisUseCase
+    public interface IPerformTimeSeriesAnalysisUsecase
     {
         Task<TimeSeriesAnalysisViewModel> Handle(AnalyticalMaterials input);
     }
