@@ -69,7 +69,8 @@ EDINETのXBRL情報で勘定項目を分析するためのツール
    git clone https://github.com/Seibi0928/ResearchXBRL.git
    ```
 
-2. コンテナ環境構築(Devcontainerを使う場合)
+2. コンテナ環境構築
+  * Devcontainerを使う場合
   
     * VSCodeを開く
 
@@ -80,12 +81,13 @@ EDINETのXBRL情報で勘定項目を分析するためのツール
     * F1を押下しコマンドパレットを開く
     * `Reopen in Container`と入力し選択
 
-3. DevContainerを使わない場合
+  * DevContainerを使わない場合
 
    ```sh
    cd ResearchXBRL.Frontend
    docker-compose -f ./devcontainer/docker-compose.yml up
    ```
+3. Usageのアプリケーションを上から順に起動する
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
