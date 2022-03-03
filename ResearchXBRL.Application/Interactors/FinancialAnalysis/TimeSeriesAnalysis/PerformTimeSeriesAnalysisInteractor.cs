@@ -7,14 +7,14 @@ using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 
 namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnalysis
 {
-    public sealed class PerformTimeSeriesAnalysisInteractor : IPerformTimeSeriesAnalysisUseCase
+    public sealed class PerformTimeSeriesAnalysisInteractor : IPerformTimeSeriesAnalysisUsecase
     {
         private readonly ITimeSeriesAnalysisResultRepository analysisResultRepository;
-        private readonly ICorporationRepository corporationRepository;
+        private readonly ICorporationsRepository corporationRepository;
 
         public PerformTimeSeriesAnalysisInteractor(
             ITimeSeriesAnalysisResultRepository analysisResultRepository,
-            ICorporationRepository corporationRepository)
+            ICorporationsRepository corporationRepository)
         {
             this.analysisResultRepository = analysisResultRepository;
             this.corporationRepository = corporationRepository;
@@ -22,8 +22,8 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnaly
 
         public async Task<TimeSeriesAnalysisViewModel> Handle(AnalyticalMaterials input)
         {
-            var corporation = await corporationRepository.Get(input.CorporationId);
-            if (corporation is null)
+            var corporationExists = await corporationRepository.Exists(input.CorporationId);
+            if (!corporationExists)
             {
                 throw new ArgumentException("指定された企業は存在しません");
             }

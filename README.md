@@ -43,7 +43,7 @@ EDINETのXBRL情報で勘定項目を分析するためのツール
 ### Built With
 
 * [Docker](https://www.docker.com/)
-* [.NET5](https://docs.microsoft.com/ja-jp/dotnet/core/whats-new/dotnet-5)
+* [.NET6](https://docs.microsoft.com/ja-jp/dotnet/core/whats-new/dotnet-6)
 * [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)
 * [PostgreSQL](https://www.postgresql.org/)
 

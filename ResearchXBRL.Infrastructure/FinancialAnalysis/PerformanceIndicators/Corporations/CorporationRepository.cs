@@ -2,9 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
-using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
+using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Corporations;
 
-namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
+namespace ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators.Corporations;
 
 public sealed class CorporationRepository : ICorporationsRepository, IDisposable, IAsyncDisposable
 {
