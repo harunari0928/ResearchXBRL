@@ -7,11 +7,11 @@ using ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndica
 
 namespace ResearchXBRL.Infrastructure.QueryServices.FinancialAnalysis.PerformanceIndicators;
 
-public class TimeserieAccountValuesQueryService : ITimeseriesAccountValuesQueryService
+public class TimeseriesAccountValuesQueryService : ITimeseriesAccountValuesQueryService
 {
     private readonly NpgsqlConnection connection;
 
-    public TimeserieAccountValuesQueryService()
+    public TimeseriesAccountValuesQueryService()
     {
         var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
         var userId = Environment.GetEnvironmentVariable("DB_USERID");

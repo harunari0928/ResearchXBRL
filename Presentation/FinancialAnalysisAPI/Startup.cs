@@ -24,6 +24,7 @@ using ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 using ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndicators;
+using ResearchXBRL.Infrastructure.QueryServices.FinancialAnalysis.PerformanceIndicators;
 
 namespace FinancialAnalysisAPI;
 
@@ -60,6 +61,7 @@ public class Startup
         services.AddTransient<IPerformTimeSeriesAnalysisUsecase, PerformTimeSeriesAnalysisInteractor>();
         services.AddTransient<IPerformanceIndicatorsQueryService, PerformanceIndicatorsQueryService>();
         services.AddTransient<ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndicators.ICorporationsQueryService, ResearchXBRL.Infrastructure.QueryServices.FinancialAnalysis.PerformanceIndicators.CorporationsQueryService>();
+        services.AddTransient<ITimeseriesAccountValuesQueryService, TimeseriesAccountValuesQueryService>();
         services.AddTransient<IGetPerformanceIndicatorsUsecase, GetPerformanceIndicatorsInteractor>();
 
         services.AddHealthChecks();
