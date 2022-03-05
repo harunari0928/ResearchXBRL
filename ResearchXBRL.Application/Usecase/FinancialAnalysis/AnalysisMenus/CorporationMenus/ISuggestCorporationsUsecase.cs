@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ResearchXBRL.Application.DTO.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 
-namespace ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.CorporationMenus
+namespace ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+
+public interface ISuggestCorporationsUsecase
 {
-    public interface ISuggestCorporationsUsecase
-    {
-        Task<IReadOnlyList<CorporationViewModel>> Handle(string keyword);
-    }
+    Task<IReadOnlyList<CorporationViewModel>> Handle(string keyword);
 }

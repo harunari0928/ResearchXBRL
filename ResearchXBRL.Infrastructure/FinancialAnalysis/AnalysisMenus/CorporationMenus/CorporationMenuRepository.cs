@@ -4,49 +4,48 @@ using System.Linq;
 using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
-using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
 
-namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.CorporationMenus
+namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+public sealed class CorporationMenuRepository : ICorporationMenuRepository, IDisposable, IAsyncDisposable
 {
-    public sealed class CorporationMenuRepository : ICorporationMenuRepository, IDisposable, IAsyncDisposable
+    private readonly NpgsqlConnection connection;
+
+    public CorporationMenuRepository()
     {
-        private readonly NpgsqlConnection connection;
+        var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
+        var userId = Environment.GetEnvironmentVariable("DB_USERID");
+        var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+        var port = Environment.GetEnvironmentVariable("DB_PORT");
+        var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+        var connectionString = $"Server={server};Port={port};Database={dbName};User Id={userId};Password={password};Pooling=true;Minimum Pool Size=0;Maximum Pool Size=100";
+        connection = new NpgsqlConnection(connectionString);
+        connection.Open();
+    }
 
-        public CorporationMenuRepository()
-        {
-            var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
-            var userId = Environment.GetEnvironmentVariable("DB_USERID");
-            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
-            var port = Environment.GetEnvironmentVariable("DB_PORT");
-            var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-            var connectionString = $"Server={server};Port={port};Database={dbName};User Id={userId};Password={password};Pooling=true;Minimum Pool Size=0;Maximum Pool Size=100";
-            connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-        }
+    public void Dispose()
+    {
+        connection.Dispose();
+    }
 
-        public void Dispose()
-        {
-            connection.Dispose();
-        }
+    public async ValueTask DisposeAsync()
+    {
+        await connection.DisposeAsync();
+    }
 
-        public async ValueTask DisposeAsync()
+    public async Task<CorporatonMenu> GetProposals(string keyword)
+    {
+        using var command = CreateReadCommand(keyword);
+        return new CorporatonMenu
         {
-            await connection.DisposeAsync();
-        }
+            Corporations = await ReadCorporations(command)
+        };
+    }
 
-        public async Task<CorporatonMenu> GetProposals(string keyword)
-        {
-            using var command = CreateReadCommand(keyword);
-            return new CorporatonMenu
-            {
-                Corporations = await ReadCorporations(command)
-            };
-        }
-
-        private NpgsqlCommand CreateReadCommand(string keyword)
-        {
-            var command = connection.CreateCommand();
-            command.CommandText = @"
+    private NpgsqlCommand CreateReadCommand(string keyword)
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = @"
 SELECT
     code,
     submitter_name
@@ -61,37 +60,36 @@ OR
 )
 LIMIT 10;
 ";
-            command.Parameters.Add("@submitterName", NpgsqlDbType.Varchar)
-                .Value = $"%{keyword}%";
-            command.Parameters.Add("@submitterNameKana", NpgsqlDbType.Varchar)
-                .Value = $"%{ToKatakana(keyword)}%";
-            return command;
-        }
-        private static async Task<IReadOnlyList<Corporation>> ReadCorporations(NpgsqlCommand command)
+        command.Parameters.Add("@submitterName", NpgsqlDbType.Varchar)
+            .Value = $"%{keyword}%";
+        command.Parameters.Add("@submitterNameKana", NpgsqlDbType.Varchar)
+            .Value = $"%{ToKatakana(keyword)}%";
+        return command;
+    }
+    private static async Task<IReadOnlyList<Corporation>> ReadCorporations(NpgsqlCommand command)
+    {
+        using var reader = await command.ExecuteReaderAsync();
+        var corporations = new List<Corporation>();
+        while (await reader.ReadAsync())
         {
-            using var reader = await command.ExecuteReaderAsync();
-            var corporations = new List<Corporation>();
-            while (await reader.ReadAsync())
+            if (reader[0] is null || reader[1] is null)
             {
-                if (reader[0] is null || reader[1] is null)
-                {
-                    continue;
-                }
-
-                corporations.Add(new Corporation
-                {
-                    Name = reader[1]?.ToString() ??
-                        throw new NullReferenceException(),
-                    CorporationId = reader[0]?.ToString() ??
-                        throw new NullReferenceException()
-                });
+                continue;
             }
 
-            return corporations;
+            corporations.Add(new Corporation
+            {
+                Name = reader[1]?.ToString() ??
+                    throw new NullReferenceException(),
+                CorporationId = reader[0]?.ToString() ??
+                    throw new NullReferenceException()
+            });
         }
-        private static string ToKatakana(string str)
-        {
-            return string.Concat(str.Select(c => (c >= 'ぁ' && c <= 'ゖ') ? (char)(c + 'ァ' - 'ぁ') : c));
-        }
+
+        return corporations;
+    }
+    private static string ToKatakana(string str)
+    {
+        return string.Concat(str.Select(c => (c >= 'ぁ' && c <= 'ゖ') ? (char)(c + 'ァ' - 'ぁ') : c));
     }
 }
