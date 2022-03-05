@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis;
 
 namespace FinancialAnalysisAPI.Controllers

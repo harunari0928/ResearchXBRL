@@ -1,28 +1,27 @@
-using System;
 using Moq;
 using Xunit;
-using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
 using ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisMenus.CorporationMenus
+namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+
+public sealed class SuggestCorporationsInteractorTests
 {
-    public sealed class SuggestCorporationsInteractorTests
+    private readonly Mock<ICorporationMenuRepository> repository;
+
+    public SuggestCorporationsInteractorTests()
     {
-        private readonly Mock<ICorporationMenuRepository> repository;
+        this.repository = new();
+    }
 
-        public SuggestCorporationsInteractorTests()
-        {
-            this.repository = new();
-        }
-
-        [Fact]
-        public async Task 渡されたキーワードをもとにサジェスト対象企業を返す()
-        {
-            // arrange
-            var expected = new List<Corporation>
+    [Fact]
+    public async Task 渡されたキーワードをもとにサジェスト対象企業を返す()
+    {
+        // arrange
+        var expected = new List<Corporation>
             {
                 new Corporation
                 {
@@ -40,37 +39,37 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                     CorporationId = "test3"
                 }
             };
-            var keyword = "キーワード";
-            repository
-                .Setup(x => x.GetProposals(keyword))
-                .ReturnsAsync(new CorporatonMenu
-                {
-                    Corporations = expected
-                });
-            var interactor = new SuggestCorporationsInteractor(repository.Object);
-
-            // act
-            var actual = await interactor.Handle(keyword);
-
-            // assert
-            foreach (var (e, a) in expected.Zip(actual))
+        var keyword = "キーワード";
+        repository
+            .Setup(x => x.GetProposals(keyword))
+            .ReturnsAsync(new CorporatonMenu
             {
-                Assert.Equal(e.Name, a.Name);
-                Assert.Equal(e.CorporationId, a.CorporationId);
-            }
-        }
+                Corporations = expected
+            });
+        var interactor = new SuggestCorporationsInteractor(repository.Object);
 
-        [Fact]
-        public async Task 渡されたキーワードが空文字のときサジェストしない()
+        // act
+        var actual = await interactor.Handle(keyword);
+
+        // assert
+        foreach (var (e, a) in expected.Zip(actual))
         {
-            // arrange
-            var keyword = ""; // キーワードが空文字
-            repository
-                .Setup(x => x.GetProposals(keyword))
-                .ReturnsAsync(new CorporatonMenu
+            Assert.Equal(e.Name, a.Name);
+            Assert.Equal(e.CorporationId, a.CorporationId);
+        }
+    }
+
+    [Fact]
+    public async Task 渡されたキーワードが空文字のときサジェストしない()
+    {
+        // arrange
+        var keyword = ""; // キーワードが空文字
+        repository
+            .Setup(x => x.GetProposals(keyword))
+            .ReturnsAsync(new CorporatonMenu
+            {
+                Corporations = new List<Corporation>
                 {
-                    Corporations = new List<Corporation>
-                    {
                         new Corporation
                         {
                             Name = "企業A",
@@ -86,28 +85,28 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                             Name = "企業C",
                             CorporationId = "test3"
                         }
-                    }
-                });
-            var interactor = new SuggestCorporationsInteractor(repository.Object);
+                }
+            });
+        var interactor = new SuggestCorporationsInteractor(repository.Object);
 
-            // act
-            var actual = await interactor.Handle(keyword);
+        // act
+        var actual = await interactor.Handle(keyword);
 
-            // assert
-            Assert.Empty(actual);
-        }
+        // assert
+        Assert.Empty(actual);
+    }
 
-        [Fact]
-        public async Task 渡されたキーワードが空白のときサジェストしない()
-        {
-            // arrange
-            var keyword = " 　"; // キーワードが空白
-            repository
-                .Setup(x => x.GetProposals(keyword))
-                .ReturnsAsync(new CorporatonMenu
+    [Fact]
+    public async Task 渡されたキーワードが空白のときサジェストしない()
+    {
+        // arrange
+        var keyword = " 　"; // キーワードが空白
+        repository
+            .Setup(x => x.GetProposals(keyword))
+            .ReturnsAsync(new CorporatonMenu
+            {
+                Corporations = new List<Corporation>
                 {
-                    Corporations = new List<Corporation>
-                    {
                         new Corporation
                         {
                             Name = "企業A",
@@ -123,28 +122,28 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                             Name = "企業C",
                             CorporationId = "test3"
                         }
-                    }
-                });
-            var interactor = new SuggestCorporationsInteractor(repository.Object);
+                }
+            });
+        var interactor = new SuggestCorporationsInteractor(repository.Object);
 
-            // act
-            var actual = await interactor.Handle(keyword);
+        // act
+        var actual = await interactor.Handle(keyword);
 
-            // assert
-            Assert.Empty(actual);
-        }
+        // assert
+        Assert.Empty(actual);
+    }
 
-        [Fact]
-        public async Task 株式会社というワードではサジェストしない()
-        {
-            // arrange
-            var keyword = "株式会社"; // キーワードが空白
-            repository
-                .Setup(x => x.GetProposals(keyword))
-                .ReturnsAsync(new CorporatonMenu
+    [Fact]
+    public async Task 株式会社というワードではサジェストしない()
+    {
+        // arrange
+        var keyword = "株式会社"; // キーワードが空白
+        repository
+            .Setup(x => x.GetProposals(keyword))
+            .ReturnsAsync(new CorporatonMenu
+            {
+                Corporations = new List<Corporation>
                 {
-                    Corporations = new List<Corporation>
-                    {
                         new Corporation
                         {
                             Name = "企業A",
@@ -160,15 +159,14 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
                             Name = "企業C",
                             CorporationId = "test3"
                         }
-                    }
-                });
-            var interactor = new SuggestCorporationsInteractor(repository.Object);
+                }
+            });
+        var interactor = new SuggestCorporationsInteractor(repository.Object);
 
-            // act
-            var actual = await interactor.Handle(keyword);
+        // act
+        var actual = await interactor.Handle(keyword);
 
-            // assert
-            Assert.Empty(actual);
-        }
+        // assert
+        Assert.Empty(actual);
     }
 }
