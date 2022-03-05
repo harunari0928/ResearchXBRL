@@ -10,11 +10,11 @@ using ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndica
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators;
 
-public class PerformanceIndicatorQueryService : IPerformanceIndicatorQueryService, IDisposable, IAsyncDisposable
+public class PerformanceIndicatorsQueryService : IPerformanceIndicatorsQueryService, IDisposable, IAsyncDisposable
 {
     private readonly NpgsqlConnection connection;
 
-    public PerformanceIndicatorQueryService()
+    public PerformanceIndicatorsQueryService()
     {
         var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
         var userId = Environment.GetEnvironmentVariable("DB_USERID");

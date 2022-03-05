@@ -15,7 +15,7 @@ public sealed class GetPerformanceIndicatorsInteractorTests
 {
     public sealed class HandleTests
     {
-        private readonly Mock<IPerformanceIndicatorQueryService> queryServiceMock = new();
+        private readonly Mock<IPerformanceIndicatorsQueryService> queryServiceMock = new();
         private readonly Mock<ICorporationsQueryService> corporationQueryServiceMock = new();
 
         [Fact]
@@ -126,6 +126,80 @@ public sealed class GetPerformanceIndicatorsInteractorTests
                     Assert.Equal(expectedValues.Value, actualValues.Value);
                 }
             }
+        }
+
+        [Fact(DisplayName = "ROEが取得できなかった場合,当期純利益と自己資本を元に計算する")]
+        public async Task Test3()
+        {
+            // arrange
+            var companyName = "tekitou2";
+            var expected = new PerformanceIndicator
+            {
+                Indicators = new List<Indicator>
+                {
+                    new Indicator
+                    {
+                        IndicatorType = IndicatorType.NetSales,
+                        Values = new Dictionary<DateOnly, decimal>
+                        {
+                            { new DateOnly(2017, 3, 1), 36 },
+                            { new DateOnly(2018, 3, 1), 3 },
+                            { new DateOnly(2019, 3, 1), 3 },
+                        }
+                    },
+                    new Indicator
+                    {
+                        IndicatorType = IndicatorType.OperatingIncome,
+                        Values = new Dictionary<DateOnly, decimal>
+                        {
+                            { new DateOnly(2017, 6, 1), 38},
+                            { new DateOnly(2018, 6, 1), 4 },
+                            { new DateOnly(2019, 6, 1), 87 },
+                        }
+                    },
+                    new Indicator
+                    {
+                        IndicatorType = IndicatorType.OrdinaryIncome,
+                        Values = new Dictionary<DateOnly, decimal>
+                        {
+                            { new DateOnly(2017, 10, 1), 213 },
+                            { new DateOnly(2018, 10, 1), 11111 },
+                            { new DateOnly(2019, 10, 1), 111144 },
+                        }
+                    },
+                    new Indicator
+                    {
+                        IndicatorType = IndicatorType.ProfitLossAttributableToOwnersOfParent,
+                        Values = new Dictionary<DateOnly, decimal>
+                        {
+                            { new DateOnly(2017, 10, 1), 2414 },
+                            { new DateOnly(2018, 10, 1), 23432 },
+                            { new DateOnly(2019, 10, 1), 32423 },
+                        }
+                    },
+                    new Indicator
+                    {
+                        IndicatorType = IndicatorType.DividendPaidPerShareSummaryOfBusinessResults,
+                        Values = new Dictionary<DateOnly, decimal>
+                        {
+                            { new DateOnly(2018, 10, 1), 30 },
+                            { new DateOnly(2019, 10, 1), 31 },
+                            { new DateOnly(2020, 10, 1), 453 },
+                        }
+                    },
+                }
+            };
+            queryServiceMock
+                .Setup(x => x.Get(companyName))
+                .ReturnsAsync(expected);
+
+            corporationQueryServiceMock
+                .Setup(x => x.Exists(companyName))
+                .ReturnsAsync(true);
+            var interactor = new GetPerformanceIndicatorsInteractor(corporationQueryServiceMock.Object, queryServiceMock.Object);
+
+            // act
+            var actual = await interactor.Handle(companyName);
         }
     }
 }

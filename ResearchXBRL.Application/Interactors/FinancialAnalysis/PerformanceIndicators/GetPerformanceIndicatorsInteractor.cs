@@ -9,11 +9,11 @@ namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.PerformanceIndi
 public sealed class GetPerformanceIndicatorsInteractor : IGetPerformanceIndicatorsUsecase
 {
     private readonly ICorporationsQueryService corporationsQueryService;
-    private readonly IPerformanceIndicatorQueryService indicatorsQueryService;
+    private readonly IPerformanceIndicatorsQueryService indicatorsQueryService;
 
     public GetPerformanceIndicatorsInteractor(
         ICorporationsQueryService corporationQueryService,
-        IPerformanceIndicatorQueryService indicatorsQueryService)
+        IPerformanceIndicatorsQueryService indicatorsQueryService)
     {
         this.corporationsQueryService = corporationQueryService;
         this.indicatorsQueryService = indicatorsQueryService;
