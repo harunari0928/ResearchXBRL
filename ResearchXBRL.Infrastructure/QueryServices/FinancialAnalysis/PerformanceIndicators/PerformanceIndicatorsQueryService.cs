@@ -129,7 +129,7 @@ GROUP BY
     C.instant_date,
     priority_of_use
 HAVING
-    priority_of_use = MIN(priority_of_use)
+    COALESCE(E.priority_of_use, 0) = MIN(COALESCE(E.priority_of_use, 0))
 ORDER BY
     period_to, instant_date;
 ";
