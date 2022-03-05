@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Corporations;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.AccountPeriods;
+using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Units;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis

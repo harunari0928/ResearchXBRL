@@ -1,34 +1,33 @@
 using System;
 using System.Threading.Tasks;
-using ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.PerformanceIndicators;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Corporations;
+using ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndicators;
 
 namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.PerformanceIndicators;
 
 public sealed class GetPerformanceIndicatorsInteractor : IGetPerformanceIndicatorsUsecase
 {
-    private readonly IPerformanceIndicatorsRepository repository;
-    private readonly ICorporationsRepository corporationRepository;
+    private readonly ICorporationsQueryService corporationsQueryService;
+    private readonly IPerformanceIndicatorQueryService indicatorsQueryService;
 
     public GetPerformanceIndicatorsInteractor(
-        IPerformanceIndicatorsRepository repository,
-        ICorporationsRepository corporationRepository)
+        ICorporationsQueryService corporationQueryService,
+        IPerformanceIndicatorQueryService indicatorsQueryService)
     {
-        this.repository = repository;
-        this.corporationRepository = corporationRepository;
+        this.corporationsQueryService = corporationQueryService;
+        this.indicatorsQueryService = indicatorsQueryService;
     }
 
-    public async ValueTask<PerformanceIndicatorsViewModel> Handle(string corporationId)
+    public async ValueTask<PerformanceIndicatorViewModel> Handle(string corporationId)
     {
-        if (!await corporationRepository.Exists(corporationId))
+        if (!await corporationsQueryService.Exists(corporationId))
         {
             throw new ArgumentException("指定された企業は存在しません");
         }
 
-        var performanceIndicators = await repository.Get(corporationId);
+        var performanceIndicators = await indicatorsQueryService.Get(corporationId);
 
-        return new PerformanceIndicatorsViewModel(performanceIndicators);
+        return new PerformanceIndicatorViewModel(performanceIndicators);
     }
 }

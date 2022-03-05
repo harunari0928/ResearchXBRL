@@ -2,15 +2,15 @@ using System;
 using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Corporations;
+using ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndicators;
 
-namespace ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators.Corporations;
+namespace ResearchXBRL.Infrastructure.QueryServices.FinancialAnalysis.PerformanceIndicators;
 
-public sealed class CorporationRepository : ICorporationsRepository, IDisposable, IAsyncDisposable
+public class CorporationsQueryService : ICorporationsQueryService
 {
     private readonly NpgsqlConnection connection;
 
-    public CorporationRepository()
+    public CorporationsQueryService()
     {
         var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
         var userId = Environment.GetEnvironmentVariable("DB_USERID");

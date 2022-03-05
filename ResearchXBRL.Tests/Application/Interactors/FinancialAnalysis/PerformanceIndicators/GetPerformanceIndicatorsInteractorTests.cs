@@ -1,13 +1,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators;
 using Xunit;
 using ResearchXBRL.Application.Interactors.FinancialAnalysis.PerformanceIndicators;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Corporations;
 using Moq;
 using System.Collections.Generic;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Indicators;
+using ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators.Indicators;
+using ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndicators;
+using ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators;
 
 namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.PerformanceIndicators;
 
@@ -15,18 +15,18 @@ public sealed class GetPerformanceIndicatorsInteractorTests
 {
     public sealed class HandleTests
     {
-        private readonly Mock<IPerformanceIndicatorsRepository> repositoryMock = new();
-        private readonly Mock<ICorporationsRepository> corporationRepositoryMock = new();
+        private readonly Mock<IPerformanceIndicatorQueryService> queryServiceMock = new();
+        private readonly Mock<ICorporationsQueryService> corporationQueryServiceMock = new();
 
         [Fact]
         public async Task 指定した企業IDの企業が存在しなければArgumentExceptionを発生させる()
         {
             // arrange
             var companyName = "tekitou";
-            corporationRepositoryMock
+            corporationQueryServiceMock
                 .Setup(x => x.Exists(companyName))
                 .ReturnsAsync(false);
-            var interactor = new GetPerformanceIndicatorsInteractor(repositoryMock.Object, corporationRepositoryMock.Object);
+            var interactor = new GetPerformanceIndicatorsInteractor(corporationQueryServiceMock.Object, queryServiceMock.Object);
 
             // act & assert
             await Assert.ThrowsAsync<ArgumentException>(async () => await interactor.Handle(companyName));
@@ -37,7 +37,7 @@ public sealed class GetPerformanceIndicatorsInteractorTests
         {
             // arrange
             var companyName = "tekitou2";
-            var expected = new ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.PerformanceIndicators
+            var expected = new PerformanceIndicator
             {
                 Indicators = new List<Indicator>
                 {
@@ -103,14 +103,14 @@ public sealed class GetPerformanceIndicatorsInteractorTests
                     },
                 }
             };
-            repositoryMock
+            queryServiceMock
                 .Setup(x => x.Get(companyName))
                 .ReturnsAsync(expected);
 
-            corporationRepositoryMock
+            corporationQueryServiceMock
                 .Setup(x => x.Exists(companyName))
                 .ReturnsAsync(true);
-            var interactor = new GetPerformanceIndicatorsInteractor(repositoryMock.Object, corporationRepositoryMock.Object);
+            var interactor = new GetPerformanceIndicatorsInteractor(corporationQueryServiceMock.Object, queryServiceMock.Object);
 
             // act
             var actual = await interactor.Handle(companyName);

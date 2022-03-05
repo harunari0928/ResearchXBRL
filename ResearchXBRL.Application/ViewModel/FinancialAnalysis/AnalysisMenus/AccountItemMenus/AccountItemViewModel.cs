@@ -1,4 +1,4 @@
-namespace ResearchXBRL.Application.DTO.FinancialAnalysis.AnalysisMenus.AccountItemMenus
+namespace ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.AccountItemMenus
 {
     public class AccountItemViewModel
     {

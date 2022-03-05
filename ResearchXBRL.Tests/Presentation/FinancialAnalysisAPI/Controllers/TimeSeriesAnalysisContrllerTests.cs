@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FinancialAnalysisAPI.Controllers;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis;
 using Xunit;
 using System.Threading.Tasks;

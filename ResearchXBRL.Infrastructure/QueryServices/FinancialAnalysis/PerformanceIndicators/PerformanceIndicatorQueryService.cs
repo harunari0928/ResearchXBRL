@@ -1,19 +1,20 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Indicators;
-using System.Linq;
+using ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators;
+using ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators.Indicators;
+using ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndicators;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators;
 
-public class PerformanceIndicatorsRepository : IPerformanceIndicatorsRepository, IDisposable, IAsyncDisposable
+public class PerformanceIndicatorQueryService : IPerformanceIndicatorQueryService, IDisposable, IAsyncDisposable
 {
     private readonly NpgsqlConnection connection;
 
-    public PerformanceIndicatorsRepository()
+    public PerformanceIndicatorQueryService()
     {
         var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
         var userId = Environment.GetEnvironmentVariable("DB_USERID");
@@ -35,9 +36,9 @@ public class PerformanceIndicatorsRepository : IPerformanceIndicatorsRepository,
         await connection.DisposeAsync();
     }
 
-    public async ValueTask<Domain.FinancialAnalysis.PerformanceIndicators.PerformanceIndicators> Get(string corporationId)
+    public async ValueTask<PerformanceIndicator> Get(string corporationId)
     {
-        return new Domain.FinancialAnalysis.PerformanceIndicators.PerformanceIndicators
+        return new Application.DTO.FinancialAnalysis.PerformanceIndicators.PerformanceIndicator
         {
             Indicators = await GetIndicators(corporationId).ToListAsync()
         };

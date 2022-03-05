@@ -15,15 +15,15 @@ using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.Corporati
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
-using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.CorporationMenus;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 using ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
 using ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.CorporationMenus;
-using ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
+using ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators;
+using ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndicators;
 
 namespace FinancialAnalysisAPI;
 
@@ -58,8 +58,8 @@ public class Startup
         services.AddTransient<ICorporationsRepository, CorporationRepository>();
         services.AddTransient<ITimeSeriesAnalysisResultRepository, TimeSeriesAnalysisResultRepository>();
         services.AddTransient<IPerformTimeSeriesAnalysisUsecase, PerformTimeSeriesAnalysisInteractor>();
-        services.AddTransient<IPerformanceIndicatorsRepository, PerformanceIndicatorsRepository>();
-        services.AddTransient<ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Corporations.ICorporationsRepository, ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators.Corporations.CorporationRepository>();
+        services.AddTransient<IPerformanceIndicatorQueryService, PerformanceIndicatorQueryService>();
+        services.AddTransient<ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndicators.ICorporationsQueryService, ResearchXBRL.Infrastructure.QueryServices.FinancialAnalysis.PerformanceIndicators.CorporationsQueryService>();
         services.AddTransient<IGetPerformanceIndicatorsUsecase, GetPerformanceIndicatorsInteractor>();
 
         services.AddHealthChecks();
