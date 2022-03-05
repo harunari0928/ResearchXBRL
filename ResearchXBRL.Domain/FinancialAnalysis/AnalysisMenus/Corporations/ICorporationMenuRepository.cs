@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.CorporationMenus
+namespace ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations
 {
     public interface ICorporationMenuRepository
     {

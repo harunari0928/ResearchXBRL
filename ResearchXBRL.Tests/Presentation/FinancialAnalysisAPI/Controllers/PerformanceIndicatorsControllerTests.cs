@@ -8,8 +8,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.PerformanceIndicators;
-using ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.Indicators;
+using ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators.Indicators;
 using Xunit;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.PerformanceIndicators;
 
 namespace ResearchXBRL.Tests.Presentation.FinancialAnalysisAPI.Controllers;
 
@@ -31,7 +32,7 @@ public class PerformanceIndicatorsControllerTests
         {
             // arrange
             var corporationId = "tekitou";
-            var expected = new ResearchXBRL.Domain.FinancialAnalysis.PerformanceIndicators.PerformanceIndicators
+            var expected = new PerformanceIndicator
             {
                 Indicators = new List<Indicator>
                 {
@@ -98,7 +99,7 @@ public class PerformanceIndicatorsControllerTests
                 }
             };
             usecaseMock.Setup(x => x.Handle(corporationId))
-                .ReturnsAsync(new PerformanceIndicatorsViewModel(expected));
+                .ReturnsAsync(new PerformanceIndicatorViewModel(expected));
             var controller = new PerformanceIndicatorsController(loggerMock.Object, usecaseMock.Object);
 
             // act
