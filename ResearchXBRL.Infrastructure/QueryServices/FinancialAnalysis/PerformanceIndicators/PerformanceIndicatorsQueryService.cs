@@ -131,44 +131,52 @@ public class PerformanceIndicatorsQueryService : IPerformanceIndicatorsQueryServ
 
         public string Query => @"
 SELECT
-    A.amounts,
-    C.period_to,
-    C.instant_date
-FROM
-    report_items A
-INNER JOIN
-    contexts C
-ON
-    A.report_id = C.report_id
-AND
-    A.context_name = c.context_name
-INNER JOIN
-    report_covers RC
-ON
-    A.report_id = RC.id
-INNER JOIN
-    company_master D
-ON
-    RC.company_id = D.code
-AND
-    C.context_name IN ('CurrentYearInstant', 'CurrentYearDuration')
-LEFT OUTER JOIN
-    aggregation_of_names_list E
-ON
-    A.xbrl_name = E.aggregate_target
+    *
+FROM (    
+    SELECT
+        A.amounts,
+        C.period_to,
+        C.instant_date,
+        COALESCE(E.priority_of_use, 0) AS priority_of_use,
+        MIN(COALESCE(E.priority_of_use, 0)) OVER (PARTITION BY COALESCE(C.period_to, C.instant_date)) AS min_priority_of_use
+    FROM
+        report_items A
+    INNER JOIN
+        contexts C
+    ON
+        A.report_id = C.report_id
+    AND
+        A.context_name = c.context_name
+    INNER JOIN
+        report_covers RC
+    ON
+        A.report_id = RC.id
+    INNER JOIN
+        company_master D
+    ON
+        RC.company_id = D.code
+    AND
+        C.context_name IN ('CurrentYearInstant', 'CurrentYearDuration')
+    LEFT OUTER JOIN
+        aggregation_of_names_list E
+    ON
+        A.xbrl_name = E.aggregate_target
+    WHERE
+        (A.xbrl_name = @XBRLName OR E.aggregate_result = @XBRLName)
+    AND
+        D.code = @corporationId
+    AND
+        A.amounts IS NOT NULL
+    GROUP BY
+        A.amounts,
+        C.period_to,
+        C.instant_date,
+        E.priority_of_use
+    ORDER BY
+        period_to, instant_date
+) A
 WHERE
-    (A.xbrl_name = @XBRLName OR E.aggregate_result = @XBRLName)
-AND
-    D.code = @corporationId
-AND
-    A.amounts IS NOT NULL
-GROUP BY
-    A.amounts,
-    C.period_to,
-    C.instant_date,
-    priority_of_use
-ORDER BY
-    period_to, instant_date;
+    priority_of_use = min_priority_of_use;
 ";
         private static string ToXBRLName(IndicatorType indicatorType)
         {
@@ -191,44 +199,52 @@ ORDER BY
 
         public string Query => @"
 SELECT
-    A.amounts,
-    C.period_to,
-    C.instant_date
-FROM
-    report_items A
-INNER JOIN
-    contexts C
-ON
-    A.report_id = C.report_id
-AND
-    A.context_name = c.context_name
-INNER JOIN
-    report_covers RC
-ON
-    A.report_id = RC.id
-INNER JOIN
-    company_master D
-ON
-    RC.company_id = D.code
-AND
-    C.context_name = 'CurrentYearDuration_NonConsolidatedMember'
-LEFT OUTER JOIN
-    aggregation_of_names_list E
-ON
-    A.xbrl_name = E.aggregate_target
+    *
+FROM (    
+    SELECT
+        A.amounts,
+        C.period_to,
+        C.instant_date,
+        COALESCE(E.priority_of_use, 0) AS priority_of_use,
+        MIN(COALESCE(E.priority_of_use, 0)) OVER (PARTITION BY COALESCE(C.period_to, C.instant_date)) AS min_priority_of_use
+    FROM
+        report_items A
+    INNER JOIN
+        contexts C
+    ON
+        A.report_id = C.report_id
+    AND
+        A.context_name = c.context_name
+    INNER JOIN
+        report_covers RC
+    ON
+        A.report_id = RC.id
+    INNER JOIN
+        company_master D
+    ON
+        RC.company_id = D.code
+    AND
+        C.context_name = 'CurrentYearDuration_NonConsolidatedMember'
+    LEFT OUTER JOIN
+        aggregation_of_names_list E
+    ON
+        A.xbrl_name = E.aggregate_target
+    WHERE
+        (A.xbrl_name = @XBRLName OR E.aggregate_result = @XBRLName)
+    AND
+        D.code = @corporationId
+    AND
+        A.amounts IS NOT NULL
+    GROUP BY
+        A.amounts,
+        C.period_to,
+        C.instant_date,
+        E.priority_of_use
+    ORDER BY
+        period_to, instant_date
+) A
 WHERE
-    (A.xbrl_name = @XBRLName OR E.aggregate_result = @XBRLName)
-AND
-    D.code = @corporationId
-AND
-    A.amounts IS NOT NULL
-GROUP BY
-    A.amounts,
-    C.period_to,
-    C.instant_date,
-    priority_of_use
-ORDER BY
-    period_to, instant_date;
+    priority_of_use = min_priority_of_use;
 ";
     }
 }
