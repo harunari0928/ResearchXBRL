@@ -95,8 +95,7 @@ public class PerformanceIndicatorsQueryService : IPerformanceIndicatorsQueryServ
 SELECT
     A.amounts,
     C.period_to,
-    C.instant_date,
-    COALESCE(E.priority_of_use, 0) priority_of_use
+    C.instant_date
 FROM
     report_items A
 INNER JOIN
@@ -123,13 +122,13 @@ WHERE
     (A.xbrl_name = @XBRLName OR E.aggregate_result = @XBRLName)
 AND
     D.code = @corporationId
+AND
+    A.amounts IS NOT NULL
 GROUP BY
     A.amounts,
     C.period_to,
     C.instant_date,
     priority_of_use
-HAVING
-    COALESCE(E.priority_of_use, 0) = MIN(COALESCE(E.priority_of_use, 0))
 ORDER BY
     period_to, instant_date;
 ";
