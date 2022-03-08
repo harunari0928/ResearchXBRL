@@ -124,7 +124,8 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers
                 // assert
                 Assert.Equal(234, report.Where(x => x.Classification == "jpcrp").Count());
                 Assert.Equal(365, report.Where(x => x.Classification == "jppfs").Count());
-                Assert.Equal(234 + 365, report.Count);
+                Assert.Equal(12, report.Where(x => x.Classification.StartsWith("jpcrp030000-asr")).Count());
+                Assert.Equal(234 + 365 + 12, report.Count);
 
                 // 最初の勘定科目
                 var first = report.Where(x => x.Classification == "jppfs").First();
