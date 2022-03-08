@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
-using ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Application.Interactors.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis;
@@ -12,34 +12,34 @@ using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Units;
 using Xunit;
 
-namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSeriesAnalysis
+namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSeriesAnalysis;
+
+public sealed class PerformTimeSeriesAnalysisInteractorTests
 {
-    public sealed class PerformTimeSeriesAnalysisInteractorTests
+    public sealed class HandleTests
     {
-        public sealed class HandleTests
+        private readonly Mock<ITimeSeriesAnalysisResultRepository> analysisResultRepository;
+        private readonly Mock<ICorporationsRepository> corporationRepository;
+
+        public HandleTests()
         {
-            private readonly Mock<ITimeSeriesAnalysisResultRepository> analysisResultRepository;
-            private readonly Mock<ICorporationsRepository> corporationRepository;
+            analysisResultRepository = new();
+            corporationRepository = new();
+        }
 
-            public HandleTests()
+        [Fact]
+        public async Task 引数の企業IDと勘定項目に関する時系列分析結果を返す()
+        {
+            // arrange
+            var expected = new TimeSeriesAnalysisResult
             {
-                analysisResultRepository = new();
-                corporationRepository = new();
-            }
-
-            [Fact]
-            public async Task 引数の企業IDと勘定項目に関する時系列分析結果を返す()
-            {
-                // arrange
-                var expected = new TimeSeriesAnalysisResult
+                AccountName = "会計項目名",
+                Unit = new NormalUnit
                 {
-                    AccountName = "会計項目名",
-                    Unit = new NormalUnit
-                    {
-                        Name = "JPY",
-                        Measure = "てきとう"
-                    },
-                    ConsolidatedValues = new List<AccountValue>
+                    Name = "JPY",
+                    Measure = "てきとう"
+                },
+                ConsolidatedValues = new List<AccountValue>
                     {
                         new AccountValue
                         {
@@ -66,7 +66,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                             }
                         }
                     },
-                    NonConsolidatedValues = new List<AccountValue>
+                NonConsolidatedValues = new List<AccountValue>
                     {
                         new AccountValue
                         {
@@ -83,61 +83,61 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                             }
                         }
                     }
-                };
-                var input = new AnalyticalMaterials
-                {
-                    CorporationId = "testCor",
-                    AccountItemName = "test"
-                };
-                corporationRepository.Setup(x => x.Exists(It.IsAny<string>()))
-                    .ReturnsAsync(true);
-                analysisResultRepository
-                    .Setup(x => x.GetResult(
-                        input.CorporationId,
-                        input.AccountItemName))
-                    .ReturnsAsync(expected);
-                var interactor = CreateInteractor();
-
-                // act
-                var acutal = await interactor.Handle(input);
-
-                // assert
-                Assert.Equal(expected.AccountName, acutal.AccountName);
-                Assert.Equal(expected.Unit.Name, acutal.Unit?.Name);
-                AssertAccountValues(expected.ConsolidatedValues, acutal.ConsolidatedValues);
-                AssertAccountValues(expected.NonConsolidatedValues, acutal.NonConsolidatedValues);
-            }
-
-            private static void AssertAccountValues(IReadOnlyList<AccountValue> expected, IReadOnlyList<AccountValueViewModel> acutal)
+            };
+            var input = new AnalyticalMaterials
             {
-                foreach (var (e, a) in expected.Zip(acutal))
+                CorporationId = "testCor",
+                AccountItemName = "test"
+            };
+            corporationRepository.Setup(x => x.Exists(It.IsAny<string>()))
+                .ReturnsAsync(true);
+            analysisResultRepository
+                .Setup(x => x.GetResult(
+                    input.CorporationId,
+                    input.AccountItemName))
+                .ReturnsAsync(expected);
+            var interactor = CreateInteractor();
+
+            // act
+            var acutal = await interactor.Handle(input);
+
+            // assert
+            Assert.Equal(expected.AccountName, acutal.AccountName);
+            Assert.Equal(expected.Unit.Name, acutal.Unit?.Name);
+            AssertAccountValues(expected.ConsolidatedValues, acutal.ConsolidatedValues);
+            AssertAccountValues(expected.NonConsolidatedValues, acutal.NonConsolidatedValues);
+        }
+
+        private static void AssertAccountValues(IReadOnlyList<AccountValue> expected, IReadOnlyList<AccountValueViewModel> acutal)
+        {
+            foreach (var (e, a) in expected.Zip(acutal))
+            {
+                Assert.Equal(e.Amount, a.Amount);
+                if (e.FinancialAccountPeriod is DurationPeriod durationPeriod)
                 {
-                    Assert.Equal(e.Amount, a.Amount);
-                    if (e.FinancialAccountPeriod is DurationPeriod durationPeriod)
-                    {
-                        Assert.Equal(durationPeriod.From, a.FinancialAccountPeriod.From);
-                        Assert.Equal(durationPeriod.To, a.FinancialAccountPeriod.To);
-                    }
-                    else if (e.FinancialAccountPeriod is InstantPeriod instantPeriod)
-                    {
-                        Assert.Equal(instantPeriod.Instant, a.FinancialAccountPeriod.Instant);
-                    }
+                    Assert.Equal(durationPeriod.From, a.FinancialAccountPeriod.From);
+                    Assert.Equal(durationPeriod.To, a.FinancialAccountPeriod.To);
+                }
+                else if (e.FinancialAccountPeriod is InstantPeriod instantPeriod)
+                {
+                    Assert.Equal(instantPeriod.Instant, a.FinancialAccountPeriod.Instant);
                 }
             }
+        }
 
-            [Fact]
-            public async Task 引数で指定した企業が存在しなければArgumentExceptionを発生させる()
+        [Fact]
+        public async Task 引数で指定した企業が存在しなければArgumentExceptionを発生させる()
+        {
+            // arrange
+            var expected = new TimeSeriesAnalysisResult
             {
-                // arrange
-                var expected = new TimeSeriesAnalysisResult
+                AccountName = "会計項目名",
+                Unit = new NormalUnit
                 {
-                    AccountName = "会計項目名",
-                    Unit = new NormalUnit
-                    {
-                        Name = "JPY",
-                        Measure = "てきとう"
-                    },
-                    ConsolidatedValues = new List<AccountValue>
+                    Name = "JPY",
+                    Measure = "てきとう"
+                },
+                ConsolidatedValues = new List<AccountValue>
                     {
                         new AccountValue
                         {
@@ -164,30 +164,29 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.TimeSerie
                             }
                         }
                     }
-                };
-                var input = new AnalyticalMaterials
-                {
-                    CorporationId = "testCor",
-                    AccountItemName = "test"
-                };
-                corporationRepository.Setup(x => x.Exists(It.IsAny<string>()))
-                    .ReturnsAsync(false);
-                analysisResultRepository
-                    .Setup(x => x.GetResult(
-                        input.CorporationId,
-                        input.AccountItemName))
-                    .ReturnsAsync(expected);
-                var interactor = CreateInteractor();
-
-                // act & assert
-                await Assert.ThrowsAsync<ArgumentException>(() => interactor.Handle(input));
-            }
-            private PerformTimeSeriesAnalysisInteractor CreateInteractor()
+            };
+            var input = new AnalyticalMaterials
             {
-                return new PerformTimeSeriesAnalysisInteractor(
-                    analysisResultRepository.Object,
-                    corporationRepository.Object);
-            }
+                CorporationId = "testCor",
+                AccountItemName = "test"
+            };
+            corporationRepository.Setup(x => x.Exists(It.IsAny<string>()))
+                .ReturnsAsync(false);
+            analysisResultRepository
+                .Setup(x => x.GetResult(
+                    input.CorporationId,
+                    input.AccountItemName))
+                .ReturnsAsync(expected);
+            var interactor = CreateInteractor();
+
+            // act & assert
+            await Assert.ThrowsAsync<ArgumentException>(() => interactor.Handle(input));
+        }
+        private PerformTimeSeriesAnalysisInteractor CreateInteractor()
+        {
+            return new PerformTimeSeriesAnalysisInteractor(
+                analysisResultRepository.Object,
+                corporationRepository.Object);
         }
     }
 }

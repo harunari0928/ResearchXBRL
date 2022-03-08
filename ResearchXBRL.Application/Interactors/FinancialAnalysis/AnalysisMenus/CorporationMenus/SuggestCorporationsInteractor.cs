@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ResearchXBRL.Application.DTO.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.CorporationMenus;
-using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
 
 namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus.CorporationMenus
 {

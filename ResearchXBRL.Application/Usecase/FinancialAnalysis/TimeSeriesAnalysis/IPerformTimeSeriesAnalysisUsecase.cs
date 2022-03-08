@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
-using ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.TimeSeriesAnalysis;
 
-namespace ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis
+namespace ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis;
+
+public interface IPerformTimeSeriesAnalysisUsecase
 {
-    public interface IPerformTimeSeriesAnalysisUsecase
-    {
-        Task<TimeSeriesAnalysisViewModel> Handle(AnalyticalMaterials input);
-    }
+    Task<TimeSeriesAnalysisViewModel> Handle(AnalyticalMaterials input);
 }

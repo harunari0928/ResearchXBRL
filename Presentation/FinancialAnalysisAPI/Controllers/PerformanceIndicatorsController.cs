@@ -1,10 +1,8 @@
 using System;
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
-using ResearchXBRL.Application.DTO.FinancialAnalysis.PerformanceIndicators;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Application.Interactors.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.PerformanceIndicators;
 
@@ -26,7 +24,7 @@ public sealed class PerformanceIndicatorsController
     }
 
     [HttpGet]
-    public async ValueTask<ActionResult<PerformanceIndicatorsViewModel>> GetPerformanceIndicators(
+    public async ValueTask<ActionResult<PerformanceIndicatorViewModel>> GetPerformanceIndicators(
             string corporationId)
     {
         try

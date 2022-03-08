@@ -1,4 +1,4 @@
-namespace ResearchXBRL.Application.DTO.FinancialAnalysis.TimeSeriesAnalysis
+namespace ResearchXBRL.Application.ViewModel.FinancialAnalysis.TimeSeriesAnalysis
 {
     public sealed class UnitViewModel
     {

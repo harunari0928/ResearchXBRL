@@ -1,4 +1,4 @@
-namespace ResearchXBRL.Application.DTO.FinancialAnalysis.AnalysisMenus.CorporationMenus
+namespace ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.CorporationMenus
 {
     public sealed class CorporationViewModel
     {
