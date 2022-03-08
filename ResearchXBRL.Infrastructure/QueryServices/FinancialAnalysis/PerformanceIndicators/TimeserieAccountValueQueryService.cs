@@ -7,7 +7,7 @@ using ResearchXBRL.Application.QueryServices.FinancialAnalysis.PerformanceIndica
 
 namespace ResearchXBRL.Infrastructure.QueryServices.FinancialAnalysis.PerformanceIndicators;
 
-public class TimeseriesAccountValuesQueryService : ITimeseriesAccountValuesQueryService
+public class TimeseriesAccountValuesQueryService : ITimeseriesAccountValuesQueryService, IAsyncDisposable, IDisposable
 {
     private readonly NpgsqlConnection connection;
 

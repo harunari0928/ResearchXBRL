@@ -187,6 +187,7 @@ VALUES
   ('OperatingRevenuesSummaryOfBusinessResults', 'NetSales', 57),
   ('BusinessRevenueSummaryOfBusinessResults', 'NetSales', 58),
   ('OperatingRevenueSummaryOfBusinessResults', 'NetSales', 59),
+  ('SalesRevenuesIFRS', 'NetSales', 60),
   -- 営業利益
   ('ProfitLossFromOperatingActivities', 'OperatingIncome', 1),
   ('OperatingIncomeLoss', 'OperatingIncome', 2),
@@ -195,11 +196,18 @@ VALUES
   ('OperatingProfitIFRSSummaryOfBusinessResults', 'OperatingIncome', 5),
   ('OperatingIncomeLossIFRSSummaryOfBusinessResults', 'OperatingIncome', 6),
   ('OperatingIncomeIFRSSummaryOfBusinessResults', 'OperatingIncome', 7),
+  ('OperatingProfitLossIFRS', 'OperatingIncome', 8),
+
   -- 経常利益
   ('OrdinaryIncomeLossSummaryOfBusinessResults', 'OrdinaryIncome', 1),
+  ('ProfitLossBeforeTaxUSGAAPSummaryOfBusinessResults', 'OrdinaryIncome', 2),
+  ('ProfitLossBeforeTaxIFRSSummaryOfBusinessResults', 'OrdinaryIncome', 3),
+  ('ProfitLossBeforeTaxIFRS', 'OrdinaryIncome', 4),
   -- 親会社の所有者に帰属する利益
   ('ProfitLossAttributableToOwnersOfParentSummaryOfBusinessResults', 'ProfitLossAttributableToOwnersOfParent', 1),
   ('ProfitLossAndAttributableToOwnersOfParent', 'ProfitLossAttributableToOwnersOfParent', 2),
+  ('NetIncomeLossAttributableToOwnersOfParentUSGAAPSummaryOfBusinessResults', 'ProfitLossAttributableToOwnersOfParent', 3),
+  ('ProfitLossAttributableToOwnersOfParentIFRS', 'ProfitLossAttributableToOwnersOfParent', 4),
   -- ROE
   ('RateOfReturnOnEquityUSGAAPSummaryOfBusinessResults', 'RateOfReturnOnEquitySummaryOfBusinessResults', 1),
   ('NetIncomeToSalesBelongingToShareholdersSummaryOfBusinessResults', 'RateOfReturnOnEquitySummaryOfBusinessResults', 2),
