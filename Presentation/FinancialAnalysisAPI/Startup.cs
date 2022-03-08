@@ -55,7 +55,7 @@ public class Startup
         services.AddTransient<ISuggestAccountItemsUsecase, SuggestAccountItemsInteractor>();
         services.AddTransient<ISuggestCorporationsUsecase, SuggestCorporationsInteractor>();
         services.AddTransient<IAccountItemMenuRepository, AccountItemMenuRepository>();
-        services.AddTransient<ICorporationMenuRepository, CorporationMenuRepository>();
+        services.AddTransient<ICorporationsMenuRepository, CorporationMenuRepository>();
         services.AddTransient<ICorporationsRepository, CorporationRepository>();
         services.AddTransient<ITimeSeriesAnalysisResultRepository, TimeSeriesAnalysisResultRepository>();
         services.AddTransient<IPerformTimeSeriesAnalysisUsecase, PerformTimeSeriesAnalysisInteractor>();

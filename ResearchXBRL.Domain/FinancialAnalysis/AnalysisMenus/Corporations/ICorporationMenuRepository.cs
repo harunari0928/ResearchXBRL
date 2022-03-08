@@ -2,8 +2,9 @@ using System.Threading.Tasks;
 
 namespace ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations
 {
-    public interface ICorporationMenuRepository
+    public interface ICorporationsMenuRepository
     {
-        Task<CorporatonMenu> GetProposals(string keyword);
+        Task<CorporatonsMenu> GetProposals(string keyword);
+        ValueTask<Corporation?> FindBySecuritiesCode(string securitiesCode);
     }
 }
