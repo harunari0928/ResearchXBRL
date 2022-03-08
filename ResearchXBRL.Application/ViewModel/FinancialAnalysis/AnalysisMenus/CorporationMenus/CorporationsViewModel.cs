@@ -1,8 +1,17 @@
-namespace ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.CorporationMenus
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
+
+namespace ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+
+public sealed class CorporationViewModel
 {
-    public sealed class CorporationViewModel
+    public string Name { get; init; } = "";
+    public string CorporationId { get; init; } = "";
+
+    public CorporationViewModel() { }
+
+    public CorporationViewModel(Corporation corporation)
     {
-        public string Name { get; init; } = "";
-        public string CorporationId { get; init; } = "";
+        Name = corporation.Name;
+        CorporationId = corporation.CorporationId;
     }
 }

@@ -29,13 +29,7 @@ public sealed class SuggestCorporationsInteractor : ISuggestCorporationsUsecase
                 return Enumerable.Empty<CorporationViewModel>().ToArray();
             }
 
-            return new CorporationViewModel[] {
-                new CorporationViewModel
-                {
-                    Name = corporation.Name,
-                    CorporationId = corporation.CorporationId
-                }
-            };
+            return new CorporationViewModel[] { new CorporationViewModel(corporation) };
         }
 
         var modifiedKeyword = CleansingKeyword(keyword);
@@ -46,12 +40,10 @@ public sealed class SuggestCorporationsInteractor : ISuggestCorporationsUsecase
         }
 
         var corporationsMenu = await repository.GetProposals(modifiedKeyword);
-        return corporationsMenu.Corporations
-            .Select(x => new CorporationViewModel
-            {
-                Name = x.Name,
-                CorporationId = x.CorporationId
-            }).ToArray();
+        return corporationsMenu
+            .Corporations
+            .Select(x => new CorporationViewModel(x))
+            .ToArray();
     }
 
     private static string CleansingKeyword(string keyword)
