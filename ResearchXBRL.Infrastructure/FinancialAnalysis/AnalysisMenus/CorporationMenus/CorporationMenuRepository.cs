@@ -7,7 +7,8 @@ using NpgsqlTypes;
 using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.CorporationMenus;
-public sealed class CorporationMenuRepository : ICorporationMenuRepository, IDisposable, IAsyncDisposable
+
+public sealed class CorporationMenuRepository : ICorporationsMenuRepository, IDisposable, IAsyncDisposable
 {
     private readonly NpgsqlConnection connection;
 
@@ -33,13 +34,20 @@ public sealed class CorporationMenuRepository : ICorporationMenuRepository, IDis
         await connection.DisposeAsync();
     }
 
-    public async Task<CorporatonMenu> GetProposals(string keyword)
+    public async Task<CorporatonsMenu> GetProposals(string keyword)
     {
         using var command = CreateReadCommand(keyword);
-        return new CorporatonMenu
+        return new CorporatonsMenu
         {
             Corporations = await ReadCorporations(command)
         };
+    }
+
+    public async ValueTask<Corporation?> FindBySecuritiesCode(string securitiesCode)
+    {
+        using var command = CreateReadCommandBySecuritiesCode(securitiesCode);
+        var suggestedCorporations = await ReadCorporations(command);
+        return suggestedCorporations.FirstOrDefault();
     }
 
     private NpgsqlCommand CreateReadCommand(string keyword)
@@ -64,6 +72,25 @@ LIMIT 10;
             .Value = $"%{keyword}%";
         command.Parameters.Add("@submitterNameKana", NpgsqlDbType.Varchar)
             .Value = $"%{ToKatakana(keyword)}%";
+        return command;
+    }
+    private NpgsqlCommand CreateReadCommandBySecuritiesCode(string securitiesCode)
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = @"
+SELECT
+    code,
+    submitter_name
+FROM
+    company_master
+WHERE
+    submission_type LIKE '%法人%' -- 法人のみをサジェストする
+AND
+    securities_code = @securitiesCode
+LIMIT 1;
+";
+        command.Parameters.Add("securitiesCode", NpgsqlDbType.Varchar)
+            .Value = $"{securitiesCode}0";
         return command;
     }
     private static async Task<IReadOnlyList<Corporation>> ReadCorporations(NpgsqlCommand command)
