@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,28 +23,41 @@ public sealed class PerformanceIndicator
         return Indicators.Any(x => x.IndicatorType == indicatorType);
     }
 
-    public bool IsEmptyValue(in IndicatorType indicatorType)
-    {
-        if (!Exists(indicatorType))
-        {
-            throw new InvalidOperationException();
-        }
-
-        return !Indicators.Single(x => x.IndicatorType == IndicatorType.RateOfReturnOnEquitySummaryOfBusinessResults).Values.Any();
-    }
-
     public void UpdateROEValue(in IReadOnlyDictionary<DateOnly, decimal> profitOrLossValues, in IReadOnlyDictionary<DateOnly, decimal> capitalValues)
     {
+        if (!Exists(IndicatorType.RateOfReturnOnEquitySummaryOfBusinessResults))
+        {
+            throw new InvalidOperationException("業績指標内にROEを含めてください");
+        }
+
+        var oldROEValues = indicators
+            .Single(x => x.IndicatorType == IndicatorType.RateOfReturnOnEquitySummaryOfBusinessResults)
+            .Values;
+
         indicators = indicators
             .Where(x => x.IndicatorType != IndicatorType.RateOfReturnOnEquitySummaryOfBusinessResults)
             .Append(new Indicator
             {
                 IndicatorType = IndicatorType.RateOfReturnOnEquitySummaryOfBusinessResults,
-                Values = CreateNewValues(profitOrLossValues, capitalValues)
+                Values = MergeValues(oldROEValues, CreateNewValues(profitOrLossValues, capitalValues))
             })
-            .ToList();
+            .ToArray();
     }
 
+    private static IReadOnlyDictionary<DateOnly, decimal> MergeValues(in IReadOnlyDictionary<DateOnly, decimal> oldValues, in IReadOnlyDictionary<DateOnly, decimal> calculatedValues)
+    {
+        var newValues = oldValues.ToDictionary(x => x.Key, y => y.Value);
+        foreach (var value in calculatedValues)
+        {
+            if (oldValues.ContainsKey(value.Key))
+            {
+                continue;
+            }
+
+            newValues.Add(value.Key, value.Value);
+        }
+        return newValues;
+    }
     private static Dictionary<DateOnly, decimal> CreateNewValues(in IReadOnlyDictionary<DateOnly, decimal> profitOrLossValues, in IReadOnlyDictionary<DateOnly, decimal> capitalValues)
     {
         var newValues = new Dictionary<DateOnly, decimal>();
