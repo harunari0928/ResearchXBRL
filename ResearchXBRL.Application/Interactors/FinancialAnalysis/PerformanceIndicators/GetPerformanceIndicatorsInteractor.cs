@@ -32,8 +32,7 @@ public sealed class GetPerformanceIndicatorsInteractor : IGetPerformanceIndicato
 
         var performanceIndicator = await indicatorsQueryService.Get(corporationId);
 
-        if (performanceIndicator.Exists(IndicatorType.RateOfReturnOnEquitySummaryOfBusinessResults)
-        && performanceIndicator.IsEmptyValue(IndicatorType.RateOfReturnOnEquitySummaryOfBusinessResults))
+        if (performanceIndicator.Exists(IndicatorType.RateOfReturnOnEquitySummaryOfBusinessResults))
         {
             var profitOrLossValues = await timeseriesAccountValuesQueryService.Get(corporationId, "当期純利益又は当期純損失（△）");
             var capitalValues = await timeseriesAccountValuesQueryService.Get(corporationId, "資本金");
