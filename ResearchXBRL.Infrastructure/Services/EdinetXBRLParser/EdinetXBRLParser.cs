@@ -17,6 +17,7 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
 public sealed class EdinetXBRLParser : IEdinetXBRLParser
 {
     private readonly IFileStorage fileStorage;
+    private const string xbrlDirectoryPath = "XBRL/PublicDoc/";
 
     public EdinetXBRLParser(IFileStorage fileStorage)
     {
