@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Npgsql;
 using PostgreSQLCopyHelper;
-using ResearchXBRL.Domain.AccountElements;
+using ResearchXBRL.Domain.AccountItems;
 
-namespace ResearchXBRL.Infrastructure.AccountElements
+namespace ResearchXBRL.Infrastructure.AccountItems
 {
-    public sealed class AccountElementRepository : IAccountElementRepository, IAsyncDisposable
+    public sealed class AccountItemsRepository : IAccountItemRepository, IAsyncDisposable
     {
         private readonly NpgsqlConnection connection;
 
-        public AccountElementRepository()
+        public AccountItemsRepository()
         {
             var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
             var userId = Environment.GetEnvironmentVariable("DB_USERID");
@@ -23,10 +23,10 @@ namespace ResearchXBRL.Infrastructure.AccountElements
             connection.Open();
         }
 
-        public async Task Write(IEnumerable<AccountElement> elements)
+        public async Task Write(IEnumerable<AccountItem> elements)
         {
             using var tran = connection.BeginTransaction();
-            var helper = new PostgreSQLCopyHelper<AccountElement>("account_elements")
+            var helper = new PostgreSQLCopyHelper<AccountItem>("account_elements")
                 .MapVarchar("xbrl_name", x => x.XBRLName)
                 .MapDate("taxonomy_version", x => x.TaxonomyVersion)
                 .MapVarchar("account_name", x => x.AccountName)

@@ -1,7 +1,7 @@
 ﻿using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
-using ResearchXBRL.Domain.AccountElements;
+using ResearchXBRL.Domain.AccountItems;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +12,7 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyParsers
 {
     public sealed class TaxonomyParser : ITaxonomyParser
     {
-        public IEnumerable<AccountElement> Parse(EdinetTaxonomyData source)
+        public IEnumerable<AccountItem> Parse(EdinetTaxonomyData source)
         {
             return CreateAccountElements(source);
         }
@@ -60,7 +60,7 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyParsers
                 .Where(x => x.Name == "xsd:element");
         }
 
-        private static IEnumerable<AccountElement> CreateAccountElements(EdinetTaxonomyData source)
+        private static IEnumerable<AccountItem> CreateAccountElements(EdinetTaxonomyData source)
         {
             using var labelReader = new StreamReader(source.LabelDataStream);
             using var schemaReader = new StreamReader(source.SchemaDataStream);
@@ -68,7 +68,7 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyParsers
             foreach (var (elementId, name) in ReadAccountLabels(labelReader))
             {
                 var accountElement = GetAccountItemElement(accountElements, elementId);
-                yield return new AccountElement
+                yield return new AccountItem
                 {
                     XBRLName = elementId,
                     AccountName = name,

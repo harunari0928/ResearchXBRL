@@ -5,10 +5,10 @@ using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
 using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
 using ResearchXBRL.Infrastructure.Services;
 using ResearchXBRL.Infrastructure.Services.FileStorages;
-using ResearchXBRL.Domain.AccountElements;
-using ResearchXBRL.Infrastructure.AccountElements;
-using ResearchXBRL.Application.Usecase.AccountElements.Aquire;
-using ResearchXBRL.Application.Interactors.AccountElements.Aquire;
+using ResearchXBRL.Domain.AccountItems;
+using ResearchXBRL.Infrastructure.AccountItems;
+using ResearchXBRL.Application.Usecase.AccountItems.Aquire;
+using ResearchXBRL.Application.Interactors.AccountItems.Aquire;
 
 namespace AquireAccountItems
 {
@@ -18,17 +18,17 @@ namespace AquireAccountItems
         {
             using var serviceProvider = CreateServiceProvider();
             var usecase = serviceProvider
-                .GetService<IAquireAccoumtElementsUsecase>();
+                .GetService<IAquireAccoumtItemsUsecase>();
             await usecase.Handle();
         }
 
         private static ServiceProvider CreateServiceProvider()
         {
             return new ServiceCollection()
-                .AddTransient<IAquireAccoumtElementsUsecase, AquireAccoumtElementsInteractor>()
+                .AddTransient<IAquireAccoumtItemsUsecase, AquireAccountItemsInteractor>()
                 .AddTransient<ITaxonomyDownloader, TaxonomyDownloader>()
                 .AddTransient<ITaxonomyParser, TaxonomyParser>()
-                .AddTransient<IAccountElementRepository, AccountElementRepository>()
+                .AddTransient<IAccountItemRepository, AccountItemsRepository>()
                 .AddSingleton<IFileStorage>(_ => new LocalStorage("/.tmp"))
                 .AddHttpClient()
                 .BuildServiceProvider();

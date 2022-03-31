@@ -1,9 +1,9 @@
 ﻿using Moq;
-using ResearchXBRL.Domain.AccountElements;
+using ResearchXBRL.Domain.AccountItems;
 using System.Threading.Tasks;
 using Xunit;
-using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
-using ResearchXBRL.Application.Interactors.AccountElements.Transfer;
+using ResearchXBRL.Application.Usecase.AccountItems.Transfer;
+using ResearchXBRL.Application.Interactors.AccountItems.Transfer;
 using System.Text.Json;
 using System.Collections.Generic;
 using System;
@@ -11,15 +11,15 @@ using System.IO;
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
 
-namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Transfer
+namespace ResearchXBRL.Tests.Application.Interactors.AccountItems.Transfer
 {
-    public sealed class TransferAccountElementsInteractorTests
+    public sealed class TransferAccountItemsInteractorTests
     {
         public sealed class HandleTests
         {
             private readonly Mock<ITaxonomyParser> accountElementReader;
-            private readonly Mock<IAccountElementWriter> accountElementWriter;
-            private readonly Mock<ITransferAccountElementsPresenter> presenter;
+            private readonly Mock<IAccountItemWriter> accountElementWriter;
+            private readonly Mock<ITransferAccountItemsPresenter> presenter;
 
             public HandleTests()
             {
@@ -32,9 +32,9 @@ namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Transfer
             public async Task 読み込んだ会計項目全てを書き込む()
             {
                 // arrange
-                var expectedAccountElements = new AccountElement[]
+                var expectedAccountElements = new AccountItem[]
                 {
-                    new AccountElement
+                    new AccountItem
                     {
                         AccountName = "売掛金",
                         XBRLName = "test",
@@ -46,7 +46,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Transfer
                         PeriodType = "",
                         TaxonomyVersion = DateTime.Parse("2021/01/02")
                     },
-                    new AccountElement
+                    new AccountItem
                     {
                         AccountName = "前受け金",
                         XBRLName = "test2",
@@ -55,7 +55,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Transfer
                         PeriodType = "aaa",
                         TaxonomyVersion = DateTime.Parse("2019/11/12")
                     },
-                    new AccountElement
+                    new AccountItem
                     {
                         AccountName = "前受け金41",
                     },
@@ -70,7 +70,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Transfer
 
                 // assert                
                 accountElementWriter
-                    .Verify(x => x.Write(It.Is<IEnumerable<AccountElement>>(x =>
+                    .Verify(x => x.Write(It.Is<IEnumerable<AccountItem>>(x =>
                     JsonSerializer.Serialize(expectedAccountElements, new JsonSerializerOptions())
                     == JsonSerializer.Serialize(x, new JsonSerializerOptions())))
                     , Times.Once);
@@ -82,7 +82,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Transfer
                 // arrange
                 var isWritingDone = false;
                 accountElementWriter
-                    .Setup(x => x.Write(It.IsAny<IEnumerable<AccountElement>>()))
+                    .Setup(x => x.Write(It.IsAny<IEnumerable<AccountItem>>()))
                     .Callback(() => isWritingDone = true);
                 var interactor = CreateInteractor();
 
@@ -95,9 +95,9 @@ namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Transfer
                     .Callback(() => Assert.True(isWritingDone));
             }
 
-            private TransferAccountElementsInteractor CreateInteractor()
+            private TransferAccountItemsInteractor CreateInteractor()
             {
-                return new TransferAccountElementsInteractor(
+                return new TransferAccountItemsInteractor(
                     accountElementReader.Object,
                     accountElementWriter.Object,
                     presenter.Object);

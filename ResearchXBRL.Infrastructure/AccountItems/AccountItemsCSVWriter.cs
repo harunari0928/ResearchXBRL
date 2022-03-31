@@ -1,24 +1,24 @@
 ﻿using CsvHelper;
-using ResearchXBRL.Domain.AccountElements;
+using ResearchXBRL.Domain.AccountItems;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Infrastructure.AccountElements
+namespace ResearchXBRL.Infrastructure.AccountItems
 {
-    public sealed class AccountElementCSVWriter : IAccountElementWriter
+    public sealed class AccountItemsCSVWriter : IAccountItemWriter
     {
         private readonly CsvWriter csvWriter;
 
-        public AccountElementCSVWriter(TextWriter writer)
+        public AccountItemsCSVWriter(TextWriter writer)
         {
             csvWriter = new CsvWriter(writer, CultureInfo.CurrentCulture);
         }
 
-        public async Task Write(IEnumerable<AccountElement> elements)
+        public async Task Write(IEnumerable<AccountItem> elements)
         {
-            csvWriter.WriteHeader<AccountElement>();
+            csvWriter.WriteHeader<AccountItem>();
             await csvWriter.NextRecordAsync();
             await csvWriter.WriteRecordsAsync(elements);
         }
