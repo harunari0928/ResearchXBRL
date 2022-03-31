@@ -1,11 +1,11 @@
 ﻿using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Application.Usecase.AccountItems.Transfer;
+using ResearchXBRL.Application.Usecase.ImportAccountItems.Transfer;
 using ResearchXBRL.Domain.AccountItems;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Application.Interactors.AccountItems.Transfer
+namespace ResearchXBRL.Application.Interactors.ImportAccountItems.Transfer
 {
     public sealed class TransferAccountItemsInteractor : ITransferAccountItemsUsecase
     {

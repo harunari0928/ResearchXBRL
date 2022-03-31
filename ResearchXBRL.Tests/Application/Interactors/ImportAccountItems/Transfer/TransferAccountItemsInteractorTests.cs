@@ -2,8 +2,8 @@
 using ResearchXBRL.Domain.AccountItems;
 using System.Threading.Tasks;
 using Xunit;
-using ResearchXBRL.Application.Usecase.AccountItems.Transfer;
-using ResearchXBRL.Application.Interactors.AccountItems.Transfer;
+using ResearchXBRL.Application.Usecase.ImportAccountItems.Transfer;
+using ResearchXBRL.Application.Interactors.ImportAccountItems.Transfer;
 using System.Text.Json;
 using System.Collections.Generic;
 using System;
@@ -11,7 +11,7 @@ using System.IO;
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
 
-namespace ResearchXBRL.Tests.Application.Interactors.AccountItems.Transfer
+namespace ResearchXBRL.Tests.Application.Interactors.ImportAccountItems.Transfer
 {
     public sealed class TransferAccountItemsInteractorTests
     {

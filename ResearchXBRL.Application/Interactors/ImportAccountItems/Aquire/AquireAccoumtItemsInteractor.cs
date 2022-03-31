@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Application.Usecase.AccountItems.Aquire;
+using ResearchXBRL.Application.Usecase.ImportAccountItems.Aquire;
 using ResearchXBRL.Domain.AccountItems;
 
-namespace ResearchXBRL.Application.Interactors.AccountItems.Aquire
+namespace ResearchXBRL.Application.Interactors.ImportAccountItems.Aquire
 {
     public sealed class AquireAccountItemsInteractor : IAquireAccoumtItemsUsecase
     {

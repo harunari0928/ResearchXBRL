@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ResearchXBRL.Application.Interactors.AccountItems.Transfer;
+using ResearchXBRL.Application.Interactors.ImportAccountItems.Transfer;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Application.Usecase.AccountItems.Transfer;
+using ResearchXBRL.Application.Usecase.ImportAccountItems.Transfer;
 using ResearchXBRL.Domain.AccountItems;
 using ResearchXBRL.Infrastructure.AccountItems;
 using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
