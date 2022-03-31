@@ -1,20 +1,20 @@
 using System.Threading.Tasks;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Application.Usecase.AccountElements.Aquire;
-using ResearchXBRL.Domain.AccountElements;
+using ResearchXBRL.Application.Usecase.AccountItems.Aquire;
+using ResearchXBRL.Domain.AccountItems;
 
-namespace ResearchXBRL.Application.Interactors.AccountElements.Aquire
+namespace ResearchXBRL.Application.Interactors.AccountItems.Aquire
 {
-    public sealed class AquireAccoumtElementsInteractor : IAquireAccoumtElementsUsecase
+    public sealed class AquireAccountItemsInteractor : IAquireAccoumtItemsUsecase
     {
         private readonly ITaxonomyDownloader downloader;
         private readonly ITaxonomyParser parser;
-        private readonly IAccountElementRepository repository;
+        private readonly IAccountItemRepository repository;
 
-        public AquireAccoumtElementsInteractor(
+        public AquireAccountItemsInteractor(
             ITaxonomyDownloader downloader,
             ITaxonomyParser parser,
-            IAccountElementRepository repository)
+            IAccountItemRepository repository)
         {
             this.downloader = downloader;
             this.parser = parser;

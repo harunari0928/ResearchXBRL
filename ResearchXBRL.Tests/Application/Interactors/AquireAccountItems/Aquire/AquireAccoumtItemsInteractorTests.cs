@@ -5,19 +5,19 @@ using System.Threading.Tasks;
 using Moq;
 using Moq.Language.Flow;
 using ResearchXBRL.Application.DTO;
-using ResearchXBRL.Application.Interactors.AccountElements.Aquire;
+using ResearchXBRL.Application.Interactors.AccountItems.Aquire;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Domain.AccountElements;
+using ResearchXBRL.Domain.AccountItems;
 using Xunit;
 
-namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Aquire
+namespace ResearchXBRL.Tests.Application.Interactors.AccountItems.Aquire
 {
-    public sealed class AquireAccoumtElementsInteractorTests
+    public sealed class AquireAccoumtItemsInteractorTests
     {
         public sealed class HandleTests
         {
             private readonly Mock<ITaxonomyParser> parser;
-            private readonly Mock<IAccountElementRepository> repository;
+            private readonly Mock<IAccountItemRepository> repository;
             private readonly Mock<ITaxonomyDownloader> downloader;
 
             public HandleTests()
@@ -122,20 +122,20 @@ namespace ResearchXBRL.Tests.Application.Interactors.AccountElements.Aquire
                 RegisterDownloadResult(expectedDownloadResult.ToAsyncEnumerable());
                 parser
                     .Setup(x => x.Parse(It.IsAny<EdinetTaxonomyData>()))
-                    .Returns(Enumerable.Empty<AccountElement>());
+                    .Returns(Enumerable.Empty<AccountItem>());
                 var interactor = CreateInteractor();
 
                 // act
                 await interactor.Handle();
 
                 // assert
-                repository.Verify(x => x.Write(It.IsAny<IEnumerable<AccountElement>>()),
+                repository.Verify(x => x.Write(It.IsAny<IEnumerable<AccountItem>>()),
                         Times.Exactly(expectedDownloadResult.Length));
             }
 
-            private AquireAccoumtElementsInteractor CreateInteractor()
+            private AquireAccountItemsInteractor CreateInteractor()
             {
-                return new AquireAccoumtElementsInteractor(
+                return new AquireAccountItemsInteractor(
                     downloader.Object,
                     parser.Object,
                     repository.Object);

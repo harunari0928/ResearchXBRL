@@ -1,9 +1,9 @@
-﻿using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
+﻿using ResearchXBRL.Application.Usecase.AccountItems.Transfer;
 using System;
 
 namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV
 {
-    public sealed class ConsolePresenter : ITransferAccountElementsPresenter
+    public sealed class ConsolePresenter : ITransferAccountItemsPresenter
     {
         public void Progress(int percentage)
         {

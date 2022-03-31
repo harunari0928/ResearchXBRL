@@ -1,22 +1,22 @@
 ﻿using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
-using ResearchXBRL.Domain.AccountElements;
+using ResearchXBRL.Application.Usecase.AccountItems.Transfer;
+using ResearchXBRL.Domain.AccountItems;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Application.Interactors.AccountElements.Transfer
+namespace ResearchXBRL.Application.Interactors.AccountItems.Transfer
 {
-    public sealed class TransferAccountElementsInteractor : ITransferAccountElementsUsecase
+    public sealed class TransferAccountItemsInteractor : ITransferAccountItemsUsecase
     {
         private readonly ITaxonomyParser accountElementReader;
-        private readonly IAccountElementWriter accountElementWriter;
-        private readonly ITransferAccountElementsPresenter presenter;
+        private readonly IAccountItemWriter accountElementWriter;
+        private readonly ITransferAccountItemsPresenter presenter;
 
-        public TransferAccountElementsInteractor(
+        public TransferAccountItemsInteractor(
             in ITaxonomyParser accountElementReader,
-            in IAccountElementWriter accountElementWriter,
-            in ITransferAccountElementsPresenter presenter)
+            in IAccountItemWriter accountElementWriter,
+            in ITransferAccountItemsPresenter presenter)
         {
             this.accountElementReader = accountElementReader;
             this.accountElementWriter = accountElementWriter;

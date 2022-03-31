@@ -1,6 +1,6 @@
 ﻿using CsvHelper;
-using ResearchXBRL.Domain.AccountElements;
-using ResearchXBRL.Infrastructure.AccountElements;
+using ResearchXBRL.Domain.AccountItems;
+using ResearchXBRL.Infrastructure.AccountItems;
 using System;
 using System.Globalization;
 using System.IO;
@@ -8,9 +8,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ResearchXBRL.Tests.Infrastructure.AccountElements
+namespace ResearchXBRL.Tests.Infrastructure.AccountItems
 {
-    public sealed class AccountElementCSVWriterTests
+    public sealed class AccountItemCSVWriterTests
     {
         public sealed class WriteTests : IDisposable
         {
@@ -28,9 +28,9 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
             public async Task ヘッダが出力される()
             {
                 // arrange
-                var elements = new AccountElement[]
+                var elements = new AccountItem[]
                 {
-                    new AccountElement
+                    new AccountItem
                     {
                         AccountName = "売掛金",
                         XBRLName = "test",
@@ -45,7 +45,7 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
                     },
                 };
                 var (writer, reader) = GetStreamWriterReader();
-                using var accountElementWriter = new AccountElementCSVWriter(writer);
+                using var accountElementWriter = new AccountItemsCSVWriter(writer);
                 using var csvReader = new CsvReader(reader, CultureInfo.CurrentCulture);
 
                 // act
@@ -61,9 +61,9 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
             public async Task 引数の会計項目全てがcsv出力される()
             {
                 // arrange
-                var expected = new AccountElement[]
+                var expected = new AccountItem[]
                 {
-                    new AccountElement
+                    new AccountItem
                     {
                         AccountName = "売掛金",
                         XBRLName = "test",
@@ -76,7 +76,7 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
                         TaxonomyVersion = DateTime.Parse("2021/01/02"),
                         Classification = "jpffs"
                     },
-                    new AccountElement
+                    new AccountItem
                     {
                         AccountName = "前受け金",
                         XBRLName = "test2",
@@ -86,19 +86,19 @@ namespace ResearchXBRL.Tests.Infrastructure.AccountElements
                         TaxonomyVersion = DateTime.Parse("2019/11/12"),
                         Classification = "jpigp"
                     },
-                    new AccountElement
+                    new AccountItem
                     {
                         AccountName = "前受け金41",
                     },
                 };
                 var (writer, reader) = GetStreamWriterReader();
                 using var csvReader = new CsvReader(reader, CultureInfo.CurrentCulture);
-                using var accountElementWriter = new AccountElementCSVWriter(writer);
+                using var accountElementWriter = new AccountItemsCSVWriter(writer);
 
                 // act
                 await accountElementWriter.Write(expected);
                 ReadyForRead();
-                var actual = csvReader.GetRecords<AccountElement>();
+                var actual = csvReader.GetRecords<AccountItem>();
 
                 // assert
                 Assert.Equal(JsonSerializer.Serialize(expected), JsonSerializer.Serialize(actual));

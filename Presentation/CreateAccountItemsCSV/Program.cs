@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ResearchXBRL.Application.Interactors.AccountElements.Transfer;
+using ResearchXBRL.Application.Interactors.AccountItems.Transfer;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
-using ResearchXBRL.Domain.AccountElements;
-using ResearchXBRL.Infrastructure.AccountElements;
+using ResearchXBRL.Application.Usecase.AccountItems.Transfer;
+using ResearchXBRL.Domain.AccountItems;
+using ResearchXBRL.Infrastructure.AccountItems;
 using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
 using System;
 using System.IO;
@@ -27,7 +27,7 @@ namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV
             using var accountElementWriter = new StreamWriter(outputFilePath);
             using var serviceProvider = CreateServiceProvider(accountElementWriter);
             var usecase = serviceProvider
-                .GetService<ITransferAccountElementsUsecase>()
+                .GetService<ITransferAccountItemsUsecase>()
                 ?? throw new Exception("実行失敗");
             await usecase.Hundle(accountItemLabelReader.BaseStream, accountSchemaReader.BaseStream);
         }
@@ -36,10 +36,10 @@ namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV
         {
             return new ServiceCollection()
                 .AddTransient<ITaxonomyParser, TaxonomyParser>()
-                .AddTransient<IAccountElementWriter>(_ =>
-                    new AccountElementCSVWriter(writer))
-                .AddTransient<ITransferAccountElementsPresenter, ConsolePresenter>()
-                .AddSingleton<ITransferAccountElementsUsecase, TransferAccountElementsInteractor>()
+                .AddTransient<IAccountItemWriter>(_ =>
+                    new AccountItemsCSVWriter(writer))
+                .AddTransient<ITransferAccountItemsPresenter, ConsolePresenter>()
+                .AddSingleton<ITransferAccountItemsUsecase, TransferAccountItemsInteractor>()
                 .BuildServiceProvider();
         }
     }
