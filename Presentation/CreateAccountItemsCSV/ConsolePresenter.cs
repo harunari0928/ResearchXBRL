@@ -1,4 +1,4 @@
-﻿using ResearchXBRL.Application.Usecase.AccountItems.Transfer;
+﻿using ResearchXBRL.Application.Usecase.ImportAccountItems.Transfer;
 using System;
 
 namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV

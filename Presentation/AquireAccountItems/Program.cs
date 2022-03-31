@@ -7,8 +7,8 @@ using ResearchXBRL.Infrastructure.Services;
 using ResearchXBRL.Infrastructure.Services.FileStorages;
 using ResearchXBRL.Domain.AccountItems;
 using ResearchXBRL.Infrastructure.AccountItems;
-using ResearchXBRL.Application.Usecase.AccountItems.Aquire;
-using ResearchXBRL.Application.Interactors.AccountItems.Aquire;
+using ResearchXBRL.Application.Usecase.ImportAccountItems.Aquire;
+using ResearchXBRL.Application.Interactors.ImportAccountItems.Aquire;
 
 namespace AquireAccountItems
 {
