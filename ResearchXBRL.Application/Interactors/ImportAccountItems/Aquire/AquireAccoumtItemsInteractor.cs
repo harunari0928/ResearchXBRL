@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.ImportAccountItems.Aquire;
-using ResearchXBRL.Domain.AccountItems;
+using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 
 namespace ResearchXBRL.Application.Interactors.ImportAccountItems.Aquire
 {
@@ -9,12 +9,12 @@ namespace ResearchXBRL.Application.Interactors.ImportAccountItems.Aquire
     {
         private readonly ITaxonomyDownloader downloader;
         private readonly ITaxonomyParser parser;
-        private readonly IAccountItemRepository repository;
+        private readonly IAccountItemsRepository repository;
 
         public AquireAccountItemsInteractor(
             ITaxonomyDownloader downloader,
             ITaxonomyParser parser,
-            IAccountItemRepository repository)
+            IAccountItemsRepository repository)
         {
             this.downloader = downloader;
             this.parser = parser;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResearchXBRL.Domain.AccountItems;
+namespace ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 
 public sealed class AccountItem
 {

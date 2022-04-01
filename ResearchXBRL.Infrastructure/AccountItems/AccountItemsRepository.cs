@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Npgsql;
 using PostgreSQLCopyHelper;
-using ResearchXBRL.Domain.AccountItems;
+using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 
-namespace ResearchXBRL.Infrastructure.AccountItems
+namespace ResearchXBRL.Infrastructure.ImportAccountItems.AccountItems
 {
-    public sealed class AccountItemsRepository : IAccountItemRepository, IAsyncDisposable
+    public sealed class AccountItemsRepository : IAccountItemsRepository, IAsyncDisposable
     {
         private readonly NpgsqlConnection connection;
 

@@ -5,8 +5,8 @@ using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
 using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
 using ResearchXBRL.Infrastructure.Services;
 using ResearchXBRL.Infrastructure.Services.FileStorages;
-using ResearchXBRL.Domain.AccountItems;
-using ResearchXBRL.Infrastructure.AccountItems;
+using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
+using ResearchXBRL.Infrastructure.ImportAccountItems.AccountItems;
 using ResearchXBRL.Application.Usecase.ImportAccountItems.Aquire;
 using ResearchXBRL.Application.Interactors.ImportAccountItems.Aquire;
 
@@ -28,7 +28,7 @@ namespace AquireAccountItems
                 .AddTransient<IAquireAccoumtItemsUsecase, AquireAccountItemsInteractor>()
                 .AddTransient<ITaxonomyDownloader, TaxonomyDownloader>()
                 .AddTransient<ITaxonomyParser, TaxonomyParser>()
-                .AddTransient<IAccountItemRepository, AccountItemsRepository>()
+                .AddTransient<IAccountItemsRepository, AccountItemsRepository>()
                 .AddSingleton<IFileStorage>(_ => new LocalStorage("/.tmp"))
                 .AddHttpClient()
                 .BuildServiceProvider();

@@ -1,7 +1,7 @@
 ﻿using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
-using ResearchXBRL.Domain.AccountItems;
+using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 using System;
 using System.Collections.Generic;
 using System.IO;

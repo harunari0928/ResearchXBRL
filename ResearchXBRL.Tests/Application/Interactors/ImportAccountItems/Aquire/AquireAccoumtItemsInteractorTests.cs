@@ -7,7 +7,7 @@ using Moq.Language.Flow;
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Interactors.ImportAccountItems.Aquire;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Domain.AccountItems;
+using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 using Xunit;
 
 namespace ResearchXBRL.Tests.Application.Interactors.ImportAccountItems.Aquire
@@ -17,7 +17,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.ImportAccountItems.Aquire
         public sealed class HandleTests
         {
             private readonly Mock<ITaxonomyParser> parser;
-            private readonly Mock<IAccountItemRepository> repository;
+            private readonly Mock<IAccountItemsRepository> repository;
             private readonly Mock<ITaxonomyDownloader> downloader;
 
             public HandleTests()

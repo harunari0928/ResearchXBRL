@@ -1,5 +1,5 @@
 ﻿using Moq;
-using ResearchXBRL.Domain.AccountItems;
+using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 using System.Threading.Tasks;
 using Xunit;
 using ResearchXBRL.Application.Usecase.ImportAccountItems.Transfer;
@@ -18,7 +18,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.ImportAccountItems.Transfer
         public sealed class HandleTests
         {
             private readonly Mock<ITaxonomyParser> accountElementReader;
-            private readonly Mock<IAccountItemWriter> accountElementWriter;
+            private readonly Mock<IAccountItemsWriter> accountElementWriter;
             private readonly Mock<ITransferAccountItemsPresenter> presenter;
 
             public HandleTests()

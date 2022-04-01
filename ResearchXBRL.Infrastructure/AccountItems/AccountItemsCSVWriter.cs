@@ -1,13 +1,13 @@
 ﻿using CsvHelper;
-using ResearchXBRL.Domain.AccountItems;
+using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Infrastructure.AccountItems
+namespace ResearchXBRL.Infrastructure.ImportAccountItems.AccountItems
 {
-    public sealed class AccountItemsCSVWriter : IAccountItemWriter
+    public sealed class AccountItemsCSVWriter : IAccountItemsWriter
     {
         private readonly CsvWriter csvWriter;
 
