@@ -22,14 +22,14 @@ public sealed class AccountItemReverseLookupInteractorTests
         public async Task Test1()
         {
             // arrange
-            var lookupParameters = new List<ReverseLookupParameters>
+            var lookupParameters = new List<FinancialReport>
             {
-                new ReverseLookupParameters
+                new FinancialReport
                 {
                     SecuritiesCode = 1111,
                     NetSales = 100
                 },
-                new ReverseLookupParameters
+                new FinancialReport
                 {
                     SecuritiesCode = 1112,
                     NetSales = 101
@@ -37,7 +37,7 @@ public sealed class AccountItemReverseLookupInteractorTests
             };
             reverseDictionaryQueryServiceMock
                 .Setup(x => x.Get())
-                .Returns(lookupParameters);
+                .Returns(lookupParameters.ToAsyncEnumerable());
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             var interactor = new AccountItemReverseLookupInteractor(
                 reverseDictionaryQueryServiceMock.Object,
@@ -50,7 +50,7 @@ public sealed class AccountItemReverseLookupInteractorTests
 
             // assert
             reverseLookupQueryService
-                .Verify(x => x.Lookup(It.IsAny<ReverseLookupParameters>()),
+                .Verify(x => x.Lookup(It.IsAny<FinancialReport>()),
                 Times.Exactly(lookupParameters.Count), "逆引き辞書の要素数だけ逆引きを行う");
         }
 
@@ -58,14 +58,14 @@ public sealed class AccountItemReverseLookupInteractorTests
         public async Task Test2()
         {
             // arrange
-            var lookupParameters = new List<ReverseLookupParameters>
+            var lookupParameters = new List<FinancialReport>
             {
-                new ReverseLookupParameters
+                new FinancialReport
                 {
                     SecuritiesCode = 1111,
                     NetSales = 100
                 },
-                new ReverseLookupParameters
+                new FinancialReport
                 {
                     SecuritiesCode = 1112,
                     NetSales = 101
@@ -73,7 +73,7 @@ public sealed class AccountItemReverseLookupInteractorTests
             };
             reverseDictionaryQueryServiceMock
                 .Setup(x => x.Get())
-                .Returns(lookupParameters);
+                .Returns(lookupParameters.ToAsyncEnumerable());
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             var interactor = new AccountItemReverseLookupInteractor(
                 reverseDictionaryQueryServiceMock.Object,
@@ -86,10 +86,10 @@ public sealed class AccountItemReverseLookupInteractorTests
 
             // assert
             reverseLookupQueryService
-                .Verify(x => x.Lookup(It.Is<ReverseLookupParameters>(p => p == lookupParameters[0])),
+                .Verify(x => x.Lookup(It.Is<FinancialReport>(p => p == lookupParameters[0])),
                 Times.Once);
             reverseLookupQueryService
-                .Verify(x => x.Lookup(It.Is<ReverseLookupParameters>(p => p == lookupParameters[1])),
+                .Verify(x => x.Lookup(It.Is<FinancialReport>(p => p == lookupParameters[1])),
                 Times.Once);
         }
 
@@ -97,9 +97,9 @@ public sealed class AccountItemReverseLookupInteractorTests
         public async Task Test3()
         {
             // arrange
-            var lookupParameters = new List<ReverseLookupParameters>
+            var lookupParameters = new List<FinancialReport>
             {
-                new ReverseLookupParameters
+                new FinancialReport
                 {
                     SecuritiesCode = 1111,
                     NetSales = 100
@@ -107,7 +107,7 @@ public sealed class AccountItemReverseLookupInteractorTests
             };
             reverseDictionaryQueryServiceMock
                 .Setup(x => x.Get())
-                .Returns(lookupParameters);
+                .Returns(lookupParameters.ToAsyncEnumerable());
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             var interactor = new AccountItemReverseLookupInteractor(
                 reverseDictionaryQueryServiceMock.Object,
@@ -151,7 +151,7 @@ public sealed class AccountItemReverseLookupInteractorTests
                 }
             };
             reverseLookupQueryService
-                .Setup(x => x.Lookup(It.IsAny<ReverseLookupParameters>()))
+                .Setup(x => x.Lookup(It.IsAny<FinancialReport>()))
                 .ReturnsAsync(reverseLookupResult);
             return reverseLookupResult;
         }
