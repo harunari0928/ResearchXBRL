@@ -1,6 +1,6 @@
 ﻿using CsvHelper;
-using ResearchXBRL.Domain.AccountItems;
-using ResearchXBRL.Infrastructure.AccountItems;
+using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
+using ResearchXBRL.Infrastructure.ImportAccountItems.AccountItems;
 using System;
 using System.Globalization;
 using System.IO;

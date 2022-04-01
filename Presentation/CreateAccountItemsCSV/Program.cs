@@ -2,8 +2,8 @@
 using ResearchXBRL.Application.Interactors.ImportAccountItems.Transfer;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.ImportAccountItems.Transfer;
-using ResearchXBRL.Domain.AccountItems;
-using ResearchXBRL.Infrastructure.AccountItems;
+using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
+using ResearchXBRL.Infrastructure.ImportAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
 using System;
 using System.IO;
@@ -36,7 +36,7 @@ namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV
         {
             return new ServiceCollection()
                 .AddTransient<ITaxonomyParser, TaxonomyParser>()
-                .AddTransient<IAccountItemWriter>(_ =>
+                .AddTransient<IAccountItemsWriter>(_ =>
                     new AccountItemsCSVWriter(writer))
                 .AddTransient<ITransferAccountItemsPresenter, ConsolePresenter>()
                 .AddSingleton<ITransferAccountItemsUsecase, TransferAccountItemsInteractor>()

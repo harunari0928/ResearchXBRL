@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ResearchXBRL.Application.DTO;
-using ResearchXBRL.Domain.AccountItems;
+using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 
 namespace ResearchXBRL.Application.Services
 {
