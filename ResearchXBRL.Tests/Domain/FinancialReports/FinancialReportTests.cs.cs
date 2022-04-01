@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 using ResearchXBRL.Domain.FinancialReports;
 using ResearchXBRL.Domain.FinancialReportItems;
