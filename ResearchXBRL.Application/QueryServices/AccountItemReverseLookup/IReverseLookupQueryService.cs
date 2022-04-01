@@ -6,5 +6,5 @@ namespace ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
 
 public interface IReverseLookupQueryService
 {
-    ValueTask<IReadOnlyCollection<ReverseLookupResult>> Lookup(ReverseLookupParameters parameters);
+    ValueTask<IReadOnlyCollection<ReverseLookupResult>> Lookup(FinancialReport financialReport);
 }

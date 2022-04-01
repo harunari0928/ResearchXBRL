@@ -23,18 +23,22 @@ public sealed class AccountItemReverseLookupInteractor
         this.repository = repository;
     }
 
+    /// <summary>
+    /// 財務諸表情報からXBRL会計項目名を逆引きし、リポジトリに保存する
+    /// </summary>
+    /// <returns></returns>
     public async ValueTask Handle()
     {
-        var reverseDictionary = reverseDictionaryQueryService.Get();
+        var financialReports = reverseDictionaryQueryService.Get();
 
-        var normalizedAccountItems = await GetNormalizedAccountItems(reverseDictionary).ToListAsync();
+        var normalizedAccountItems = await GetNormalizedAccountItems(financialReports).ToListAsync();
 
         await repository.Add(normalizedAccountItems);
     }
 
-    private async IAsyncEnumerable<AccountItem> GetNormalizedAccountItems(IEnumerable<ReverseLookupParameters> reverseDictionary)
+    private async IAsyncEnumerable<AccountItem> GetNormalizedAccountItems(IAsyncEnumerable<FinancialReport> financialReports)
     {
-        foreach (var item in reverseDictionary)
+        await foreach (var item in financialReports)
         {
             foreach (var result in await reverseLookupQueryService.Lookup(item))
             {

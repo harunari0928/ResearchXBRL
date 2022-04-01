@@ -6,5 +6,5 @@ namespace ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
 
 public interface IReverseDictionaryQueryService
 {
-    IEnumerable<ReverseLookupParameters> Get();
+    IAsyncEnumerable<FinancialReport> Get();
 }
