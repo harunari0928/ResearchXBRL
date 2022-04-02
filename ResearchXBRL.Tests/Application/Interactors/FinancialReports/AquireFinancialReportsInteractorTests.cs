@@ -6,9 +6,10 @@ using Moq;
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.ImportFinancialReports;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Application.Usecase.FinancialReports;
+using ResearchXBRL.Application.Usecase.ImportFinancialReports;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReportItems;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
+
 using Xunit;
 
 namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports

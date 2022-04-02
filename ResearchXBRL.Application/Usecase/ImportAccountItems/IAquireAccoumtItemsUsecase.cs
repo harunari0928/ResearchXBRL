@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Application.Usecase.ImportAccountItems.Aquire
+namespace ResearchXBRL.Application.Usecase.ImportAccountItems
 {
     public interface IAquireAccoumtItemsUsecase
     {

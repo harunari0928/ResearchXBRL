@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.AccountItems;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
 using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItems;
 

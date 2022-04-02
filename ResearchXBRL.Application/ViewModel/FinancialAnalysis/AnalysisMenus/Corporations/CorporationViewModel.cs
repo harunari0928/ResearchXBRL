@@ -1,6 +1,6 @@
 using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
 
-namespace ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+namespace ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.Corporations;
 
 public sealed class CorporationViewModel
 {

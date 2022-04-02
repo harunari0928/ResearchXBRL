@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Application.Usecase.FinancialReports
+namespace ResearchXBRL.Application.Usecase.ImportFinancialReports
 {
     public interface IAquireFinancialReportsUsecase
     {
