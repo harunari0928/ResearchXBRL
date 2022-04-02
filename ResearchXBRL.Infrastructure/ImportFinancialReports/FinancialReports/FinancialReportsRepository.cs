@@ -1,17 +1,17 @@
-﻿using ResearchXBRL.Domain.FinancialReports;
-using System;
-using System.Threading.Tasks;
-using PostgreSQLCopyHelper;
-using ResearchXBRL.Domain.FinancialReports.Units;
+﻿using System;
 using System.Linq;
-using ResearchXBRL.Domain.FinancialReportItems;
-using ResearchXBRL.Domain.FinancialReports.Contexts;
+using System.Threading.Tasks;
 using NpgsqlTypes;
+using PostgreSQLCopyHelper;
+using ResearchXBRL.Domain.ImportFinancialReports.Contexts;
+using ResearchXBRL.Domain.ImportFinancialReports.FinancialReportItems;
+using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
+using ResearchXBRL.Domain.ImportFinancialReports.Units;
 using ResearchXBRL.Infrastructure.Shared;
 
-namespace ResearchXBRL.Infrastructure.FinancialReports;
+namespace ResearchXBRL.Infrastructure.ImportFinancialReports.FinancialReports;
 
-public sealed class FinancialReportRepository : SQLService, IFinancialReportRepository
+public sealed class FinancialReportsRepository : SQLService, IFinancialReportsRepository
 {
     public async Task<bool> IsExists(string doucmentId)
     {

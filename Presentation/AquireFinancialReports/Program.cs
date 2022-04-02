@@ -1,17 +1,17 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ResearchXBRL.Application.FinancialReports;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using ResearchXBRL.Application.ImportFinancialReports;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.FinancialReports;
-using ResearchXBRL.Domain.FinancialReports;
-using ResearchXBRL.Infrastructure.FinancialReports;
+using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
+using ResearchXBRL.Infrastructure.ImportFinancialReports.FinancialReports;
 using ResearchXBRL.Infrastructure.Services;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
 using ResearchXBRL.Infrastructure.Services.FileStorages;
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace AquireFinancialReports
 {
@@ -78,7 +78,7 @@ namespace AquireFinancialReports
                     => new AquireFinancialReportsInteractor(
                         x.GetService<IEdinetXBRLDownloader>() ?? throw new Exception($"{nameof(IEdinetXBRLDownloader)}のDIに失敗しました"),
                         x.GetService<IEdinetXBRLParser>() ?? throw new Exception($"{nameof(IEdinetXBRLParser)}のDIに失敗しました"),
-                        x.GetService<IFinancialReportRepository>() ?? throw new Exception($"{nameof(IFinancialReportRepository)}のDIに失敗しました"),
+                        x.GetService<IFinancialReportsRepository>() ?? throw new Exception($"{nameof(IFinancialReportsRepository)}のDIに失敗しました"),
                         x.GetService<IAquireFinancialReportsPresenter>() ?? throw new Exception($"{nameof(IAquireFinancialReportsPresenter)}のDIに失敗しました"),
                         maxParallelism
                     ))
@@ -87,7 +87,7 @@ namespace AquireFinancialReports
                         x.GetService<IHttpClientFactory>() ?? throw new Exception($"{nameof(IHttpClientFactory)}のDIに失敗しました"),
                  "v1"))
                 .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
-                .AddTransient<IFinancialReportRepository, FinancialReportRepository>()
+                .AddTransient<IFinancialReportsRepository, FinancialReportsRepository>()
                 .AddSingleton<IFileStorage>(_ => new LocalStorage(".tmp"))
                 .AddSingleton<IAquireFinancialReportsPresenter, ConsolePresenter>()
                 .AddHttpClient()

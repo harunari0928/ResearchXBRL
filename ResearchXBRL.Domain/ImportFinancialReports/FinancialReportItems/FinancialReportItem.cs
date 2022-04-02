@@ -1,4 +1,4 @@
-﻿namespace ResearchXBRL.Domain.FinancialReportItems
+﻿namespace ResearchXBRL.Domain.ImportFinancialReports.FinancialReportItems
 {
     public sealed class FinancialReportItem
     {
