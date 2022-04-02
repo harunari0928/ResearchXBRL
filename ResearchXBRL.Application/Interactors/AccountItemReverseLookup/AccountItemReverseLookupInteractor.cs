@@ -6,6 +6,7 @@ using ResearchXBRL.Application.Usecase.AccountItemReverseLookup;
 using ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
 
 namespace ResearchXBRL.Application.Interactors.AccountItemReverseLookup;
+
 public sealed class AccountItemReverseLookupInteractor : IAccountItemReverseLookupUsecase
 {
     private readonly IReverseDictionaryQueryService reverseDictionaryQueryService;
