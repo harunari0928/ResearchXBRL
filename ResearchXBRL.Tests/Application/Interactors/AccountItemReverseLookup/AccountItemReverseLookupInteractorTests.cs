@@ -39,6 +39,10 @@ public sealed class AccountItemReverseLookupInteractorTests
                 .Setup(x => x.Get())
                 .Returns(lookupParameters.ToAsyncEnumerable());
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
+            repository
+                .Setup(x => x.Add(It.IsAny<IAsyncEnumerable<AccountItem>>()))
+                .Callback<IAsyncEnumerable<AccountItem>>(async x => await x.ToArrayAsync());
+
             var interactor = new AccountItemReverseLookupInteractor(
                 reverseDictionaryQueryServiceMock.Object,
                 reverseLookupQueryService.Object,
@@ -80,6 +84,11 @@ public sealed class AccountItemReverseLookupInteractorTests
                 reverseLookupQueryService.Object,
                 repository.Object
             );
+            // lookup処理は遅延実行なので以下設定がないと動かない。
+            // 処理を動かすため、Addメソッド実行時に引数のリスト要素全件を評価している
+            repository
+                .Setup(x => x.Add(It.IsAny<IAsyncEnumerable<AccountItem>>()))
+                .Callback<IAsyncEnumerable<AccountItem>>(async x => await x.ToArrayAsync());
 
             // act
             await interactor.Handle();
@@ -122,16 +131,16 @@ public sealed class AccountItemReverseLookupInteractorTests
             repository
             .Verify(x =>
                 x.Add(
-                    It.Is<IEnumerable<AccountItem>>(
-                        x => x.ElementAt(0).NormalizedName == reverseLookupResult[0].NormalizedName
-                         && x.ElementAt(0).OriginalName == reverseLookupResult[0].OriginalName))
+                    It.Is<IAsyncEnumerable<AccountItem>>(
+                        x => x.ToEnumerable().ElementAt(0).NormalizedName == reverseLookupResult[0].NormalizedName
+                         && x.ToEnumerable().ElementAt(0).OriginalName == reverseLookupResult[0].OriginalName))
                 , Times.Once);
             repository
             .Verify(x =>
                 x.Add(
-                    It.Is<IEnumerable<AccountItem>>(
-                        x => x.ElementAt(1).NormalizedName == reverseLookupResult[1].NormalizedName
-                         && x.ElementAt(1).OriginalName == reverseLookupResult[1].OriginalName))
+                    It.Is<IAsyncEnumerable<AccountItem>>(
+                        x => x.ToEnumerable().ElementAt(1).NormalizedName == reverseLookupResult[1].NormalizedName
+                         && x.ToEnumerable().ElementAt(1).OriginalName == reverseLookupResult[1].OriginalName))
                 , Times.Once);
         }
 
