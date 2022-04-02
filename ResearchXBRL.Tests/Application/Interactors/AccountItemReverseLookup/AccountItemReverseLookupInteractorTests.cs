@@ -148,16 +148,8 @@ public sealed class AccountItemReverseLookupInteractorTests
         {
             var reverseLookupResult = new List<ReverseLookupResult>
             {
-                new ReverseLookupResult
-                {
-                    NormalizedName = "NetSales",
-                    OriginalName = "hoge"
-                },
-                new ReverseLookupResult
-                {
-                    NormalizedName = "ROE",
-                    OriginalName = "fuga"
-                }
+                new ReverseLookupResult("NetSales", "hoge"),
+                new ReverseLookupResult("ROE", "fuga")
             };
             reverseLookupQueryService
                 .Setup(x => x.Lookup(It.IsAny<FinancialReport>()))
