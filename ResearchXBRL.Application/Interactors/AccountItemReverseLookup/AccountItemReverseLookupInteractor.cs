@@ -38,11 +38,11 @@ public sealed class AccountItemReverseLookupInteractor
 
     private async IAsyncEnumerable<AccountItem> GetNormalizedAccountItems(IAsyncEnumerable<FinancialReport> financialReports)
     {
-        await foreach (var item in financialReports)
+        await foreach (var report in financialReports)
         {
-            foreach (var result in await reverseLookupQueryService.Lookup(item))
+            foreach (var lookupResult in await reverseLookupQueryService.Lookup(report))
             {
-                yield return new AccountItem(result.NormalizedName, result.OriginalName);
+                yield return new AccountItem(lookupResult.NormalizedName, lookupResult.OriginalName);
             }
         }
     }
