@@ -13,6 +13,11 @@ public sealed class ReverseLookupQueryService : SQLService, IReverseLookupQueryS
 {
     public async ValueTask<IReadOnlyCollection<ReverseLookupResult>> Lookup(FinancialReport financialReport)
     {
+        if (financialReport.NetSales is null)
+        {
+            return Enumerable.Empty<ReverseLookupResult>().ToArray();
+        }
+
         return await GetXBRLNames(financialReport)
             .Select(x => new ReverseLookupResult("NetSales", x))
             .ToArrayAsync();
