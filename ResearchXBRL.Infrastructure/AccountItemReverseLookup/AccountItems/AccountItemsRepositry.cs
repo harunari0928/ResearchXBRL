@@ -33,7 +33,7 @@ public sealed class AccountItemsRepository : SQLService, IAccountItemRepository
         command.CommandText = $@"
 CREATE TABLE TEMP {tmpTableName} (
   aggregate_target VARCHAR PRIMARY KEY,
-  aggregate_result VARCHAR NOT NULL,
+  aggregate_result VARCHAR NOT NULL
 );
         ";
         await command.ExecuteNonQueryAsync();
