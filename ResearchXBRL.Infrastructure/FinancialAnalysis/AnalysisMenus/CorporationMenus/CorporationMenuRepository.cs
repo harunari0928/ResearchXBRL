@@ -5,35 +5,12 @@ using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
 using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
+using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 
-public sealed class CorporationMenuRepository : ICorporationsMenuRepository, IDisposable, IAsyncDisposable
+public sealed class CorporationMenuRepository : SQLService, ICorporationMenuRepository
 {
-    private readonly NpgsqlConnection connection;
-
-    public CorporationMenuRepository()
-    {
-        var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
-        var userId = Environment.GetEnvironmentVariable("DB_USERID");
-        var dbName = Environment.GetEnvironmentVariable("DB_NAME");
-        var port = Environment.GetEnvironmentVariable("DB_PORT");
-        var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-        var connectionString = $"Server={server};Port={port};Database={dbName};User Id={userId};Password={password};Pooling=true;Minimum Pool Size=0;Maximum Pool Size=100";
-        connection = new NpgsqlConnection(connectionString);
-        connection.Open();
-    }
-
-    public void Dispose()
-    {
-        connection.Dispose();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await connection.DisposeAsync();
-    }
-
     public async Task<CorporatonsMenu> GetProposals(string keyword)
     {
         using var command = CreateReadCommand(keyword);

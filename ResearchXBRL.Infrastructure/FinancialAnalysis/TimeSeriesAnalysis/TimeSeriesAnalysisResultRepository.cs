@@ -5,76 +5,52 @@ using Npgsql;
 using NpgsqlTypes;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.AccountPeriods;
-using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Units;
+using ResearchXBRL.Infrastructure.Shared;
 
-namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis
+namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis;
+
+public sealed class TimeSeriesAnalysisResultRepository : SQLService, ITimeSeriesAnalysisResultRepository
 {
-    public sealed class TimeSeriesAnalysisResultRepository : ITimeSeriesAnalysisResultRepository, IDisposable, IAsyncDisposable
+    public async Task<TimeSeriesAnalysisResult> GetResult(string corporationId, string accountItemName)
     {
-        private readonly NpgsqlConnection connection;
-
-        public TimeSeriesAnalysisResultRepository(ICorporationsRepository corporationRepository)
+        var (unit, consolidatedAccountValues) = await ReadUnitAndConsolidatedAccountValues(connection, corporationId, accountItemName);
+        var (unitFromNonConsolidated, nonConsolidatedAccountValues) = await ReadUnitAndNonConsolidatedAccountValues(connection, corporationId, accountItemName);
+        return new TimeSeriesAnalysisResult
         {
-            var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
-            var userId = Environment.GetEnvironmentVariable("DB_USERID");
-            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
-            var port = Environment.GetEnvironmentVariable("DB_PORT");
-            var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-            var connectionString = $"Server={server};Port={port};Database={dbName};User Id={userId};Password={password};Pooling=true;Minimum Pool Size=0;Maximum Pool Size=100";
-            connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-        }
+            AccountName = accountItemName,
+            Unit = unit ?? unitFromNonConsolidated,
+            ConsolidatedValues = consolidatedAccountValues,
+            NonConsolidatedValues = nonConsolidatedAccountValues,
+        };
+    }
 
-        public void Dispose()
+    private static IUnit GetUnit(NpgsqlDataReader reader)
+    {
+        var measureColumn = reader.GetOrdinal("measure");
+        var unitNameColumn = reader.GetOrdinal("unit_name");
+        var measure = reader[measureColumn];
+        if (measure is DBNull)
         {
-            connection.Dispose();
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            await connection.DisposeAsync();
-        }
-
-        public async Task<TimeSeriesAnalysisResult> GetResult(string corporationId, string accountItemName)
-        {
-            var (unit, consolidatedAccountValues) = await ReadUnitAndConsolidatedAccountValues(connection, corporationId, accountItemName);
-            var (unitFromNonConsolidated, nonConsolidatedAccountValues) = await ReadUnitAndNonConsolidatedAccountValues(connection, corporationId, accountItemName);
-            return new TimeSeriesAnalysisResult
-            {
-                AccountName = accountItemName,
-                Unit = unit ?? unitFromNonConsolidated,
-                ConsolidatedValues = consolidatedAccountValues,
-                NonConsolidatedValues = nonConsolidatedAccountValues,
-            };
-        }
-
-        private static IUnit GetUnit(NpgsqlDataReader reader)
-        {
-            var measureColumn = reader.GetOrdinal("measure");
-            var unitNameColumn = reader.GetOrdinal("unit_name");
-            var measure = reader[measureColumn];
-            if (measure is DBNull)
-            {
-                var unitNumeratorColumn = reader.GetOrdinal("unit_numerator");
-                var unitDenominatorColumn = reader.GetOrdinal("unit_denominator");
-                return new DividedUnit
-                {
-                    Name = $"{reader[unitNameColumn]}",
-                    UnitNumerator = $"{reader[unitNumeratorColumn]}",
-                    UnitDenominator = $"{reader[unitDenominatorColumn]}"
-                };
-            }
-            return new NormalUnit
+            var unitNumeratorColumn = reader.GetOrdinal("unit_numerator");
+            var unitDenominatorColumn = reader.GetOrdinal("unit_denominator");
+            return new DividedUnit
             {
                 Name = $"{reader[unitNameColumn]}",
-                Measure = $"{reader[measureColumn]}"
+                UnitNumerator = $"{reader[unitNumeratorColumn]}",
+                UnitDenominator = $"{reader[unitDenominatorColumn]}"
             };
         }
-        private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndConsolidatedAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
+        return new NormalUnit
         {
-            await using var command = connection.CreateCommand();
-            command.CommandText = @"
+            Name = $"{reader[unitNameColumn]}",
+            Measure = $"{reader[measureColumn]}"
+        };
+    }
+    private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndConsolidatedAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = @"
 SELECT
     A.amounts,
     A.unit_name,
@@ -137,37 +113,37 @@ GROUP BY
 ORDER BY
     period_from, instant_date;
 ";
-            command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
-                .Value = accountItemName;
-            command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
-                .Value = corporationId;
-            using var reader = await command.ExecuteReaderAsync();
-            return await GetAccountValues(reader);
-        }
-        private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> GetAccountValues(NpgsqlDataReader reader)
+        command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
+            .Value = accountItemName;
+        command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
+            .Value = corporationId;
+        using var reader = await command.ExecuteReaderAsync();
+        return await GetAccountValues(reader);
+    }
+    private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> GetAccountValues(NpgsqlDataReader reader)
+    {
+        var values = new List<AccountValue>();
+        var amountsColumn = reader.GetOrdinal("amounts");
+        var instantDateColumn = reader.GetOrdinal("instant_date");
+        var fromDateColumn = reader.GetOrdinal("period_from");
+        var toDateColumn = reader.GetOrdinal("period_to");
+        IUnit? unit = null;
+        while (await reader.ReadAsync())
         {
-            var values = new List<AccountValue>();
-            var amountsColumn = reader.GetOrdinal("amounts");
-            var instantDateColumn = reader.GetOrdinal("instant_date");
-            var fromDateColumn = reader.GetOrdinal("period_from");
-            var toDateColumn = reader.GetOrdinal("period_to");
-            IUnit? unit = null;
-            while (await reader.ReadAsync())
+            unit ??= GetUnit(reader);
+            values.Add(new AccountValue
             {
-                unit ??= GetUnit(reader);
-                values.Add(new AccountValue
-                {
-                    FinancialAccountPeriod = GetAccountsPeriod(reader, instantDateColumn, fromDateColumn, toDateColumn),
-                    Amount = decimal.Parse($"{reader[amountsColumn]}")
-                });
-            }
-            return (unit, values);
+                FinancialAccountPeriod = GetAccountsPeriod(reader, instantDateColumn, fromDateColumn, toDateColumn),
+                Amount = decimal.Parse($"{reader[amountsColumn]}")
+            });
         }
+        return (unit, values);
+    }
 
-        private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndNonConsolidatedAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
-        {
-            await using var command = connection.CreateCommand();
-            command.CommandText = @"
+    private static async Task<(IUnit?, IReadOnlyList<AccountValue>)> ReadUnitAndNonConsolidatedAccountValues(NpgsqlConnection connection, string corporationId, string accountItemName)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = @"
 SELECT
     A.amounts,
     A.unit_name,
@@ -230,27 +206,26 @@ GROUP BY
 ORDER BY
     period_from, instant_date;
 ";
-            command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
-                .Value = accountItemName;
-            command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
-                .Value = corporationId;
-            using var reader = await command.ExecuteReaderAsync();
-            return await GetAccountValues(reader);
-        }
-        private static IAccountsPeriod GetAccountsPeriod(NpgsqlDataReader reader, int instantDateColumn, int fromDateColumn, int toDateColumn)
+        command.Parameters.Add("@accountName", NpgsqlDbType.Varchar)
+            .Value = accountItemName;
+        command.Parameters.Add("@corporationId", NpgsqlDbType.Varchar)
+            .Value = corporationId;
+        using var reader = await command.ExecuteReaderAsync();
+        return await GetAccountValues(reader);
+    }
+    private static IAccountsPeriod GetAccountsPeriod(NpgsqlDataReader reader, int instantDateColumn, int fromDateColumn, int toDateColumn)
+    {
+        if (reader[instantDateColumn] is DBNull)
         {
-            if (reader[instantDateColumn] is DBNull)
+            return new DurationPeriod
             {
-                return new DurationPeriod
-                {
-                    From = DateTime.Parse($"{reader[fromDateColumn]}"),
-                    To = DateTime.Parse($"{reader[toDateColumn]}")
-                };
-            }
-            return new InstantPeriod
-            {
-                Instant = DateTime.Parse($"{reader[instantDateColumn]}")
+                From = DateTime.Parse($"{reader[fromDateColumn]}"),
+                To = DateTime.Parse($"{reader[toDateColumn]}")
             };
         }
+        return new InstantPeriod
+        {
+            Instant = DateTime.Parse($"{reader[instantDateColumn]}")
+        };
     }
 }
