@@ -31,7 +31,7 @@ public sealed class AccountItemReverseLookupInteractor
     {
         var financialReports = reverseDictionaryQueryService.Get();
 
-        var normalizedAccountItems = await GetNormalizedAccountItems(financialReports).ToListAsync();
+        var normalizedAccountItems = GetNormalizedAccountItems(financialReports);
 
         await repository.Add(normalizedAccountItems);
     }

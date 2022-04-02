@@ -6,5 +6,5 @@ namespace ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
 
 public interface IAccountItemRepository
 {
-    ValueTask Add(IEnumerable<AccountItem> normalizedAccountItemNames);
+    ValueTask Add(IAsyncEnumerable<AccountItem> normalizedAccountItemNames);
 }
