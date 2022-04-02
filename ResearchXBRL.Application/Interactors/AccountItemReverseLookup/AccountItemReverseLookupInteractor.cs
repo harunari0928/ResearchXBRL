@@ -1,13 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
 using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
+using ResearchXBRL.Application.Usecase.AccountItemReverseLookup;
 using ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
 
 namespace ResearchXBRL.Application.Interactors.AccountItemReverseLookup;
-public sealed class AccountItemReverseLookupInteractor
+public sealed class AccountItemReverseLookupInteractor : IAccountItemReverseLookupUsecase
 {
     private readonly IReverseDictionaryQueryService reverseDictionaryQueryService;
     private readonly IReverseLookupQueryService reverseLookupQueryService;
@@ -23,10 +22,7 @@ public sealed class AccountItemReverseLookupInteractor
         this.repository = repository;
     }
 
-    /// <summary>
-    /// 財務諸表情報からXBRL会計項目名を逆引きし、リポジトリに保存する
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public async ValueTask Handle()
     {
         var financialReports = reverseDictionaryQueryService.Get();
