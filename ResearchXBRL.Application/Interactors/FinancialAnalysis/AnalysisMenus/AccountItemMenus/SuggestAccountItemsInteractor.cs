@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
-using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItems;
 
 namespace ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus.AccountItemMenus
 {
     public sealed class SuggestAccountItemsInteractor : ISuggestAccountItemsUsecase
     {
-        private readonly IAccountItemMenuRepository repository;
+        private readonly IAccountItemsMenuRepository repository;
 
         public SuggestAccountItemsInteractor(
-            IAccountItemMenuRepository repository)
+            IAccountItemsMenuRepository repository)
         {
             this.repository = repository;
         }

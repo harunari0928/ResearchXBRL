@@ -7,9 +7,9 @@ using NpgsqlTypes;
 using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
 using ResearchXBRL.Infrastructure.Shared;
 
-namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.Corporations;
 
-public sealed class CorporationMenuRepository : SQLService, ICorporationMenuRepository
+public sealed class CorporationsMenuRepository : SQLService, ICorporationsMenuRepository
 {
     public async Task<CorporatonsMenu> GetProposals(string keyword)
     {

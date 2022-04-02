@@ -3,16 +3,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
-using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItems;
 using ResearchXBRL.Infrastructure.Shared;
 
-namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountItems;
 
-public sealed class AccountItemMenuRepository : SQLService, IAccountItemMenuRepository
+public sealed class AccountItemsMenuRepository : SQLService, IAccountItemsMenuRepository
 {
-    public async Task<AccountItemMenu> GetProposals(string keyword)
+    public async Task<AccountItemsMenu> GetProposals(string keyword)
     {
-        return new AccountItemMenu
+        return new AccountItemsMenu
         {
             SearchedAccountItem = await ReadSearchedAccountItems(keyword),
             SuggestedAccountItems = await ReadSuggestedAccountItems(keyword).ToListAsync()
