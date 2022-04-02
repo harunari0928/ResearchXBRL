@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Application.Usecase.ImportAccountItems.Transfer
+namespace ResearchXBRL.Application.Usecase.ImportAccountItems
 {
     public interface ITransferAccountItemsUsecase
     {

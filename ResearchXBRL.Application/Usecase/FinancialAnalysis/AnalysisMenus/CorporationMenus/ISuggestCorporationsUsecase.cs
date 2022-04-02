@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.Corporations;
 
 namespace ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 

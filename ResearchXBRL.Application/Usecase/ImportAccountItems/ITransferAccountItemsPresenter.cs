@@ -1,4 +1,4 @@
-﻿namespace ResearchXBRL.Application.Usecase.ImportAccountItems.Transfer
+﻿namespace ResearchXBRL.Application.Usecase.ImportAccountItems
 {
     public interface ITransferAccountItemsPresenter
     {

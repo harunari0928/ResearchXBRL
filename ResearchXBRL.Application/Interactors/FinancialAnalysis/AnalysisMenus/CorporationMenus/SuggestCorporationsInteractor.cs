@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.Corporations;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
 

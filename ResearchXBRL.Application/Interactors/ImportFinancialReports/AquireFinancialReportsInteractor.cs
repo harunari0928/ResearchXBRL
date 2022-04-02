@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Application.Usecase.FinancialReports;
+using ResearchXBRL.Application.Usecase.ImportFinancialReports;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
 
 namespace ResearchXBRL.Application.ImportFinancialReports;

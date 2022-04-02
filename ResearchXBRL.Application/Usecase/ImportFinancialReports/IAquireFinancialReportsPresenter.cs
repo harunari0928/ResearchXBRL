@@ -1,5 +1,5 @@
 using System;
-namespace ResearchXBRL.Application.Usecase.FinancialReports
+namespace ResearchXBRL.Application.Usecase.ImportFinancialReports
 {
     public interface IAquireFinancialReportsPresenter
     {

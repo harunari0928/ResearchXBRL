@@ -1,14 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using ResearchXBRL.Application.Interactors.ImportAccountItems;
 using ResearchXBRL.Application.Services;
-using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
-using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
-using ResearchXBRL.Infrastructure.Services;
-using ResearchXBRL.Infrastructure.Services.FileStorages;
+using ResearchXBRL.Application.Usecase.ImportAccountItems;
 using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.ImportAccountItems.AccountItems;
-using ResearchXBRL.Application.Usecase.ImportAccountItems.Aquire;
-using ResearchXBRL.Application.Interactors.ImportAccountItems.Aquire;
+using ResearchXBRL.Infrastructure.Services;
+using ResearchXBRL.Infrastructure.Services.FileStorages;
+using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
+using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
 
 namespace AquireAccountItems
 {
