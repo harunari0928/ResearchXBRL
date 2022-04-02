@@ -1,14 +1,14 @@
-﻿using Moq;
-using ResearchXBRL.Application.DTO;
-using ResearchXBRL.Application.FinancialReports;
-using ResearchXBRL.Application.Services;
-using ResearchXBRL.Application.Usecase.FinancialReports;
-using ResearchXBRL.Domain.FinancialReportItems;
-using ResearchXBRL.Domain.FinancialReports;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Moq;
+using ResearchXBRL.Application.DTO;
+using ResearchXBRL.Application.ImportFinancialReports;
+using ResearchXBRL.Application.Services;
+using ResearchXBRL.Application.Usecase.FinancialReports;
+using ResearchXBRL.Domain.ImportFinancialReports.FinancialReportItems;
+using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
 using Xunit;
 
 namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
@@ -19,7 +19,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialReports
         {
             private readonly Mock<IEdinetXBRLDownloader> downloader;
             private readonly Mock<IEdinetXBRLParser> parser;
-            private readonly Mock<IFinancialReportRepository> reportRepository;
+            private readonly Mock<IFinancialReportsRepository> reportRepository;
             private readonly Mock<IAquireFinancialReportsPresenter> presenter;
 
             public HandleTests()

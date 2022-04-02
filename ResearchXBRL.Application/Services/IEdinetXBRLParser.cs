@@ -1,11 +1,10 @@
-﻿using ResearchXBRL.Application.DTO;
-using ResearchXBRL.Domain.FinancialReports;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using ResearchXBRL.Application.DTO;
+using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
 
-namespace ResearchXBRL.Application.Services
+namespace ResearchXBRL.Application.Services;
+
+public interface IEdinetXBRLParser
 {
-    public interface IEdinetXBRLParser
-    {
-        Task<FinancialReport> Parse(EdinetXBRLData data);
-    }
+    Task<FinancialReport> Parse(EdinetXBRLData data);
 }

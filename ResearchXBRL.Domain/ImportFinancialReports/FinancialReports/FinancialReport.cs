@@ -1,12 +1,12 @@
-﻿using ResearchXBRL.Domain.FinancialReportItems;
-using ResearchXBRL.Domain.FinancialReports.Contexts;
-using ResearchXBRL.Domain.FinancialReports.Units;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ResearchXBRL.Domain.ImportFinancialReports.Contexts;
+using ResearchXBRL.Domain.ImportFinancialReports.FinancialReportItems;
+using ResearchXBRL.Domain.ImportFinancialReports.Units;
 
-namespace ResearchXBRL.Domain.FinancialReports
+namespace ResearchXBRL.Domain.ImportFinancialReports.FinancialReports
 {
     public sealed class FinancialReport : IReadOnlyList<FinancialReportItem>
     {
