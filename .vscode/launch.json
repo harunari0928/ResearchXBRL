@@ -52,9 +52,15 @@
             "stopAtEntry": false
         },
         {
-            "name": ".NET Core Attach",
+            "name": "AccountItemReverseLookup",
             "type": "coreclr",
-            "request": "attach"
+            "request": "launch",
+            "preLaunchTask": "buildAccountItemReverseLookup",
+            "program": "${workspaceFolder}/Presentation/AccountItemReverseLookup/bin/Debug/net6.0/AccountItemReverseLookup.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Presentation/AccountItemReverseLookup",
+            "console": "internalConsole",
+            "stopAtEntry": false
         }
     ]
 }
