@@ -14,6 +14,16 @@ public sealed class ReverseDictionaryCSVQueryServiceTests
 {
     private readonly LocalFileStorage fileStorage = new(".");
 
+    [Fact(DisplayName = "ファイルがない場合中断オブジェクトを返却する")]
+    public void Test1()
+    {
+        // arrange
+        var service = new ReverseDictionaryCSVQueryService(fileStorage, "notExists.csv");
+
+        // act & assert
+        Assert.IsType<Abort<IAsyncEnumerable<FinancialReport>>>(service.Get());
+    }
+
     [Fact(DisplayName = "csvのデータを取得できる")]
     public async Task Test2()
     {

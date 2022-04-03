@@ -24,6 +24,14 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
     public IResult<IAsyncEnumerable<FinancialReport>> Get()
     {
         var fileStream = fileStorage.Get(filePath);
+        if (fileStream is null)
+        {
+            return new Abort<IAsyncEnumerable<FinancialReport>>
+            {
+                Message = $"対象のファイルが存在しません: {filePath}"
+            };
+        }
+
         var streamReader = new StreamReader(fileStream);
         var reader = new CsvReader(streamReader, CultureInfo.CurrentCulture, true);
         return new Success<IAsyncEnumerable<FinancialReport>>(ReadFinancialReports(reader,
