@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Npgsql" Version="5.0.11" />
     <PackageReference Include="PostgreSQLCopyHelper" Version="2.8.0" />
+    <PackageReference Include="SSH.NET" Version="2020.0.1" />
     <PackageReference Include="System.Linq.Async" Version="5.0.0" />
     <PackageReference Include="CsvHelper" Version="27.2.1" />
   </ItemGroup>
