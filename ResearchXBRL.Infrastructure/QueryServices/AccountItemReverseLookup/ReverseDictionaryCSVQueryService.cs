@@ -22,9 +22,9 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
 
     public async IAsyncEnumerable<FinancialReport> Get()
     {
-        var fileStream = fileStorage.Get(filePath);
+        using var fileStream = fileStorage.Get(filePath);
         using var streamReader = new StreamReader(fileStream);
-        using var reader = new CsvReader(streamReader, CultureInfo.CurrentCulture);
+        using var reader = new CsvReader(streamReader, CultureInfo.CurrentCulture, true);
         // return ReadFinancialReports(reader);としてもビルドは通るが、
         // 遅延実行中にreaderのDisposeが走ってしまい実行時エラーになる
         await foreach (var report in ReadFinancialReports(reader))
