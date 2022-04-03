@@ -32,14 +32,20 @@ public sealed class SFTPFileStorage : IFileStorage, IDisposable
         client.Dispose();
     }
 
-    public Stream Get(string filePath)
+    public Stream? Get(string filePath)
     {
         if (IFileStorage.IsDirectory(filePath))
         {
             throw new IOException($"{nameof(filePath)}には、ファイルパスを指定してください");
         }
 
-        return client.OpenRead(Path.Combine(baseDirectory, filePath));
+        var fullFilePath = Path.Combine(baseDirectory, filePath);
+        if (!client.Exists(fullFilePath))
+        {
+            return null;
+        }
+
+        return client.OpenRead(fullFilePath);
     }
 
     public IReadOnlyList<string> GetDirectoryNames(string directoryPath, string searchPattern = "*")
