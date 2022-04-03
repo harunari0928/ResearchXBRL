@@ -42,10 +42,6 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
 
             var accountingStandard = (AccountingStandards)int.Parse(record["会計基準"]?.ToString()
                 ?? throw new Exception($"会計基準が不正です: {record["会計基準"]}"));
-            if (accountingStandard != AccountingStandards.Japanese)
-            {
-                continue; // 日本基準以外はとりあえず無視
-            }
 
             if (record["証券コード"]?.ToString() == "NA")
             {
