@@ -111,7 +111,7 @@ public sealed class EdinetXBRLParser : IEdinetXBRLParser
         // EDINETのXBRLインスタンスファイル規則
         // https://www.fsa.go.jp/search/20180228/2b_InstanceGuide.pdf 22ページ
         var xbrlFile = files.Single(x => x.Contains($"{xbrlDirectoryPath}jpcrp") && x.EndsWith(".xbrl"));
-        using var xbrlFileStream = fileStorage.Get(xbrlFile);
+        using var xbrlFileStream = fileStorage.Get(xbrlFile) ?? throw new FileNotFoundException("インポート対象ファイルが存在しません");
         var xbrl = new XmlDocument();
         xbrl.Load(xbrlFileStream);
         return xbrl;
@@ -122,6 +122,12 @@ public sealed class EdinetXBRLParser : IEdinetXBRLParser
         // ファイル名先頭jpcrpかつ拡張子.xsdのファイルを取る
         var xbrlFile = files.Single(x => x.Contains($"{xbrlDirectoryPath}jpcrp") && x.EndsWith(".xsd"));
         using var xbrlFileStream = fileStorage.Get(xbrlFile);
+
+        if (xbrlFileStream is null)
+        {
+            throw new FileNotFoundException("インポート対象ファイルが存在しません");
+        }
+
         using var streamReader = new StreamReader(xbrlFileStream);
         var isJppfs = streamReader.ReadToEnd().Contains("jppfs");
         return isJppfs ? "jppfs" : "jpigp";

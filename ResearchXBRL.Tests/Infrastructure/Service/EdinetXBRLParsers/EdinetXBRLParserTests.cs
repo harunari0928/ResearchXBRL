@@ -153,7 +153,7 @@ public sealed class EdinetXBRLParserTests
             // arrange & act
             await CreateReport();
 
-            Assert.Throws<FileNotFoundException>(() => storage.Get($"/{documentId}.zip"));
+            Assert.Null(storage.Get($"/{documentId}.zip"));
         }
 
         private async Task<FinancialReport> CreateReport()

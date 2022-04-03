@@ -1,13 +1,14 @@
 using System;
-using System.Net.Http;
-using Xunit;
-using Moq;
-using RichardSzalay.MockHttp;
-using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
-using ResearchXBRL.Infrastructure.Services;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Moq;
+using ResearchXBRL.Infrastructure.Services;
+using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
+using RichardSzalay.MockHttp;
+using Xunit;
 
 namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
 {
@@ -21,6 +22,9 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.TaxonomyDownloaders
         {
             httpClientFactory = new();
             storage = new();
+            storage
+                .Setup(x => x.Get(It.IsAny<string>()))
+                .Returns(new MemoryStream());
             mockHttpHandler = new();
         }
 
