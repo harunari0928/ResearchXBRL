@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Threading.Tasks;
 using CsvHelper;
 using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
 using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
@@ -23,7 +22,7 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
 
     public async IAsyncEnumerable<FinancialReport> Get()
     {
-        var fileStream = fileStorage.Get("ReverseLookupDictionary.csv");
+        var fileStream = fileStorage.Get(filePath);
         using var streamReader = new StreamReader(fileStream);
         using var reader = new CsvReader(streamReader, CultureInfo.CurrentCulture);
         // return ReadFinancialReports(reader);としてもビルドは通るが、
@@ -48,13 +47,27 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
                 continue; // 日本基準以外はとりあえず無視
             }
 
+            if (record["証券コード"]?.ToString() == "NA")
+            {
+                continue; // 未上場企業は無視
+            }
+
             yield return new FinancialReport
             {
-                SecuritiesCode = int.Parse(record["証券コード"]?.ToString() ?? throw new Exception($"証券コードが不正です: {record["証券コード"]}")),
+                SecuritiesCode = ParseInt(record["証券コード"]?.ToString(), "証券コード"),
                 AccountingStandard = accountingStandard,
                 FiscalYear = DateOnly.Parse(record["会計年度"]?.ToString() ?? throw new Exception($"会計年度が不正です: {record["会計年度"]}")),
                 NetSales = maybeNetsales
             };
         }
+    }
+
+    private static int ParseInt(string? maybeStr, string columnName)
+    {
+        if (!int.TryParse(maybeStr, out var num))
+        {
+            throw new Exception($"{columnName}が不正です: {maybeStr}");
+        }
+        return num;
     }
 }

@@ -7,7 +7,7 @@ using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
 using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
 using ResearchXBRL.Infrastructure.Shared;
 
-namespace ResearchXBRL.Infrastructure.Services.AccountItemReverseLookup;
+namespace ResearchXBRL.Infrastructure.QueryServices.AccountItemReverseLookup;
 
 public sealed class ReverseLookupQueryService : SQLService, IReverseLookupQueryService
 {
@@ -82,11 +82,11 @@ AND
 GROUP BY
     A.xbrl_name
 ";
-        command.Parameters.Add("@securitiesCode", NpgsqlDbType.Numeric)
+        command.Parameters.Add("@amounts", NpgsqlDbType.Numeric)
             .Value = financialReport.NetSales * 1000000;
         command.Parameters.Add("@securitiesCode", NpgsqlDbType.Varchar)
             .Value = $"{financialReport.SecuritiesCode}0";
         command.Parameters.Add("@fiscalYear", NpgsqlDbType.Date)
-            .Value = financialReport.FiscalYear;
+            .Value = financialReport.FiscalYear.ToDateTime(TimeOnly.MinValue);
     }
 }

@@ -16,7 +16,7 @@ public sealed class AccountItemReverseLookupInteractorTests
     {
         private readonly Mock<IReverseDictionaryQueryService> reverseDictionaryQueryServiceMock = new();
         private readonly Mock<IReverseLookupQueryService> reverseLookupQueryService = new();
-        private readonly Mock<IAccountItemRepository> repository = new();
+        private readonly Mock<IAccountItemsRepository> repository = new();
 
         [Fact(DisplayName = "逆引き辞書の要素数だけ逆引きを行う")]
         public async Task Test1()

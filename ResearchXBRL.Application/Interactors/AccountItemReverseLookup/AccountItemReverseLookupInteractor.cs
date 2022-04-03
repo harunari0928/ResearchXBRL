@@ -11,12 +11,12 @@ public sealed class AccountItemReverseLookupInteractor : IAccountItemReverseLook
 {
     private readonly IReverseDictionaryQueryService reverseDictionaryQueryService;
     private readonly IReverseLookupQueryService reverseLookupQueryService;
-    private readonly IAccountItemRepository repository;
+    private readonly IAccountItemsRepository repository;
 
     public AccountItemReverseLookupInteractor(
         IReverseDictionaryQueryService reverseLookupTableQueryService,
         IReverseLookupQueryService reverseLookupQueryService,
-        IAccountItemRepository repository)
+        IAccountItemsRepository repository)
     {
         this.reverseDictionaryQueryService = reverseLookupTableQueryService;
         this.reverseLookupQueryService = reverseLookupQueryService;
