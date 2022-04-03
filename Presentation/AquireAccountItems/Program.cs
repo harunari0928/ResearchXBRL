@@ -10,28 +10,27 @@ using ResearchXBRL.Infrastructure.Services.FileStorages;
 using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
 using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
 
-namespace AquireAccountItems
-{
-    class Program
-    {
-        static async Task Main(string[] _)
-        {
-            using var serviceProvider = CreateServiceProvider();
-            var usecase = serviceProvider
-                .GetService<IAquireAccoumtItemsUsecase>();
-            await usecase.Handle();
-        }
+namespace AquireAccountItems;
 
-        private static ServiceProvider CreateServiceProvider()
-        {
-            return new ServiceCollection()
-                .AddTransient<IAquireAccoumtItemsUsecase, AquireAccountItemsInteractor>()
-                .AddTransient<ITaxonomyDownloader, TaxonomyDownloader>()
-                .AddTransient<ITaxonomyParser, TaxonomyParser>()
-                .AddTransient<IAccountItemsRepository, AccountItemsRepository>()
-                .AddSingleton<IFileStorage>(_ => new LocalStorage("/.tmp"))
-                .AddHttpClient()
-                .BuildServiceProvider();
-        }
+class Program
+{
+    static async Task Main(string[] _)
+    {
+        using var serviceProvider = CreateServiceProvider();
+        var usecase = serviceProvider
+            .GetService<IAquireAccoumtItemsUsecase>();
+        await usecase.Handle();
+    }
+
+    private static ServiceProvider CreateServiceProvider()
+    {
+        return new ServiceCollection()
+            .AddTransient<IAquireAccoumtItemsUsecase, AquireAccountItemsInteractor>()
+            .AddTransient<ITaxonomyDownloader, TaxonomyDownloader>()
+            .AddTransient<ITaxonomyParser, TaxonomyParser>()
+            .AddTransient<IAccountItemsRepository, AccountItemsRepository>()
+            .AddSingleton<IFileStorage>(_ => new LocalStorage("/.tmp"))
+            .AddHttpClient()
+            .BuildServiceProvider();
     }
 }
