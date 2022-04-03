@@ -12,7 +12,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
         public sealed class GetTests : IDisposable
         {
             private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalStorage storage;
+            private readonly LocalFileStorage storage;
 
             public GetTests()
             {
@@ -73,7 +73,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
         public sealed class GetFilesTests : IDisposable
         {
             private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalStorage storage;
+            private readonly LocalFileStorage storage;
 
             public GetFilesTests()
             {
@@ -151,7 +151,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
         public sealed class SetTests : IDisposable
         {
             private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalStorage storage;
+            private readonly LocalFileStorage storage;
 
             public SetTests()
             {
@@ -180,7 +180,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
         public sealed class UnzipTests : IDisposable
         {
             private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalStorage storage;
+            private readonly LocalFileStorage storage;
 
             public UnzipTests()
             {
@@ -254,7 +254,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
         public sealed class DeleteTests : IDisposable
         {
             private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalStorage storage;
+            private readonly LocalFileStorage storage;
 
             public DeleteTests()
             {
@@ -324,7 +324,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
         public sealed class GetDirectoryNamesTests : IDisposable
         {
             private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalStorage storage;
+            private readonly LocalFileStorage storage;
 
             public GetDirectoryNamesTests()
             {

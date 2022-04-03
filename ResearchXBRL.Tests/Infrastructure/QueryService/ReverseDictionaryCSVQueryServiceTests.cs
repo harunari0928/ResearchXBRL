@@ -11,7 +11,7 @@ namespace ResearchXBRL.Tests.Infrastructure.QueryService;
 
 public sealed class ReverseDictionaryCSVQueryServiceTests
 {
-    private readonly LocalStorage fileStorage = new(".");
+    private readonly LocalFileStorage fileStorage = new(".");
 
     [Fact(DisplayName = "会計基準が日本基準のデータのみを取得する")]
     public async Task Test1()
