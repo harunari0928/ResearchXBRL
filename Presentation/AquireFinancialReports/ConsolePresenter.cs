@@ -1,5 +1,5 @@
 using System;
-using ResearchXBRL.Application.Usecase.FinancialReports;
+using ResearchXBRL.Application.Usecase.ImportFinancialReports;
 
 namespace AquireFinancialReports
 {
