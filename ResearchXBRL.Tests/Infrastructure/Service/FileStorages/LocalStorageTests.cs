@@ -5,414 +5,425 @@ using System.IO.Compression;
 using System.Linq;
 using Xunit;
 
-namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
+namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages;
+
+public sealed class LocalFileStorageTests
 {
-    public sealed class LocalFileStorageTests
+    public sealed class GetTests : IDisposable
     {
-        public sealed class GetTests : IDisposable
+        private readonly string basePath = $"./{Guid.NewGuid()}";
+        private readonly LocalFileStorage storage;
+
+        public GetTests()
         {
-            private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalFileStorage storage;
+            storage = new(basePath);
+        }
 
-            public GetTests()
-            {
-                storage = new(basePath);
-            }
+        public void Dispose()
+        {
+            Clean(basePath);
+        }
 
-            public void Dispose()
-            {
-                Clean(basePath);
-            }
+        [Fact]
+        public void 指定したパスのストリームを取得する()
+        {
+            // arrange
+            using var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream) { AutoFlush = true };
+            var expectedStr = "テストです";
+            writer.WriteLine(expectedStr);
+            var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
+            storage.Set(stream, filePath);
 
-            [Fact]
-            public void 指定したパスのストリームを取得する()
+            // act
+            var outputStream = storage.Get(filePath) ?? throw new Exception("Test is failed.");
+
+            // assert
+            using var reader = new StreamReader(outputStream);
+            Assert.Equal(expectedStr, reader.ReadLine());
+        }
+
+        [Fact]
+        public void 指定したパスのストリームを取得する_引数パスの先頭がスラッシュのとき()
+        {
+            // arrange
+            using var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream) { AutoFlush = true };
+            var expectedStr = "テストです";
+            writer.WriteLine(expectedStr);
+            var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
+            storage.Set(stream, filePath);
+
+            // act
+            var outputStream = storage.Get(string.Concat(filePath.Skip(1)))
+                ?? throw new Exception("Test is failed.");
+
+            // assert
+            using var reader = new StreamReader(outputStream);
+            Assert.Equal(expectedStr, reader.ReadLine());
+        }
+
+        [Fact]
+        public void 拡張子なしのファイルパスが指定されたときストリームを取得する()
+        {
+            // arrange
+            using var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream) { AutoFlush = true };
+            var expectedStr = "テストです";
+            writer.WriteLine(expectedStr);
+            var filePath = $"./{Guid.NewGuid()}/testd/test";
+            storage.Set(stream, filePath);
+
+            // act
+            var outputStream = storage.Get(filePath) ?? throw new Exception("Test is failed.");
+
+            // assert
+            using var reader = new StreamReader(outputStream);
+            Assert.Equal(expectedStr, reader.ReadLine());
+        }
+
+        [Fact]
+        public void 指定したパスのファイルが存在しなかったときnullを返す()
+        {
+            // arrange
+            var notExistsFilePath = $"./{Guid.NewGuid()}/testd/test_notexists.txt";
+
+            // act
+            var outputStream = storage.Get(notExistsFilePath);
+
+            // assert
+            Assert.Null(outputStream);
+        }
+    }
+
+    public sealed class GetFilesTests : IDisposable
+    {
+        private readonly string basePath = $"./{Guid.NewGuid()}";
+        private readonly LocalFileStorage storage;
+
+        public GetFilesTests()
+        {
+            storage = new(basePath);
+        }
+
+        public void Dispose()
+        {
+            Clean(basePath);
+        }
+
+        [Fact]
+        public void 指定したパスの全ファイルパスを取得する()
+        {
+            // arrange
+            var path = "./testd";
+            var fileSize = 10;
+            foreach (var number in Enumerable.Range(0, fileSize))
             {
-                // arrange
                 using var stream = new MemoryStream();
                 using var writer = new StreamWriter(stream) { AutoFlush = true };
-                var expectedStr = "テストです";
+                stream.Position = 0;
+                var expectedStr = $"テストです{number}";
                 writer.WriteLine(expectedStr);
-                var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
+                var filePath = $"{path}/test{number}.txt";
                 storage.Set(stream, filePath);
-
-                // act
-                var outputStream = storage.Get(filePath) ?? throw new Exception("Test is failed.");
-
-                // assert
-                using var reader = new StreamReader(outputStream);
-                Assert.Equal(expectedStr, reader.ReadLine());
             }
 
-            [Fact]
-            public void 指定したパスのストリームを取得する_引数パスの先頭がスラッシュのとき()
+            // act
+            var files = storage.GetFiles(path).OrderBy(x => x);
+
+            // assert
+            Assert.Equal(fileSize, files.Count());
+            Assert.True(Enumerable.Range(0, fileSize)
+                .Select(n => $"test{n}.txt")
+                .Zip(files, (expected, actual) => actual.Contains(expected))
+                .All(x => x));
+        }
+
+        [Fact]
+        public void ベースパスからの相対パスを返す()
+        {
+            // arrange
+            var path = "./testd";
+            var fileSize = 10;
+            foreach (var number in Enumerable.Range(0, fileSize))
             {
-                // arrange
                 using var stream = new MemoryStream();
                 using var writer = new StreamWriter(stream) { AutoFlush = true };
-                var expectedStr = "テストです";
+                stream.Position = 0;
+                var expectedStr = $"テストです{number}";
                 writer.WriteLine(expectedStr);
-                var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
+                var filePath = $"{path}/test{number}.txt";
                 storage.Set(stream, filePath);
-
-                // act
-                var outputStream = storage.Get(string.Concat(filePath.Skip(1)))
-                    ?? throw new Exception("Test is failed.");
-
-                // assert
-                using var reader = new StreamReader(outputStream);
-                Assert.Equal(expectedStr, reader.ReadLine());
             }
 
-            [Fact]
-            public void ディレクトリパスが指定されたとき例外を出す()
-            {
-                // act & assert
-                Assert.Throws<IOException>(() => storage.Get("/test"));
-            }
+            // act
+            var files = storage.GetFiles(path);
 
-            [Fact]
-            public void 指定したパスのファイルが存在しなかったときnullを返す()
-            {
-                // arrange
-                var notExistsFilePath = $"./{Guid.NewGuid()}/testd/test_notexists.txt";
-
-                // act
-                var outputStream = storage.Get(notExistsFilePath);
-
-                // assert
-                Assert.Null(outputStream);
-            }
+            // assert
+            Assert.True(Enumerable.Range(0, fileSize)
+                .Select(n => $"test{n}.txt")
+                .Zip(files, (expected, actual) => actual.StartsWith(path))
+                .All(x => x));
         }
 
-        public sealed class GetFilesTests : IDisposable
+        [Fact]
+        public void ファイルパスが指定されたとき例外を出す()
         {
-            private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalFileStorage storage;
+            // act & assert
+            Assert.Throws<IOException>(() => storage.GetFiles("/test/test.txt"));
+        }
+    }
 
-            public GetFilesTests()
-            {
-                storage = new(basePath);
-            }
+    public sealed class SetTests : IDisposable
+    {
+        private readonly string basePath = $"./{Guid.NewGuid()}";
+        private readonly LocalFileStorage storage;
 
-            public void Dispose()
-            {
-                Clean(basePath);
-            }
-
-            [Fact]
-            public void 指定したパスの全ファイルパスを取得する()
-            {
-                // arrange
-                var path = "./testd";
-                var fileSize = 10;
-                foreach (var number in Enumerable.Range(0, fileSize))
-                {
-                    using var stream = new MemoryStream();
-                    using var writer = new StreamWriter(stream) { AutoFlush = true };
-                    stream.Position = 0;
-                    var expectedStr = $"テストです{number}";
-                    writer.WriteLine(expectedStr);
-                    var filePath = $"{path}/test{number}.txt";
-                    storage.Set(stream, filePath);
-                }
-
-                // act
-                var files = storage.GetFiles(path).OrderBy(x => x);
-
-                // assert
-                Assert.Equal(fileSize, files.Count());
-                Assert.True(Enumerable.Range(0, fileSize)
-                    .Select(n => $"test{n}.txt")
-                    .Zip(files, (expected, actual) => actual.Contains(expected))
-                    .All(x => x));
-            }
-
-            [Fact]
-            public void ベースパスからの相対パスを返す()
-            {
-                // arrange
-                var path = "./testd";
-                var fileSize = 10;
-                foreach (var number in Enumerable.Range(0, fileSize))
-                {
-                    using var stream = new MemoryStream();
-                    using var writer = new StreamWriter(stream) { AutoFlush = true };
-                    stream.Position = 0;
-                    var expectedStr = $"テストです{number}";
-                    writer.WriteLine(expectedStr);
-                    var filePath = $"{path}/test{number}.txt";
-                    storage.Set(stream, filePath);
-                }
-
-                // act
-                var files = storage.GetFiles(path);
-
-                // assert
-                Assert.True(Enumerable.Range(0, fileSize)
-                    .Select(n => $"test{n}.txt")
-                    .Zip(files, (expected, actual) => actual.StartsWith(path))
-                    .All(x => x));
-            }
-
-            [Fact]
-            public void ファイルパスが指定されたとき例外を出す()
-            {
-                // act & assert
-                Assert.Throws<IOException>(() => storage.GetFiles("/test/test.txt"));
-            }
+        public SetTests()
+        {
+            storage = new(basePath);
         }
 
-        public sealed class SetTests : IDisposable
+        public void Dispose()
         {
-            private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalFileStorage storage;
+            Clean(basePath);
+        }
 
-            public SetTests()
-            {
-                storage = new(basePath);
-            }
+        [Fact]
+        public void 拡張子なしのファイルパスが指定されたときでもファイルを設置できる()
+        {
+            // arrange
+            using var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream) { AutoFlush = true };
+            var expectedStr = "テストです";
+            writer.WriteLine(expectedStr);
 
-            public void Dispose()
-            {
-                Clean(basePath);
-            }
+            // act & assert
+            storage.Set(stream, "/testd");
+        }
+    }
 
-            [Fact]
-            public void ディレクトリパスが指定されたとき例外を出す()
+    public sealed class UnzipTests : IDisposable
+    {
+        private readonly string basePath = $"./{Guid.NewGuid()}";
+        private readonly LocalFileStorage storage;
+
+        public UnzipTests()
+        {
+            storage = new(basePath);
+        }
+
+        public void Dispose()
+        {
+            Clean(basePath);
+        }
+
+        [Fact]
+        public void 指定したzipファイルを解凍する()
+        {
+            // arrange
+            using var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream) { AutoFlush = true };
+            var expectedStr = "テストです";
+            writer.WriteLine(expectedStr);
+            var directoryPath = $"./{Guid.NewGuid()}/testd";
+            var filePath = $"{directoryPath}/test.txt";
+            storage.Set(stream, filePath);
+            var zipFilePath = "./test.zip";
+            ZipFile.CreateFromDirectory(Path.Combine(basePath, directoryPath), Path.Combine(basePath, zipFilePath));
+            var unzippedDirectoryPath = $"./{Guid.NewGuid()}/unzipped";
+
+            // act
+            storage.Unzip(zipFilePath, unzippedDirectoryPath);
+
+            // assert
+            Assert.True(Directory.Exists(Path.Combine(basePath, unzippedDirectoryPath)));
+        }
+
+        [Fact]
+        public void 解凍後ZIPファイルを消す()
+        {
+            // arrange
+            using var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream) { AutoFlush = true };
+            var expectedStr = "テストです";
+            writer.WriteLine(expectedStr);
+            var directoryPath = $"./{Guid.NewGuid()}/testd";
+            var filePath = $"{directoryPath}/test.txt";
+            storage.Set(stream, filePath);
+            var zipFilePath = "./test.zip";
+            ZipFile.CreateFromDirectory(Path.Combine(basePath, directoryPath), Path.Combine(basePath, zipFilePath));
+            var unzippedDirectoryPath = $"./{Guid.NewGuid()}/unzipped";
+
+            // act
+            storage.Unzip(zipFilePath, unzippedDirectoryPath);
+
+            // assert
+            Assert.False(Directory.Exists(Path.Combine(basePath, zipFilePath)));
+        }
+
+        [Fact]
+        public void ZIPのファイルパスがディレクトリパスのとき例外を出す()
+        {
+            // act & assert
+            Assert.Throws<IOException>(() => storage.Unzip("/test", "/test2"));
+        }
+
+        [Fact]
+        public void 解凍後のディレクトリパスがファイルパスのとき例外を出す()
+        {
+            // act & assert
+            Assert.Throws<IOException>(() => storage.Unzip("/test/text.txt", "/test2/file.txt"));
+        }
+    }
+
+    public sealed class DeleteTests : IDisposable
+    {
+        private readonly string basePath = $"./{Guid.NewGuid()}";
+        private readonly LocalFileStorage storage;
+
+        public DeleteTests()
+        {
+            storage = new(basePath);
+        }
+
+        public void Dispose()
+        {
+            Clean(basePath);
+        }
+
+        [Fact]
+        public void 指定したディレクトリを削除する()
+        {
+            // arrange
+            using var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream) { AutoFlush = true };
+            var expectedStr = "テストです";
+            writer.WriteLine(expectedStr);
+            var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
+            var directoryPath = filePath.Replace("test.txt", "");
+            storage.Set(stream, filePath);
+
+            // act
+            storage.Delete(directoryPath);
+
+            // assert
+            Assert.False(Directory.Exists(Path.Combine(basePath, directoryPath)));
+        }
+
+        [Fact]
+        public void 指定したディレクトリが存在しないとき例外を出す()
+        {
+            // arrange
+            var directoryPath = $"./{Guid.NewGuid()}/testd/";
+
+            // act & assert
+            Assert.Throws<DirectoryNotFoundException>(() => storage.Delete(directoryPath));
+        }
+
+        [Fact]
+        public void 指定したファイルを削除する()
+        {
+            // arrange
+            using var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream) { AutoFlush = true };
+            var expectedStr = "テストです";
+            writer.WriteLine(expectedStr);
+            var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
+            storage.Set(stream, filePath);
+
+            // act
+            storage.Delete(filePath);
+
+            // assert
+            Assert.False(File.Exists(Path.Combine(basePath, filePath)));
+        }
+
+        [Fact]
+        public void 指定したファイルが存在しないとき例外を出す()
+        {
+            // act & assert
+            Assert.Throws<FileNotFoundException>(() => storage.Delete("./not_existed_file.csv"));
+        }
+    }
+
+    public sealed class GetDirectoryNamesTests : IDisposable
+    {
+        private readonly string basePath = $"./{Guid.NewGuid()}";
+        private readonly LocalFileStorage storage;
+
+        public GetDirectoryNamesTests()
+        {
+            storage = new(basePath);
+        }
+
+        public void Dispose()
+        {
+            Clean(basePath);
+        }
+
+        [Fact]
+        public void 指定したパスの全ディレクトリ名を取得する()
+        {
+            // arrange
+            var path = "./testd";
+            var folderSize = 10;
+            foreach (var number in Enumerable.Range(0, folderSize))
             {
-                // arrange
                 using var stream = new MemoryStream();
                 using var writer = new StreamWriter(stream) { AutoFlush = true };
-                var expectedStr = "テストです";
+                stream.Position = 0;
+                var expectedStr = $"テストです{number}";
                 writer.WriteLine(expectedStr);
-
-                // act & assert
-                Assert.Throws<IOException>(() => storage.Set(stream, "/testd"));
-            }
-        }
-
-        public sealed class UnzipTests : IDisposable
-        {
-            private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalFileStorage storage;
-
-            public UnzipTests()
-            {
-                storage = new(basePath);
-            }
-
-            public void Dispose()
-            {
-                Clean(basePath);
-            }
-
-            [Fact]
-            public void 指定したzipファイルを解凍する()
-            {
-                // arrange
-                using var stream = new MemoryStream();
-                using var writer = new StreamWriter(stream) { AutoFlush = true };
-                var expectedStr = "テストです";
-                writer.WriteLine(expectedStr);
-                var directoryPath = $"./{Guid.NewGuid()}/testd";
-                var filePath = $"{directoryPath}/test.txt";
+                var filePath = $"{path}/testd{number}/test{number}.txt";
                 storage.Set(stream, filePath);
-                var zipFilePath = "./test.zip";
-                ZipFile.CreateFromDirectory(Path.Combine(basePath, directoryPath), Path.Combine(basePath, zipFilePath));
-                var unzippedDirectoryPath = $"./{Guid.NewGuid()}/unzipped";
-
-                // act
-                storage.Unzip(zipFilePath, unzippedDirectoryPath);
-
-                // assert
-                Assert.True(Directory.Exists(Path.Combine(basePath, unzippedDirectoryPath)));
             }
 
-            [Fact]
-            public void 解凍後ZIPファイルを消す()
+            // act
+            var directoryNames = storage.GetDirectoryNames(path).OrderBy(x => x);
+
+            // assert
+            Assert.Equal(folderSize, directoryNames.Count());
+            Assert.True(Enumerable.Range(0, folderSize)
+                .Select(n => $"testd{n}")
+                .Zip(directoryNames, (expected, actual) => actual == expected)
+                .All(x => x));
+        }
+
+        [Fact]
+        public void 引数で指定したパターンのディレクトリ名を取得する()
+        {
+            // arrange
+            var path = "./testd";
+            var folderSize = 10;
+            foreach (var number in Enumerable.Range(0, folderSize))
             {
-                // arrange
                 using var stream = new MemoryStream();
                 using var writer = new StreamWriter(stream) { AutoFlush = true };
-                var expectedStr = "テストです";
+                stream.Position = 0;
+                var expectedStr = $"テストです{number}";
                 writer.WriteLine(expectedStr);
-                var directoryPath = $"./{Guid.NewGuid()}/testd";
-                var filePath = $"{directoryPath}/test.txt";
+                var filePath = $"{path}/testd{number}/test{number}.txt";
                 storage.Set(stream, filePath);
-                var zipFilePath = "./test.zip";
-                ZipFile.CreateFromDirectory(Path.Combine(basePath, directoryPath), Path.Combine(basePath, zipFilePath));
-                var unzippedDirectoryPath = $"./{Guid.NewGuid()}/unzipped";
-
-                // act
-                storage.Unzip(zipFilePath, unzippedDirectoryPath);
-
-                // assert
-                Assert.False(Directory.Exists(Path.Combine(basePath, zipFilePath)));
             }
 
-            [Fact]
-            public void ZIPのファイルパスがディレクトリパスのとき例外を出す()
-            {
-                // act & assert
-                Assert.Throws<IOException>(() => storage.Unzip("/test", "/test2"));
-            }
+            // act
+            var directoryName = storage.GetDirectoryNames(path, "testd5").Single();
 
-            [Fact]
-            public void 解凍後のディレクトリパスがファイルパスのとき例外を出す()
-            {
-                // act & assert
-                Assert.Throws<IOException>(() => storage.Unzip("/test/text.txt", "/test2/file.txt"));
-            }
+            // assert
+            Assert.Equal("testd5", directoryName);
         }
 
-        public sealed class DeleteTests : IDisposable
+        [Fact]
+        public void ファイルパスが指定されたとき例外を出す()
         {
-            private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalFileStorage storage;
-
-            public DeleteTests()
-            {
-                storage = new(basePath);
-            }
-
-            public void Dispose()
-            {
-                Clean(basePath);
-            }
-
-            [Fact]
-            public void 指定したディレクトリを削除する()
-            {
-                // arrange
-                using var stream = new MemoryStream();
-                using var writer = new StreamWriter(stream) { AutoFlush = true };
-                var expectedStr = "テストです";
-                writer.WriteLine(expectedStr);
-                var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
-                var directoryPath = filePath.Replace("test.txt", "");
-                storage.Set(stream, filePath);
-
-                // act
-                storage.Delete(directoryPath);
-
-                // assert
-                Assert.False(Directory.Exists(Path.Combine(basePath, directoryPath)));
-            }
-
-            [Fact]
-            public void 指定したディレクトリが存在しないとき例外を出す()
-            {
-                // arrange
-                var directoryPath = $"./{Guid.NewGuid()}/testd/";
-
-                // act & assert
-                Assert.Throws<DirectoryNotFoundException>(() => storage.Delete(directoryPath));
-            }
-
-            [Fact]
-            public void 指定したファイルを削除する()
-            {
-                // arrange
-                using var stream = new MemoryStream();
-                using var writer = new StreamWriter(stream) { AutoFlush = true };
-                var expectedStr = "テストです";
-                writer.WriteLine(expectedStr);
-                var filePath = $"./{Guid.NewGuid()}/testd/test.txt";
-                storage.Set(stream, filePath);
-
-                // act
-                storage.Delete(filePath);
-
-                // assert
-                Assert.False(File.Exists(Path.Combine(basePath, filePath)));
-            }
-
-            [Fact]
-            public void 指定したファイルが存在しないとき例外を出す()
-            {
-                // act & assert
-                Assert.Throws<FileNotFoundException>(() => storage.Delete("./not_existed_file.csv"));
-            }
+            // act & assert
+            Assert.Throws<ArgumentException>(() => storage.GetDirectoryNames("/test/test.txt"));
         }
+    }
 
-        public sealed class GetDirectoryNamesTests : IDisposable
-        {
-            private readonly string basePath = $"./{Guid.NewGuid()}";
-            private readonly LocalFileStorage storage;
-
-            public GetDirectoryNamesTests()
-            {
-                storage = new(basePath);
-            }
-
-            public void Dispose()
-            {
-                Clean(basePath);
-            }
-
-            [Fact]
-            public void 指定したパスの全ディレクトリ名を取得する()
-            {
-                // arrange
-                var path = "./testd";
-                var folderSize = 10;
-                foreach (var number in Enumerable.Range(0, folderSize))
-                {
-                    using var stream = new MemoryStream();
-                    using var writer = new StreamWriter(stream) { AutoFlush = true };
-                    stream.Position = 0;
-                    var expectedStr = $"テストです{number}";
-                    writer.WriteLine(expectedStr);
-                    var filePath = $"{path}/testd{number}/test{number}.txt";
-                    storage.Set(stream, filePath);
-                }
-
-                // act
-                var directoryNames = storage.GetDirectoryNames(path).OrderBy(x => x);
-
-                // assert
-                Assert.Equal(folderSize, directoryNames.Count());
-                Assert.True(Enumerable.Range(0, folderSize)
-                    .Select(n => $"testd{n}")
-                    .Zip(directoryNames, (expected, actual) => actual == expected)
-                    .All(x => x));
-            }
-
-            [Fact]
-            public void 引数で指定したパターンのディレクトリ名を取得する()
-            {
-                // arrange
-                var path = "./testd";
-                var folderSize = 10;
-                foreach (var number in Enumerable.Range(0, folderSize))
-                {
-                    using var stream = new MemoryStream();
-                    using var writer = new StreamWriter(stream) { AutoFlush = true };
-                    stream.Position = 0;
-                    var expectedStr = $"テストです{number}";
-                    writer.WriteLine(expectedStr);
-                    var filePath = $"{path}/testd{number}/test{number}.txt";
-                    storage.Set(stream, filePath);
-                }
-
-                // act
-                var directoryName = storage.GetDirectoryNames(path, "testd5").Single();
-
-                // assert
-                Assert.Equal("testd5", directoryName);
-            }
-
-            [Fact]
-            public void ファイルパスが指定されたとき例外を出す()
-            {
-                // act & assert
-                Assert.Throws<ArgumentException>(() => storage.GetDirectoryNames("/test/test.txt"));
-            }
-        }
-
-        private static void Clean(string path)
-        {
-            Directory.Delete(path, true);
-        }
+    private static void Clean(string path)
+    {
+        Directory.Delete(path, true);
     }
 }
