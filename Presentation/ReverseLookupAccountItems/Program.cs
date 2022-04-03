@@ -1,15 +1,15 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using ResearchXBRL.Application.Interactors.AccountItemReverseLookup;
-using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
-using ResearchXBRL.Application.Usecase.AccountItemReverseLookup;
-using ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
-using ResearchXBRL.Infrastructure.AccountItemReverseLookup.AccountItems;
-using ResearchXBRL.Infrastructure.QueryServices.AccountItemReverseLookup;
+using ResearchXBRL.Application.Interactors.ReverseLookupAccountItems;
+using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
+using ResearchXBRL.Application.Usecase.ReverseLookupAccountItems;
+using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
+using ResearchXBRL.Infrastructure.ReverseLookupAccountItems.AccountItems;
+using ResearchXBRL.Infrastructure.QueryServices.ReverseLookupAccountItems;
 using ResearchXBRL.Infrastructure.Services;
 using ResearchXBRL.Infrastructure.Services.FileStorages;
 
-namespace AccountItemReverseLookup;
+namespace ReverseLookupAccountItems;
 
 class Program
 {
@@ -19,7 +19,7 @@ class Program
         {
             using var serviceProvider = CreateServiceProvider(fileName);
             var usecase = serviceProvider?
-                .GetService<IAccountItemReverseLookupUsecase>()
+                .GetService<IReverseLookupAccountItemsUsecase>()
                 ?? throw new System.Exception("usecaseモジュールのDIに失敗しました");
             await usecase.Handle();
         });
@@ -28,8 +28,8 @@ class Program
     private static ServiceProvider CreateServiceProvider(string fileName)
     {
         return new ServiceCollection()
-            .AddTransient<IAccountItemReverseLookupUsecase, AccountItemReverseLookupInteractor>()
-            .AddTransient<IAccountItemReverseLookupPresenter, ConsolePresenter>()
+            .AddTransient<IReverseLookupAccountItemsUsecase, ReverseLookupAccountItemsInteractor>()
+            .AddTransient<IReverseLookupAccountItemsPresenter, ConsolePresenter>()
             .AddTransient<IReverseDictionaryQueryService>(x => new ReverseDictionaryCSVQueryService(x.GetService<IFileStorage>()!, fileName))
             .AddTransient<IReverseLookupQueryService, ReverseLookupQueryService>()
             .AddTransient<IAccountItemsRepository, AccountItemsRepository>()

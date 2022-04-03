@@ -64,3 +64,15 @@ steps:
     tags: |
       ${{ parameters.imageTag }}-$(Build.BuildId)
       ${{ parameters.imageTag }}
+
+- task: Docker@2
+  displayName: 'Build and Push ReverseLookupAccountItems Batch Image'
+  inputs:
+    containerRegistry: 'dockerRegistryServiceConnection'
+    repository: 'harunari/'
+    command: 'buildAndPush'
+    Dockerfile: './Presentation/ReverseLookupAccountItems/Dockerfile'
+    buildContext: '.'
+    tags: |
+      ${{ parameters.imageTag }}-$(Build.BuildId)
+      ${{ parameters.imageTag }}

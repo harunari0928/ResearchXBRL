@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using CsvHelper;
-using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
+using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
 using ResearchXBRL.Application.DTO.Results;
-using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
+using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
 using ResearchXBRL.Infrastructure.Services;
 
-namespace ResearchXBRL.Infrastructure.QueryServices.AccountItemReverseLookup;
+namespace ResearchXBRL.Infrastructure.QueryServices.ReverseLookupAccountItems;
 
 public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQueryService
 {

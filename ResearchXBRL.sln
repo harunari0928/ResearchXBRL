@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AquireAccountItems", "Prese
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancialAnalysisAPI", "Presentation\FinancialAnalysisAPI\FinancialAnalysisAPI.csproj", "{CBA51F4B-FD06-43D0-BAE7-E6E047C2E208}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountItemReverseLookup", "Presentation\AccountItemReverseLookup\AccountItemReverseLookup.csproj", "{1C4865DE-36F4-478C-8F35-1FA6CA5ED464}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReverseLookupAccountItems", "Presentation\ReverseLookupAccountItems\ReverseLookupAccountItems.csproj", "{1C4865DE-36F4-478C-8F35-1FA6CA5ED464}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

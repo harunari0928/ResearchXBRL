@@ -75,12 +75,12 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "buildAccountItemReverseLookup",
+            "label": "buildReverseLookupAccountItems",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Presentation/AccountItemReverseLookup/AccountItemReverseLookup.csproj",
+                "${workspaceFolder}/Presentation/ReverseLookupAccountItems/ReverseLookupAccountItems.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

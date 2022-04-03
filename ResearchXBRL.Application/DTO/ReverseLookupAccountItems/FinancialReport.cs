@@ -1,6 +1,6 @@
 using System;
 
-namespace ResearchXBRL.Application.DTO.AccountItemReverseLookup;
+namespace ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
 
 public record FinancialReport
 {

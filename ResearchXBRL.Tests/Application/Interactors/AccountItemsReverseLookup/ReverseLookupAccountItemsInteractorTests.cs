@@ -1,25 +1,25 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
-using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
-using ResearchXBRL.Application.Interactors.AccountItemReverseLookup;
-using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
-using ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
+using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
+using ResearchXBRL.Application.Interactors.ReverseLookupAccountItems;
+using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
+using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
 using System.Linq;
 using Xunit;
 using ResearchXBRL.Application.DTO.Results;
-using ResearchXBRL.Application.Usecase.AccountItemReverseLookup;
+using ResearchXBRL.Application.Usecase.ReverseLookupAccountItems;
 
-namespace ResearchXBRL.Tests.Application.Interactors.AccountItemReverseLookup;
+namespace ResearchXBRL.Tests.Application.Interactors.ReverseLookupAccountItems;
 
-public sealed class AccountItemReverseLookupInteractorTests
+public sealed class ReverseLookupAccountItemsInteractorTests
 {
     public sealed class HandleTests
     {
         private readonly Mock<IReverseDictionaryQueryService> reverseDictionaryQueryServiceMock = new();
         private readonly Mock<IReverseLookupQueryService> reverseLookupQueryServiceMock = new();
         private readonly Mock<IAccountItemsRepository> repositoryMock = new();
-        private readonly Mock<IAccountItemReverseLookupPresenter> presenterMock = new();
+        private readonly Mock<IReverseLookupAccountItemsPresenter> presenterMock = new();
 
         [Fact(DisplayName = "逆引き辞書の要素数だけ逆引きを行う")]
         public async Task Test1()
@@ -46,7 +46,7 @@ public sealed class AccountItemReverseLookupInteractorTests
                 .Setup(x => x.Add(It.IsAny<IAsyncEnumerable<AccountItem>>()))
                 .Callback<IAsyncEnumerable<AccountItem>>(async x => await x.ToArrayAsync());
 
-            var interactor = new AccountItemReverseLookupInteractor(
+            var interactor = new ReverseLookupAccountItemsInteractor(
                 reverseDictionaryQueryServiceMock.Object,
                 reverseLookupQueryServiceMock.Object,
                 repositoryMock.Object,
@@ -83,7 +83,7 @@ public sealed class AccountItemReverseLookupInteractorTests
                 .Setup(x => x.Get())
                 .Returns(new Success<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
-            var interactor = new AccountItemReverseLookupInteractor(
+            var interactor = new ReverseLookupAccountItemsInteractor(
                 reverseDictionaryQueryServiceMock.Object,
                 reverseLookupQueryServiceMock.Object,
                 repositoryMock.Object,
@@ -123,7 +123,7 @@ public sealed class AccountItemReverseLookupInteractorTests
                 .Setup(x => x.Get())
                 .Returns(new Success<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
-            var interactor = new AccountItemReverseLookupInteractor(
+            var interactor = new ReverseLookupAccountItemsInteractor(
                 reverseDictionaryQueryServiceMock.Object,
                 reverseLookupQueryServiceMock.Object,
                 repositoryMock.Object,
@@ -161,7 +161,7 @@ public sealed class AccountItemReverseLookupInteractorTests
                 {
                     Message = expectedMessage
                 });
-            var interactor = new AccountItemReverseLookupInteractor(
+            var interactor = new ReverseLookupAccountItemsInteractor(
                 reverseDictionaryQueryServiceMock.Object,
                 reverseLookupQueryServiceMock.Object,
                 repositoryMock.Object,
