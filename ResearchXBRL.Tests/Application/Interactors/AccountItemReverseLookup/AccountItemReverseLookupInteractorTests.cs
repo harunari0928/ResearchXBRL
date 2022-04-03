@@ -8,6 +8,7 @@ using ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
 using System.Linq;
 using Xunit;
 using ResearchXBRL.Application.DTO.Results;
+using ResearchXBRL.Application.Usecase.AccountItemReverseLookup;
 
 namespace ResearchXBRL.Tests.Application.Interactors.AccountItemReverseLookup;
 
@@ -16,8 +17,9 @@ public sealed class AccountItemReverseLookupInteractorTests
     public sealed class HandleTests
     {
         private readonly Mock<IReverseDictionaryQueryService> reverseDictionaryQueryServiceMock = new();
-        private readonly Mock<IReverseLookupQueryService> reverseLookupQueryService = new();
-        private readonly Mock<IAccountItemsRepository> repository = new();
+        private readonly Mock<IReverseLookupQueryService> reverseLookupQueryServiceMock = new();
+        private readonly Mock<IAccountItemsRepository> repositoryMock = new();
+        private readonly Mock<IAccountItemReverseLookupPresenter> presenterMock = new();
 
         [Fact(DisplayName = "逆引き辞書の要素数だけ逆引きを行う")]
         public async Task Test1()
@@ -40,21 +42,22 @@ public sealed class AccountItemReverseLookupInteractorTests
                 .Setup(x => x.Get())
                 .Returns(new Success<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
-            repository
+            repositoryMock
                 .Setup(x => x.Add(It.IsAny<IAsyncEnumerable<AccountItem>>()))
                 .Callback<IAsyncEnumerable<AccountItem>>(async x => await x.ToArrayAsync());
 
             var interactor = new AccountItemReverseLookupInteractor(
                 reverseDictionaryQueryServiceMock.Object,
-                reverseLookupQueryService.Object,
-                repository.Object
+                reverseLookupQueryServiceMock.Object,
+                repositoryMock.Object,
+                presenterMock.Object
             );
 
             // act
             await interactor.Handle();
 
             // assert
-            reverseLookupQueryService
+            reverseLookupQueryServiceMock
                 .Verify(x => x.Lookup(It.IsAny<FinancialReport>()),
                 Times.Exactly(lookupParameters.Count), "逆引き辞書の要素数だけ逆引きを行う");
         }
@@ -82,12 +85,13 @@ public sealed class AccountItemReverseLookupInteractorTests
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             var interactor = new AccountItemReverseLookupInteractor(
                 reverseDictionaryQueryServiceMock.Object,
-                reverseLookupQueryService.Object,
-                repository.Object
+                reverseLookupQueryServiceMock.Object,
+                repositoryMock.Object,
+                presenterMock.Object
             );
             // lookup処理は遅延実行なので以下設定がないと動かない。
             // 処理を動かすため、Addメソッド実行時に引数のリスト要素全件を評価している
-            repository
+            repositoryMock
                 .Setup(x => x.Add(It.IsAny<IAsyncEnumerable<AccountItem>>()))
                 .Callback<IAsyncEnumerable<AccountItem>>(async x => await x.ToArrayAsync());
 
@@ -95,10 +99,10 @@ public sealed class AccountItemReverseLookupInteractorTests
             await interactor.Handle();
 
             // assert
-            reverseLookupQueryService
+            reverseLookupQueryServiceMock
                 .Verify(x => x.Lookup(It.Is<FinancialReport>(p => p == lookupParameters[0])),
                 Times.Once);
-            reverseLookupQueryService
+            reverseLookupQueryServiceMock
                 .Verify(x => x.Lookup(It.Is<FinancialReport>(p => p == lookupParameters[1])),
                 Times.Once);
         }
@@ -121,28 +125,54 @@ public sealed class AccountItemReverseLookupInteractorTests
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             var interactor = new AccountItemReverseLookupInteractor(
                 reverseDictionaryQueryServiceMock.Object,
-                reverseLookupQueryService.Object,
-                repository.Object
+                reverseLookupQueryServiceMock.Object,
+                repositoryMock.Object,
+                presenterMock.Object
             );
 
             // act
             await interactor.Handle();
 
             // assert
-            repository
+            repositoryMock
             .Verify(x =>
                 x.Add(
                     It.Is<IAsyncEnumerable<AccountItem>>(
                         x => x.ToEnumerable().ElementAt(0).NormalizedName == reverseLookupResult[0].NormalizedName
                          && x.ToEnumerable().ElementAt(0).OriginalName == reverseLookupResult[0].OriginalName))
                 , Times.Once);
-            repository
+            repositoryMock
             .Verify(x =>
                 x.Add(
                     It.Is<IAsyncEnumerable<AccountItem>>(
                         x => x.ToEnumerable().ElementAt(1).NormalizedName == reverseLookupResult[1].NormalizedName
                          && x.ToEnumerable().ElementAt(1).OriginalName == reverseLookupResult[1].OriginalName))
                 , Times.Once);
+        }
+
+        [Fact(DisplayName = "revereDictionaryQueryServiceが中断したとき、付随するメッセージをPresenterへ送る")]
+        public async void Test4()
+        {
+            // arrange
+            var expectedMessage = "中断";
+            reverseDictionaryQueryServiceMock
+                .Setup(x => x.Get())
+                .Returns(new Abort<IAsyncEnumerable<FinancialReport>>
+                {
+                    Message = expectedMessage
+                });
+            var interactor = new AccountItemReverseLookupInteractor(
+                reverseDictionaryQueryServiceMock.Object,
+                reverseLookupQueryServiceMock.Object,
+                repositoryMock.Object,
+                presenterMock.Object
+            );
+
+            // act
+            await interactor.Handle();
+
+            // assert
+            presenterMock.Verify(x => x.Warn(expectedMessage), Times.Once);
         }
 
         private IReadOnlyList<ReverseLookupResult> CreateReverseLookupQueryServiceMock()
@@ -152,7 +182,7 @@ public sealed class AccountItemReverseLookupInteractorTests
                 new ReverseLookupResult("NetSales", "hoge"),
                 new ReverseLookupResult("ROE", "fuga")
             };
-            reverseLookupQueryService
+            reverseLookupQueryServiceMock
                 .Setup(x => x.Lookup(It.IsAny<FinancialReport>()))
                 .ReturnsAsync(reverseLookupResult);
             return reverseLookupResult;

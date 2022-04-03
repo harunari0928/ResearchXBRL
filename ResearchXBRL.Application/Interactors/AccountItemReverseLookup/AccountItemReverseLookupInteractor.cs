@@ -13,26 +13,36 @@ public sealed class AccountItemReverseLookupInteractor : IAccountItemReverseLook
     private readonly IReverseDictionaryQueryService reverseDictionaryQueryService;
     private readonly IReverseLookupQueryService reverseLookupQueryService;
     private readonly IAccountItemsRepository repository;
+    private readonly IAccountItemReverseLookupPresenter presenter;
 
     public AccountItemReverseLookupInteractor(
         IReverseDictionaryQueryService reverseLookupTableQueryService,
         IReverseLookupQueryService reverseLookupQueryService,
-        IAccountItemsRepository repository)
+        IAccountItemsRepository repository,
+        IAccountItemReverseLookupPresenter presenter)
     {
         this.reverseDictionaryQueryService = reverseLookupTableQueryService;
         this.reverseLookupQueryService = reverseLookupQueryService;
         this.repository = repository;
+        this.presenter = presenter;
     }
 
     /// <inheritdoc/>
     public async ValueTask Handle()
     {
-        var financialReports = reverseDictionaryQueryService.Get();
-        if (financialReports is Success<IAsyncEnumerable<FinancialReport>> success)
+        switch (reverseDictionaryQueryService.Get())
         {
-            var normalizedAccountItems = GetNormalizedAccountItems(success.Value);
+            case Success<IAsyncEnumerable<FinancialReport>> success:
+                {
+                    var normalizedAccountItems = GetNormalizedAccountItems(success.Value);
 
-            await repository.Add(normalizedAccountItems);
+                    await repository.Add(normalizedAccountItems);
+                    break;
+                }
+
+            case Abort<IAsyncEnumerable<FinancialReport>> abort:
+                presenter.Warn(abort.Message);
+                break;
         }
     }
 
