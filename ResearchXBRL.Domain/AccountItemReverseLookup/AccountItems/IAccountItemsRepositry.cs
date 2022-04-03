@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
 
-public interface IAccountItemRepository
+public interface IAccountItemsRepository
 {
     ValueTask Add(IAsyncEnumerable<AccountItem> normalizedAccountItems);
 }
