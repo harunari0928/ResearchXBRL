@@ -5,7 +5,8 @@ services:
       context: ..
       dockerfile: Dockerfile.dev
     volumes:
-      - ..:/src:cached
+      - ..:/src
+      - upload_dir:/src/upload
     ports:
       - "45612:45612"
     command: /bin/bash -c "dotnet build; while sleep 1000; do :; done"
@@ -18,8 +19,13 @@ services:
       DB_PASSWORD: mysecretpassword
       ASPNETCORE_URLS: http://+:45612
       ASPNETCORE_ENVIRONMENT: Development
+      FILESTORAGE_HOST: sftp
+      FILESTORAGE_USERID: foo
+      FILESTORAGE_PASSWORD: pass
+      FILESTORAGE_BASEDIR: upload
     depends_on:
       - rdb_primary
+      - sftp
   rdb_primary:
     build:
       context: ../postgres
@@ -50,8 +56,18 @@ services:
       - "5432"
     depends_on:
       - rdb_primary
+  sftp:
+    image: atmoz/sftp
+    ports:
+      - "22"
+    volumes:
+      - upload_dir:/home/foo/upload
+    environment:
+      SFTP_USERS: foo:pass:::upload
 volumes:
   primary_database:
     driver: local
   readonly_database:
+    driver: local
+  upload_dir:
     driver: local

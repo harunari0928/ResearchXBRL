@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
-using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.AccountItems;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.Corporations;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 

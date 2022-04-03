@@ -14,7 +14,6 @@
 		"files.autoSave": "afterDelay",
 		"files.autoSaveDelay": 500,
 		"omnisharp.useGlobalMono": "never",
-		"omnisharp.path": "latest",
 		"omnisharp.useModernNet": true,
 		"files.eol": "\n"
 	},

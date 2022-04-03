@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItemMenus
+namespace ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItems
 {
-    public interface IAccountItemMenuRepository
+    public interface IAccountItemsMenuRepository
     {
-        Task<AccountItemMenu> GetProposals(string keyword);
+        Task<AccountItemsMenu> GetProposals(string keyword);
     }
 }

@@ -1,16 +1,16 @@
-﻿using ResearchXBRL.Application.DTO;
-using ResearchXBRL.Application.Services;
-using ResearchXBRL.CrossCuttingInterest.Extensions;
-using ResearchXBRL.Domain.FinancialReportItems;
-using ResearchXBRL.Domain.FinancialReports;
-using ResearchXBRL.Domain.FinancialReports.Contexts;
-using ResearchXBRL.Domain.FinancialReports.Units;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using ResearchXBRL.Application.DTO;
+using ResearchXBRL.Application.Services;
+using ResearchXBRL.CrossCuttingInterest.Extensions;
+using ResearchXBRL.Domain.ImportFinancialReports.Contexts;
+using ResearchXBRL.Domain.ImportFinancialReports.FinancialReportItems;
+using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
+using ResearchXBRL.Domain.ImportFinancialReports.Units;
 
 namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
 
@@ -194,5 +194,10 @@ public sealed class EdinetXBRLParser : IEdinetXBRLParser
         return (unzippedFolderPath, fileStorage
             .GetFiles(Path.Combine(unzippedFolderPath, xbrlDirectoryPath),
             "*"));
+    }
+
+    Task<FinancialReport> IEdinetXBRLParser.Parse(EdinetXBRLData data)
+    {
+        throw new NotImplementedException();
     }
 }
