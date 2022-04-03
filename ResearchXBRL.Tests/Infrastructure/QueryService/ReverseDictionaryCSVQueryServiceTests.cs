@@ -1,11 +1,12 @@
 using System;
-using System.IO;
 using Xunit;
 using ResearchXBRL.Infrastructure.Services.FileStorages;
 using ResearchXBRL.Infrastructure.QueryServices.AccountItemReverseLookup;
 using System.Linq;
 using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
 using System.Threading.Tasks;
+using ResearchXBRL.Application.DTO.Results;
+using System.Collections.Generic;
 
 namespace ResearchXBRL.Tests.Infrastructure.QueryService;
 
@@ -20,7 +21,12 @@ public sealed class ReverseDictionaryCSVQueryServiceTests
         var service = new ReverseDictionaryCSVQueryService(fileStorage, "ReverseLookupDictionary.csv");
 
         // act
-        var actual = await service.Get().ElementAtAsync(3);
+        if (service.Get() is not Success<IAsyncEnumerable<FinancialReport>> success)
+        {
+            throw new Exception("Test Failed.");
+        }
+
+        var actual = await success.Value.ElementAtAsync(3);
 
         // assert
         Assert.Equal(1301, actual.SecuritiesCode);
@@ -36,7 +42,11 @@ public sealed class ReverseDictionaryCSVQueryServiceTests
         var service = new ReverseDictionaryCSVQueryService(fileStorage, "ReverseLookupDictionary.csv");
 
         // act
-        var actual = await service.Get().ElementAtAsync(2);
+        if (service.Get() is not Success<IAsyncEnumerable<FinancialReport>> success)
+        {
+            throw new Exception("Test Failed.");
+        }
+        var actual = await success.Value.ElementAtAsync(2);
 
         // assert
         Assert.Null(actual.NetSales);

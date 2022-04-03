@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
+using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
 using ResearchXBRL.Application.Usecase.AccountItemReverseLookup;
 using ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
@@ -27,10 +28,12 @@ public sealed class AccountItemReverseLookupInteractor : IAccountItemReverseLook
     public async ValueTask Handle()
     {
         var financialReports = reverseDictionaryQueryService.Get();
+        if (financialReports is Success<IAsyncEnumerable<FinancialReport>> success)
+        {
+            var normalizedAccountItems = GetNormalizedAccountItems(success.Value);
 
-        var normalizedAccountItems = GetNormalizedAccountItems(financialReports);
-
-        await repository.Add(normalizedAccountItems);
+            await repository.Add(normalizedAccountItems);
+        }
     }
 
     private async IAsyncEnumerable<AccountItem> GetNormalizedAccountItems(IAsyncEnumerable<FinancialReport> financialReports)
