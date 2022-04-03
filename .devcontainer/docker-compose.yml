@@ -19,9 +19,10 @@ services:
       DB_PASSWORD: mysecretpassword
       ASPNETCORE_URLS: http://+:45612
       ASPNETCORE_ENVIRONMENT: Development
-      FILESTORAGE_DOMAIN: sftp
+      FILESTORAGE_HOST: sftp
       FILESTORAGE_USERID: foo
       FILESTORAGE_PASSWORD: pass
+      FILESTORAGE_BASEDIR: upload
     depends_on:
       - rdb_primary
       - sftp
