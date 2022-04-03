@@ -19,14 +19,20 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
             this.storageDirectoryBasePath = storageDirectoryBasePath;
         }
 
-        public Stream Get(string filePath)
+        public Stream? Get(string filePath)
         {
             if (IFileStorage.IsDirectory(filePath))
             {
                 throw new IOException($"{nameof(filePath)}には、ファイルパスを指定してください");
             }
 
-            return new FileStream(CreateFullPath(filePath), FileMode.Open);
+            var fullFilePath = CreateFullPath(filePath);
+            if (!File.Exists(fullFilePath))
+            {
+                return null;
+            }
+
+            return new FileStream(fullFilePath, FileMode.Open);
         }
 
         public void Set(in Stream inputStream, string filePath)

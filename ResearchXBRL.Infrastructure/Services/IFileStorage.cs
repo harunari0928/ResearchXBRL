@@ -7,7 +7,7 @@ namespace ResearchXBRL.Infrastructure.Services;
 
 public interface IFileStorage
 {
-    public Stream Get(string filePath);
+    public Stream? Get(string filePath);
     public void Set(in Stream inputStream, string filePath);
     IReadOnlyList<string> GetFiles(string directoryPath, string searchPattern = "*");
     IReadOnlyList<string> GetDirectoryNames(string directoryPath, string searchPattern = "*");

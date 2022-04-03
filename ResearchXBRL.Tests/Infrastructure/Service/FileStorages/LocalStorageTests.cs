@@ -36,7 +36,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
                 storage.Set(stream, filePath);
 
                 // act
-                var outputStream = storage.Get(filePath);
+                var outputStream = storage.Get(filePath) ?? throw new Exception("Test is failed.");
 
                 // assert
                 using var reader = new StreamReader(outputStream);
@@ -55,7 +55,8 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
                 storage.Set(stream, filePath);
 
                 // act
-                var outputStream = storage.Get(string.Concat(filePath.Skip(1)));
+                var outputStream = storage.Get(string.Concat(filePath.Skip(1)))
+                    ?? throw new Exception("Test is failed.");
 
                 // assert
                 using var reader = new StreamReader(outputStream);
@@ -67,6 +68,19 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
             {
                 // act & assert
                 Assert.Throws<IOException>(() => storage.Get("/test"));
+            }
+
+            [Fact]
+            public void 指定したパスのファイルが存在しなかったときnullを返す()
+            {
+                // arrange
+                var notExistsFilePath = $"./{Guid.NewGuid()}/testd/test_notexists.txt";
+
+                // act
+                var outputStream = storage.Get(notExistsFilePath);
+
+                // assert
+                Assert.Null(outputStream);
             }
         }
 

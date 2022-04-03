@@ -55,7 +55,6 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
         }
         DisposeDataResources(dataResources);
     }
-
     private static int ParseInt(string? maybeStr, string columnName)
     {
         if (!int.TryParse(maybeStr, out var num))
