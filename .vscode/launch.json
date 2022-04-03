@@ -57,7 +57,9 @@
             "request": "launch",
             "preLaunchTask": "buildAccountItemReverseLookup",
             "program": "${workspaceFolder}/Presentation/AccountItemReverseLookup/bin/Debug/net6.0/AccountItemReverseLookup.dll",
-            "args": [],
+            "args": [
+                "--file-name ReverseLookupDictionary.csv"
+            ],
             "cwd": "${workspaceFolder}/Presentation/AccountItemReverseLookup",
             "console": "internalConsole",
             "stopAtEntry": false
