@@ -7,7 +7,7 @@ using Xunit;
 
 namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages
 {
-    public sealed class LocalStorageTests
+    public sealed class LocalFileStorageTests
     {
         public sealed class GetTests : IDisposable
         {
