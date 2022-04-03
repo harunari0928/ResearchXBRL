@@ -18,7 +18,7 @@ public sealed class EdinetXBRLParserTests
         private readonly string documentId = "S100AJZW";
         private readonly string companyId = "test";
         private readonly string documentType = "testtype";
-        private readonly LocalStorage storage = new("./work");
+        private readonly LocalFileStorage storage = new("./work");
 
         public ParseTests()
         {

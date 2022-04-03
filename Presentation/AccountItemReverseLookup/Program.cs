@@ -26,10 +26,10 @@ class Program
     {
         return new ServiceCollection()
             .AddTransient<IAccountItemReverseLookupUsecase, AccountItemReverseLookupInteractor>()
-            .AddTransient<IReverseDictionaryQueryService>(x => new ReverseDictionaryCSVQueryService(x.GetService<IFileStorage>(), "./Presentation/AccountItemReverseLookup/ReverseLookupDictionary.csv"))
+            .AddTransient<IReverseDictionaryQueryService>(x => new ReverseDictionaryCSVQueryService(x.GetService<IFileStorage>()!, "./Presentation/AccountItemReverseLookup/ReverseLookupDictionary.csv"))
             .AddTransient<IReverseLookupQueryService, ReverseLookupQueryService>()
             .AddTransient<IAccountItemsRepository, AccountItemsRepository>()
-            .AddSingleton<IFileStorage>(_ => new LocalStorage("."))
+            .AddSingleton<IFileStorage>(_ => new LocalFileStorage("."))
             .AddHttpClient()
             .BuildServiceProvider();
     }

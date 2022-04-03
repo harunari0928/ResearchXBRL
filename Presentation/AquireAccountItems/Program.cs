@@ -29,7 +29,7 @@ class Program
             .AddTransient<ITaxonomyDownloader, TaxonomyDownloader>()
             .AddTransient<ITaxonomyParser, TaxonomyParser>()
             .AddTransient<IAccountItemsRepository, AccountItemsRepository>()
-            .AddSingleton<IFileStorage>(_ => new LocalStorage("/.tmp"))
+            .AddSingleton<IFileStorage>(_ => new LocalFileStorage("/.tmp"))
             .AddHttpClient()
             .BuildServiceProvider();
     }

@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace ResearchXBRL.Infrastructure.Services.FileStorages
 {
-    public sealed class LocalStorage : IFileStorage
+    public sealed class LocalFileStorage : IFileStorage
     {
         private readonly string storageDirectoryBasePath;
 
-        public LocalStorage(string storageDirectoryBasePath)
+        public LocalFileStorage(string storageDirectoryBasePath)
         {
             if (!Directory.Exists(storageDirectoryBasePath))
             {
