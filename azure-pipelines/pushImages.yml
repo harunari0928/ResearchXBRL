@@ -69,7 +69,7 @@ steps:
   displayName: 'Build and Push ReverseLookupAccountItems Batch Image'
   inputs:
     containerRegistry: 'dockerRegistryServiceConnection'
-    repository: 'harunari/'
+    repository: 'harunari/reverse_lookup_account_items_batch'
     command: 'buildAndPush'
     Dockerfile: './Presentation/ReverseLookupAccountItems/Dockerfile'
     buildContext: '.'
