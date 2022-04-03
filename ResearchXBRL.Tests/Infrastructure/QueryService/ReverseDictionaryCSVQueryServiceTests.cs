@@ -13,19 +13,6 @@ public sealed class ReverseDictionaryCSVQueryServiceTests
 {
     private readonly LocalFileStorage fileStorage = new(".");
 
-    [Fact(DisplayName = "会計基準が日本基準のデータのみを取得する")]
-    public async Task Test1()
-    {
-        // arrange
-        var service = new ReverseDictionaryCSVQueryService(fileStorage, "ReverseLookupDictionary.csv");
-
-        // act
-        var actual = await service.Get().ToArrayAsync();
-
-        // assert
-        Assert.Equal(6, actual.Count());
-    }
-
     [Fact(DisplayName = "csvのデータを取得できる")]
     public async Task Test2()
     {
