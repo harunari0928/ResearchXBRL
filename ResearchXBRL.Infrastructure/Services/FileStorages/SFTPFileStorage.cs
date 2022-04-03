@@ -32,13 +32,8 @@ public sealed class SFTPFileStorage : IFileStorage, IDisposable
         client.Dispose();
     }
 
-    public Stream? Get(string filePath)
+    public Stream? Get(in string filePath)
     {
-        if (IFileStorage.IsDirectory(filePath))
-        {
-            throw new IOException($"{nameof(filePath)}には、ファイルパスを指定してください");
-        }
-
         var fullFilePath = Path.Combine(baseDirectory, filePath);
         if (!client.Exists(fullFilePath))
         {
@@ -58,7 +53,7 @@ public sealed class SFTPFileStorage : IFileStorage, IDisposable
         throw new NotImplementedException();
     }
 
-    public void Set(in Stream inputStream, string filePath)
+    public void Set(in Stream inputStream, in string filePath)
     {
         throw new NotImplementedException();
     }
