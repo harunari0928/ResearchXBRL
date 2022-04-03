@@ -13,20 +13,23 @@ namespace AccountItemReverseLookup;
 
 class Program
 {
-    public static async Task Main(string[] _)
+    public static async Task Main(string[] args)
     {
-        using var serviceProvider = CreateServiceProvider();
-        var usecase = serviceProvider?
-            .GetService<IAccountItemReverseLookupUsecase>()
-            ?? throw new System.Exception("usecaseモジュールのDIに失敗しました");
-        await usecase.Handle();
+        await ConsoleApp.RunAsync(args, async ([Option("f", "name of reverse dictionary file.")] string fileName) =>
+        {
+            using var serviceProvider = CreateServiceProvider(fileName);
+            var usecase = serviceProvider?
+                .GetService<IAccountItemReverseLookupUsecase>()
+                ?? throw new System.Exception("usecaseモジュールのDIに失敗しました");
+            await usecase.Handle();
+        });
     }
 
-    private static ServiceProvider CreateServiceProvider()
+    private static ServiceProvider CreateServiceProvider(string fileName)
     {
         return new ServiceCollection()
             .AddTransient<IAccountItemReverseLookupUsecase, AccountItemReverseLookupInteractor>()
-            .AddTransient<IReverseDictionaryQueryService>(x => new ReverseDictionaryCSVQueryService(x.GetService<IFileStorage>()!, "ReverseLookupDictionary.csv"))
+            .AddTransient<IReverseDictionaryQueryService>(x => new ReverseDictionaryCSVQueryService(x.GetService<IFileStorage>()!, fileName))
             .AddTransient<IReverseLookupQueryService, ReverseLookupQueryService>()
             .AddTransient<IAccountItemsRepository, AccountItemsRepository>()
             .AddSingleton<IFileStorage, SFTPFileStorage>()
