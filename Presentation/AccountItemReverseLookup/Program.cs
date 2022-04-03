@@ -29,6 +29,7 @@ class Program
     {
         return new ServiceCollection()
             .AddTransient<IAccountItemReverseLookupUsecase, AccountItemReverseLookupInteractor>()
+            .AddTransient<IAccountItemReverseLookupPresenter, ConsolePresenter>()
             .AddTransient<IReverseDictionaryQueryService>(x => new ReverseDictionaryCSVQueryService(x.GetService<IFileStorage>()!, fileName))
             .AddTransient<IReverseLookupQueryService, ReverseLookupQueryService>()
             .AddTransient<IAccountItemsRepository, AccountItemsRepository>()

@@ -61,4 +61,14 @@ public sealed class ReverseDictionaryCSVQueryServiceTests
         // assert
         Assert.Null(actual.NetSales);
     }
+
+    [Fact(DisplayName = "ディレクトリが指定された場合中断オブジェクトを返却する")]
+    public void Test4()
+    {
+        // arrange
+        var service = new ReverseDictionaryCSVQueryService(fileStorage, "directory");
+
+        // act & assert
+        Assert.IsType<Abort<IAsyncEnumerable<FinancialReport>>>(service.Get());
+    }
 }
