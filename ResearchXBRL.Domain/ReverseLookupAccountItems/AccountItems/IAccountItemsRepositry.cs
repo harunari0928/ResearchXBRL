@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
+namespace ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
 
 public interface IAccountItemsRepository
 {

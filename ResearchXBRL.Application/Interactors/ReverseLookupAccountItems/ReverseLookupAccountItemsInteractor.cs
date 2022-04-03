@@ -1,25 +1,25 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
+using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
 using ResearchXBRL.Application.DTO.Results;
-using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
-using ResearchXBRL.Application.Usecase.AccountItemReverseLookup;
-using ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
+using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
+using ResearchXBRL.Application.Usecase.ReverseLookupAccountItems;
+using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
 
-namespace ResearchXBRL.Application.Interactors.AccountItemReverseLookup;
+namespace ResearchXBRL.Application.Interactors.ReverseLookupAccountItems;
 
-public sealed class AccountItemReverseLookupInteractor : IAccountItemReverseLookupUsecase
+public sealed class ReverseLookupAccountItemsInteractor : IReverseLookupAccountItemsUsecase
 {
     private readonly IReverseDictionaryQueryService reverseDictionaryQueryService;
     private readonly IReverseLookupQueryService reverseLookupQueryService;
     private readonly IAccountItemsRepository repository;
-    private readonly IAccountItemReverseLookupPresenter presenter;
+    private readonly IReverseLookupAccountItemsPresenter presenter;
 
-    public AccountItemReverseLookupInteractor(
+    public ReverseLookupAccountItemsInteractor(
         IReverseDictionaryQueryService reverseLookupTableQueryService,
         IReverseLookupQueryService reverseLookupQueryService,
         IAccountItemsRepository repository,
-        IAccountItemReverseLookupPresenter presenter)
+        IReverseLookupAccountItemsPresenter presenter)
     {
         this.reverseDictionaryQueryService = reverseLookupTableQueryService;
         this.reverseLookupQueryService = reverseLookupQueryService;

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NpgsqlTypes;
-using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
-using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
+using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
+using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
 using ResearchXBRL.Infrastructure.Shared;
 
-namespace ResearchXBRL.Infrastructure.QueryServices.AccountItemReverseLookup;
+namespace ResearchXBRL.Infrastructure.QueryServices.ReverseLookupAccountItems;
 
 public sealed class ReverseLookupQueryService : SQLService, IReverseLookupQueryService
 {

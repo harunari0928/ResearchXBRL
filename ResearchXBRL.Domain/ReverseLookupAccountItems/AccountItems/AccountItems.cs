@@ -1,3 +1,3 @@
-namespace ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
+namespace ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
 
 public record AccountItem(string NormalizedName, string OriginalName);

@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Npgsql;
 using PostgreSQLCopyHelper;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
-using ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
+using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.Shared;
 
-namespace ResearchXBRL.Infrastructure.AccountItemReverseLookup.AccountItems;
+namespace ResearchXBRL.Infrastructure.ReverseLookupAccountItems.AccountItems;
 
 public sealed class AccountItemsRepository : SQLService, IAccountItemsRepository
 {

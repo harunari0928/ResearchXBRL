@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
+using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
 
-namespace ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
+namespace ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
 
 public interface IReverseLookupQueryService
 {
