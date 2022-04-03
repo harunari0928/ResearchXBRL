@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using CsvHelper;
 using ResearchXBRL.Application.DTO.AccountItemReverseLookup;
+using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
 using ResearchXBRL.Infrastructure.Services;
 
@@ -20,20 +21,16 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
         this.filePath = filePath;
     }
 
-    public async IAsyncEnumerable<FinancialReport> Get()
+    public IResult<IAsyncEnumerable<FinancialReport>> Get()
     {
-        using var fileStream = fileStorage.Get(filePath);
-        using var streamReader = new StreamReader(fileStream);
-        using var reader = new CsvReader(streamReader, CultureInfo.CurrentCulture, true);
-        // return ReadFinancialReports(reader);としてもビルドは通るが、
-        // 遅延実行中にreaderのDisposeが走ってしまい実行時エラーになる
-        await foreach (var report in ReadFinancialReports(reader))
-        {
-            yield return report;
-        }
+        var fileStream = fileStorage.Get(filePath);
+        var streamReader = new StreamReader(fileStream);
+        var reader = new CsvReader(streamReader, CultureInfo.CurrentCulture, true);
+        return new Success<IAsyncEnumerable<FinancialReport>>(ReadFinancialReports(reader,
+            new IDisposable[] { reader, streamReader, fileStream }));
     }
 
-    private static async IAsyncEnumerable<FinancialReport> ReadFinancialReports(CsvReader reader)
+    private static async IAsyncEnumerable<FinancialReport> ReadFinancialReports(CsvReader reader, IEnumerable<IDisposable> dataResources)
     {
         await foreach (IDictionary<string, object> record in reader.GetRecordsAsync<dynamic>())
         {
@@ -56,6 +53,7 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
                 NetSales = maybeNetsales
             };
         }
+        DisposeDataResources(dataResources);
     }
 
     private static int ParseInt(string? maybeStr, string columnName)
@@ -65,5 +63,12 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
             throw new Exception($"{columnName}が不正です: {maybeStr}");
         }
         return num;
+    }
+    private static void DisposeDataResources(IEnumerable<IDisposable> resources)
+    {
+        foreach (var resource in resources)
+        {
+            resource.Dispose();
+        }
     }
 }

@@ -7,6 +7,7 @@ using ResearchXBRL.Application.QueryServices.AccountItemReverseLookup;
 using ResearchXBRL.Domain.AccountItemReverseLookup.AccountItems;
 using System.Linq;
 using Xunit;
+using ResearchXBRL.Application.DTO.Results;
 
 namespace ResearchXBRL.Tests.Application.Interactors.AccountItemReverseLookup;
 
@@ -37,7 +38,7 @@ public sealed class AccountItemReverseLookupInteractorTests
             };
             reverseDictionaryQueryServiceMock
                 .Setup(x => x.Get())
-                .Returns(lookupParameters.ToAsyncEnumerable());
+                .Returns(new Success<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             repository
                 .Setup(x => x.Add(It.IsAny<IAsyncEnumerable<AccountItem>>()))
@@ -77,7 +78,7 @@ public sealed class AccountItemReverseLookupInteractorTests
             };
             reverseDictionaryQueryServiceMock
                 .Setup(x => x.Get())
-                .Returns(lookupParameters.ToAsyncEnumerable());
+                .Returns(new Success<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             var interactor = new AccountItemReverseLookupInteractor(
                 reverseDictionaryQueryServiceMock.Object,
@@ -116,7 +117,7 @@ public sealed class AccountItemReverseLookupInteractorTests
             };
             reverseDictionaryQueryServiceMock
                 .Setup(x => x.Get())
-                .Returns(lookupParameters.ToAsyncEnumerable());
+                .Returns(new Success<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             var interactor = new AccountItemReverseLookupInteractor(
                 reverseDictionaryQueryServiceMock.Object,
