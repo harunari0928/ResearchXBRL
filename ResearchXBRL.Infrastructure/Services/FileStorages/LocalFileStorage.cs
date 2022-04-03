@@ -21,7 +21,7 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
 
         public Stream Get(string filePath)
         {
-            if (IsDirectory(filePath))
+            if (IFileStorage.IsDirectory(filePath))
             {
                 throw new IOException($"{nameof(filePath)}には、ファイルパスを指定してください");
             }
@@ -33,7 +33,7 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
         {
             var parentPath = Directory.GetParent(CreateFullPath(filePath))?.FullName;
 
-            if (parentPath is null || IsDirectory(filePath))
+            if (parentPath is null || IFileStorage.IsDirectory(filePath))
             {
                 throw new IOException($"{nameof(filePath)}には、ファイルパスを指定してください");
             }
@@ -52,7 +52,7 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
 
         public IReadOnlyList<string> GetFiles(string directoryPath, string searchPattern = "*")
         {
-            if (!IsDirectory(directoryPath))
+            if (!IFileStorage.IsDirectory(directoryPath))
             {
                 throw new IOException($"{nameof(directoryPath)}には、ディレクトリパスを指定してください");
             }
@@ -67,12 +67,12 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
 
         public void Unzip(string zipFilePath, string unzippedDirectoryPath)
         {
-            if (IsDirectory(zipFilePath))
+            if (IFileStorage.IsDirectory(zipFilePath))
             {
                 throw new IOException($"{nameof(zipFilePath)}には、ファイルパスを指定してください");
             }
 
-            if (!IsDirectory(unzippedDirectoryPath))
+            if (!IFileStorage.IsDirectory(unzippedDirectoryPath))
             {
                 throw new IOException($"{nameof(unzippedDirectoryPath)}には、ディレクトリパスを指定してください");
             }
@@ -94,31 +94,9 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
             return Path.Combine(storageDirectoryBasePath, copiedPath);
         }
 
-        private static bool IsDirectory(string path)
-        {
-            path = path?.Trim() ?? throw new ArgumentNullException(nameof(path));
-
-            if (Directory.Exists(path))
-            {
-                return true;
-            }
-
-            if (File.Exists(path))
-            {
-                return false;
-            }
-
-            if (new[] { "\\", "/" }.Any(path.EndsWith))
-            {
-                return true;
-            }
-
-            return string.IsNullOrWhiteSpace(Path.GetExtension(path));
-        }
-
         public void Delete(string path)
         {
-            if (IsDirectory(path))
+            if (IFileStorage.IsDirectory(path))
             {
                 Directory.Delete(CreateFullPath(path), true);
             }
@@ -135,7 +113,7 @@ namespace ResearchXBRL.Infrastructure.Services.FileStorages
 
         public IReadOnlyList<string> GetDirectoryNames(string directoryPath, string searchPattern = "*")
         {
-            if (!IsDirectory(directoryPath))
+            if (!IFileStorage.IsDirectory(directoryPath))
             {
                 throw new ArgumentException($"{nameof(directoryPath)}には、ディレクトリパスを指定してください");
             }
