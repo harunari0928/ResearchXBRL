@@ -11,6 +11,7 @@ using ResearchXBRL.Domain.ImportFinancialReports.Contexts;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReportItems;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
 using ResearchXBRL.Domain.ImportFinancialReports.Units;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
 

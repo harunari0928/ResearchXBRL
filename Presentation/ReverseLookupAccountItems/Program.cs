@@ -6,8 +6,7 @@ using ResearchXBRL.Application.Usecase.ReverseLookupAccountItems;
 using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.ReverseLookupAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.QueryServices.ReverseLookupAccountItems;
-using ResearchXBRL.Infrastructure.Services;
-using ResearchXBRL.Infrastructure.Services.FileStorages;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 namespace ReverseLookupAccountItems;
 

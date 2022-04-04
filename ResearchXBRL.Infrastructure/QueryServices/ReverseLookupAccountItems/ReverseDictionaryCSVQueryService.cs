@@ -6,7 +6,7 @@ using CsvHelper;
 using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
 using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
-using ResearchXBRL.Infrastructure.Services;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 namespace ResearchXBRL.Infrastructure.QueryServices.ReverseLookupAccountItems;
 

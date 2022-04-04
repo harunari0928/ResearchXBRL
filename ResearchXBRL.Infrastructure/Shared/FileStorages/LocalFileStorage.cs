@@ -4,7 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 
-namespace ResearchXBRL.Infrastructure.Services.FileStorages;
+namespace ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 public sealed class LocalFileStorage : IFileStorage
 {

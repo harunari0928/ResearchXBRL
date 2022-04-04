@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Renci.SshNet;
 
-namespace ResearchXBRL.Infrastructure.Services.FileStorages;
+namespace ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 public sealed class SFTPFileStorage : IFileStorage, IDisposable
 {

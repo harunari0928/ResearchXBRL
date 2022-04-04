@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace ResearchXBRL.Infrastructure.Services;
+namespace ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 public interface IFileStorage
 {

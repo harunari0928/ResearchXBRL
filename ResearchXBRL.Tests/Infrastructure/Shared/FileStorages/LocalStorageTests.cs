@@ -1,11 +1,11 @@
-﻿using ResearchXBRL.Infrastructure.Services.FileStorages;
+﻿using ResearchXBRL.Infrastructure.Shared.FileStorages;
 using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using Xunit;
 
-namespace ResearchXBRL.Tests.Infrastructure.Service.FileStorages;
+namespace ResearchXBRL.Tests.Infrastructure.Shared.FileStorages;
 
 public sealed class LocalFileStorageTests
 {

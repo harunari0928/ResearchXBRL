@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 namespace ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders
 {
