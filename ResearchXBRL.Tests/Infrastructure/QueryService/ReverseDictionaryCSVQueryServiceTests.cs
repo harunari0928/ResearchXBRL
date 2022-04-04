@@ -1,6 +1,6 @@
 using System;
 using Xunit;
-using ResearchXBRL.Infrastructure.Services.FileStorages;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 using ResearchXBRL.Infrastructure.QueryServices.ReverseLookupAccountItems;
 using System.Linq;
 using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;

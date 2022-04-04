@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using CsvHelper;
-using ResearchXBRL.Infrastructure.Services.FileStorages;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 using System.Threading.Tasks;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
 using Npgsql;

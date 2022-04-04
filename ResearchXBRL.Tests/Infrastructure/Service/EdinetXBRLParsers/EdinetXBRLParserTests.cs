@@ -6,7 +6,7 @@ using ResearchXBRL.Domain.ImportFinancialReports.Contexts;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
 using ResearchXBRL.Domain.ImportFinancialReports.Units;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
-using ResearchXBRL.Infrastructure.Services.FileStorages;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 using Xunit;
 
 namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLParsers;

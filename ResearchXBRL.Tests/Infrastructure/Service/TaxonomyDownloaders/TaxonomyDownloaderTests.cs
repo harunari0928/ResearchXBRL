@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Moq;
-using ResearchXBRL.Infrastructure.Services;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
 using RichardSzalay.MockHttp;
 using Xunit;

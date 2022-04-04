@@ -8,10 +8,9 @@ using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.ImportFinancialReports;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
 using ResearchXBRL.Infrastructure.ImportFinancialReports.FinancialReports;
-using ResearchXBRL.Infrastructure.Services;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
-using ResearchXBRL.Infrastructure.Services.FileStorages;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 namespace AquireFinancialReports
 {
