@@ -6,6 +6,7 @@ using ResearchXBRL.Application.Usecase.ReverseLookupAccountItems;
 using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.ReverseLookupAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.QueryServices.ReverseLookupAccountItems;
+using ResearchXBRL.Infrastructure.Shared.Extensions;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 namespace ReverseLookupAccountItems;
@@ -32,7 +33,7 @@ class Program
             .AddTransient<IReverseDictionaryQueryService>(x => new ReverseDictionaryCSVQueryService(x.GetService<IFileStorage>()!, fileName))
             .AddTransient<IReverseLookupQueryService, ReverseLookupQueryService>()
             .AddTransient<IAccountItemsRepository, AccountItemsRepository>()
-            .AddSingleton<IFileStorage, SFTPFileStorage>()
+            .AddSFTPFileStorage()
             .BuildServiceProvider();
     }
 }

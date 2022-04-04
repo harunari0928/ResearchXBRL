@@ -5,31 +5,20 @@ using Renci.SshNet;
 
 namespace ResearchXBRL.Infrastructure.Shared.FileStorages;
 
-public sealed class SFTPFileStorage : IFileStorage, IDisposable
+public sealed class SFTPFileStorage : IFileStorage
 {
-    private readonly SftpClient client;
+    private readonly ISftpClient client;
     private readonly string baseDirectory;
 
-    public SFTPFileStorage()
+    public SFTPFileStorage(ISftpClient client, string baseDirectory)
     {
-        var host = Environment.GetEnvironmentVariable("FILESTORAGE_HOST");
-        var user = Environment.GetEnvironmentVariable("FILESTORAGE_USERID");
-        var password = Environment.GetEnvironmentVariable("FILESTORAGE_PASSWORD");
-        var connectionInfo = new ConnectionInfo(host, user,
-            new PasswordAuthenticationMethod(user, password));
-        client = new SftpClient(connectionInfo);
-        client.Connect();
-        baseDirectory = Environment.GetEnvironmentVariable("FILESTORAGE_BASEDIR") ?? "~/";
+        this.client = client;
+        this.baseDirectory = baseDirectory;
     }
 
     public void Delete(string path)
     {
         throw new NotImplementedException();
-    }
-
-    public void Dispose()
-    {
-        client.Dispose();
     }
 
     public Stream? Get(in string filePath)
