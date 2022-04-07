@@ -1,14 +1,14 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Moq;
+using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
 using ResearchXBRL.Application.Interactors.ReverseLookupAccountItems;
 using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
-using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
-using System.Linq;
-using Xunit;
-using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.Usecase.ReverseLookupAccountItems;
+using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
+using Xunit;
 
 namespace ResearchXBRL.Tests.Application.Interactors.ReverseLookupAccountItems;
 
@@ -30,12 +30,12 @@ public sealed class ReverseLookupAccountItemsInteractorTests
                 new FinancialReport
                 {
                     SecuritiesCode = 1111,
-                    NetSales = 100
+                    AccountAmounts = new Dictionary<string, decimal>()
                 },
                 new FinancialReport
                 {
                     SecuritiesCode = 1112,
-                    NetSales = 101
+                    AccountAmounts = new Dictionary<string, decimal>()
                 },
             };
             reverseDictionaryQueryServiceMock
@@ -71,12 +71,12 @@ public sealed class ReverseLookupAccountItemsInteractorTests
                 new FinancialReport
                 {
                     SecuritiesCode = 1111,
-                    NetSales = 100
+                    AccountAmounts = new Dictionary<string, decimal>()
                 },
                 new FinancialReport
                 {
                     SecuritiesCode = 1112,
-                    NetSales = 101
+                    AccountAmounts = new Dictionary<string, decimal>()
                 },
             };
             reverseDictionaryQueryServiceMock
@@ -116,7 +116,7 @@ public sealed class ReverseLookupAccountItemsInteractorTests
                 new FinancialReport
                 {
                     SecuritiesCode = 1111,
-                    NetSales = 100
+                    AccountAmounts = new Dictionary<string, decimal>()
                 },
             };
             reverseDictionaryQueryServiceMock
