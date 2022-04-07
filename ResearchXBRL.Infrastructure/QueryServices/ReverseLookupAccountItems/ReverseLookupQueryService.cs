@@ -83,7 +83,7 @@ AND
     A.report_id = E.report_id
 WHERE
     A.amounts = @amounts
-ND
+AND
     C.context_name IN ('CurrentYearInstant_NonConsolidatedMember', 'CurrentYearDuration_NonConsolidatedMember', 'CurrentYearInstant', 'CurrentYearDuration')
 AND
     D.securities_code = @securitiesCode
