@@ -42,10 +42,19 @@ public sealed class ReverseDictionaryCSVQueryServiceTests
         Assert.Equal(1301, actual.SecuritiesCode);
         Assert.Equal(AccountingStandards.Japanese, actual.AccountingStandard);
         Assert.Equal(new DateOnly(2020, 3, 31), actual.FiscalYear);
-        Assert.Equal(262519, actual.NetSales);
+        Assert.Equal(262519000000, actual.AccountAmounts["NetSales"]);
+        Assert.Equal(111184000000, actual.AccountAmounts["TotalAssets"]);
+        Assert.Equal(32593000000, actual.AccountAmounts["NetAssets"]);
+        Assert.Equal(3608000000, actual.AccountAmounts["OrdinaryIncome"]);
+        Assert.Equal(2918000000, actual.AccountAmounts["OperatingIncome"]);
+        Assert.Equal(2037000000, actual.AccountAmounts["ProfitLossAttributableToOwnersOfParent"]);
+        Assert.Equal(24245000000, actual.AccountAmounts["GrossProfit"]);
+        Assert.Equal(9410000000, actual.AccountAmounts["NetCashProvidedByUsedInOperatingActivities"]);
+        Assert.Equal(78591000000, actual.AccountAmounts["Liabilities"]);
+        Assert.Equal(70, actual.AccountAmounts["DividendPaidPerShareSummaryOfBusinessResults"]);
     }
 
-    [Fact(DisplayName = "NAのデータはnullとして取得する")]
+    [Fact(DisplayName = "NAのデータは取得しない")]
     public async Task Test3()
     {
         // arrange
@@ -59,7 +68,7 @@ public sealed class ReverseDictionaryCSVQueryServiceTests
         var actual = await success.Value.ElementAtAsync(2);
 
         // assert
-        Assert.Null(actual.NetSales);
+        Assert.False(actual.AccountAmounts.ContainsKey("NetSales"));
     }
 
     [Fact(DisplayName = "ディレクトリが指定された場合中断オブジェクトを返却する")]
