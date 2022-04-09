@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using CsvHelper;
-using ResearchXBRL.Infrastructure.Services.FileStorages;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 using System.Threading.Tasks;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
 using Npgsql;
@@ -16,7 +16,7 @@ namespace ImportCorporationInfo
         static async Task Main(string[] _)
         {
             var storage = new LocalFileStorage(AppDomain.CurrentDomain.BaseDirectory);
-            var fileStream = storage.Get("EdinetcodeDlInfo.csv");
+            var fileStream = storage.Get("EdinetcodeDlInfo.csv") ?? throw new FileNotFoundException("インポート対象ファイルが存在しません");
             using var streamReader = new StreamReader(fileStream);
             using var reader = new CsvReader(streamReader, CultureInfo.CurrentCulture);
             await CleanTable();

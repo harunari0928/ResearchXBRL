@@ -5,8 +5,7 @@ using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.ImportAccountItems;
 using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.ImportAccountItems.AccountItems;
-using ResearchXBRL.Infrastructure.Services;
-using ResearchXBRL.Infrastructure.Services.FileStorages;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
 using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
 
