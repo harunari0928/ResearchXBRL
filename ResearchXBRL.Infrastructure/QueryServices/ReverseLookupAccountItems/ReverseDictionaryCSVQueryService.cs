@@ -44,8 +44,6 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
         {
             await foreach (IDictionary<string, object> record in reader.GetRecordsAsync<dynamic>())
             {
-                var accountAmounts = GetAccountAmounts(record);
-
                 var accountingStandard = (AccountingStandards)int.Parse(record["会計基準"]?.ToString()
                     ?? throw new Exception($"会計基準が不正です: {record["会計基準"]}"));
 
@@ -59,7 +57,7 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
                     SecuritiesCode = ParseInt(record["証券コード"]?.ToString(), "証券コード"),
                     AccountingStandard = accountingStandard,
                     FiscalYear = DateOnly.Parse(record["会計年度"]?.ToString() ?? throw new Exception($"会計年度が不正です: {record["会計年度"]}")),
-                    AccountAmounts = accountAmounts
+                    AccountAmounts = GetAccountAmounts(record)
                 };
             }
         }
@@ -68,26 +66,33 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
             DisposeDataResources(resources);
         }
     }
-    private static IReadOnlyDictionary<string, decimal> GetAccountAmounts(IDictionary<string, object> record)
+    private static IReadOnlyDictionary<string, (decimal? amounts, int priority)> GetAccountAmounts(IDictionary<string, object> record)
     {
-        var accountAmounts = new Dictionary<string, decimal>();
-        foreach (var (accountName, accountNameInCsv) in new (string, string)[] {
-                ("NetSales", "売上高"),
-                ("TotalAssets", "総資産"),
-                ("NetAssets", "純資産"),
-                ("OrdinaryIncome", "経常利益"),
-                ("OperatingIncome", "営業利益"),
-                ("ProfitLossAttributableToOwnersOfParent", "親会社帰属利益"),
-                ("GrossProfit", "売上総利益"),
-                ("NetCashProvidedByUsedInOperatingActivities", "営業活動によるキャッシュフロー"),
-                ("Liabilities", "総負債"),
-                ("DividendPaidPerShareSummaryOfBusinessResults", "配当金")
-            })
+        var accountAmounts = new Dictionary<string, (decimal? amounts, int priority)>();
+        foreach (var (accountName, accountNameInCsv, priority) in new (string, string, int)[]
+        {
+            // 金額が大きくなりがちなものから順に優先度を昇順に並べること
+            // 逆引き結果重複を防ぐため
+            ("TotalAssets", "総資産", 1),
+            ("NetAssets", "純資産", 2),
+            ("Liabilities", "総負債", 3),
+            ("NetSales", "売上高", 4),
+            ("GrossProfit", "売上総利益", 5),
+            ("OperatingIncome", "営業利益", 6),
+            ("OrdinaryIncome", "経常利益", 7),
+            ("ProfitLossAttributableToOwnersOfParent", "親会社帰属利益", 8),
+            ("NetCashProvidedByUsedInOperatingActivities", "営業活動によるキャッシュフロー", 9),
+            ("DividendPaidPerShareSummaryOfBusinessResults", "配当金", 10)
+        })
         {
             var amountStr = record[accountNameInCsv]?.ToString() ?? throw new Exception($"{accountNameInCsv}が不正です: {record[accountNameInCsv]}");
-            if (amountStr != "NA")
+            if (amountStr == "NA")
             {
-                accountAmounts.Add(accountName, ModifyAmounts(accountNameInCsv, decimal.Parse(amountStr)));
+                accountAmounts.Add(accountName, (null, priority));
+            }
+            else
+            {
+                accountAmounts.Add(accountName, (ModifyAmounts(accountNameInCsv, decimal.Parse(amountStr)), priority));
             }
         }
 

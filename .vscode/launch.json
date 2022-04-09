@@ -58,11 +58,12 @@
             "preLaunchTask": "buildReverseLookupAccountItems",
             "program": "${workspaceFolder}/Presentation/ReverseLookupAccountItems/bin/Debug/net6.0/ReverseLookupAccountItems.dll",
             "args": [
-                "--file-name ReverseLookupDictionary.csv"
+                "--file-name",
+                "ReverseLookupDictionary.csv"
             ],
             "cwd": "${workspaceFolder}/Presentation/ReverseLookupAccountItems",
             "console": "internalConsole",
-            "stopAtEntry": false
+            "stopAtEntry": true
         }
     ]
 }

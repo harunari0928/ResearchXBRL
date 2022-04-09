@@ -33,7 +33,8 @@ public sealed class AccountItemsRepository : SQLService, IAccountItemsRepository
         command.CommandText = $@"
 CREATE TEMP TABLE {tmpTableName} (
   aggregate_target VARCHAR NOT NULL,
-  aggregate_result VARCHAR NOT NULL
+  aggregate_result VARCHAR NOT NULL,
+  priority INT NOT NULL
 );
         ";
         await command.ExecuteNonQueryAsync();
@@ -43,7 +44,8 @@ CREATE TEMP TABLE {tmpTableName} (
     {
         var reportCoverHelper = new PostgreSQLCopyHelper<AccountItem>(tmpTableName)
             .MapVarchar("aggregate_target", x => x.OriginalName)
-            .MapVarchar("aggregate_result", x => x.NormalizedName);
+            .MapVarchar("aggregate_result", x => x.NormalizedName)
+            .MapInteger("priority", x => x.Priority);
         await reportCoverHelper.SaveAllAsync(connection, accountItems);
         await InsertIntoPersistenceTable(connection, tmpTableName);
     }
@@ -52,24 +54,31 @@ CREATE TEMP TABLE {tmpTableName} (
         using var command = connection.CreateCommand();
         command.CommandText = $@"
 INSERT INTO aggregation_of_names_list
-SELECT
-    TMP.aggregate_target,
-    TMP.aggregate_result,
+SELECT 
+    A.aggregate_target,
+    A.aggregate_result,
     9999999
-FROM
-    {tmpTableName} TMP
-LEFT OUTER JOIN
-    aggregation_of_names_list TARGET
-ON
-    TARGET.aggregate_target = TMP.aggregate_target
-AND
-    TARGET.aggregate_result = TMP.aggregate_result
+FROM (
+    SELECT
+        TMP.aggregate_target,
+        TMP.aggregate_result,
+        TMP.priority,
+        MIN(TMP.priority) OVER (PARTITION BY TMP.aggregate_target) AS highest_priority
+    FROM
+        {tmpTableName} TMP
+    LEFT OUTER JOIN
+        aggregation_of_names_list TARGET
+    ON
+        TARGET.aggregate_target = TMP.aggregate_target
+    WHERE
+        TARGET.aggregate_target IS NULL
+    AND
+        TMP.aggregate_target <> TMP.aggregate_result -- (NetSales, NetSales)といったデータを除く
+    ) A
 WHERE
-    TARGET.aggregate_target IS NULL
-AND
-    TMP.aggregate_target <> TMP.aggregate_result -- (NetSales, NetSales)といったデータを除く
+    A.priority = A.highest_priority
 GROUP BY
-    TMP.aggregate_target, TMP.aggregate_result;
+    A.aggregate_target, A.aggregate_result;
 ";
         await command.ExecuteNonQueryAsync();
     }

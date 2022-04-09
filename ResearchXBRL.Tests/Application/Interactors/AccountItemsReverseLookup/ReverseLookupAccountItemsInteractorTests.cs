@@ -30,12 +30,12 @@ public sealed class ReverseLookupAccountItemsInteractorTests
                 new FinancialReport
                 {
                     SecuritiesCode = 1111,
-                    AccountAmounts = new Dictionary<string, decimal>()
+                    AccountAmounts = new Dictionary<string, (decimal?, int)>()
                 },
                 new FinancialReport
                 {
                     SecuritiesCode = 1112,
-                    AccountAmounts = new Dictionary<string, decimal>()
+                    AccountAmounts = new Dictionary<string, (decimal?, int)>()
                 },
             };
             reverseDictionaryQueryServiceMock
@@ -71,12 +71,12 @@ public sealed class ReverseLookupAccountItemsInteractorTests
                 new FinancialReport
                 {
                     SecuritiesCode = 1111,
-                    AccountAmounts = new Dictionary<string, decimal>()
+                    AccountAmounts = new Dictionary<string, (decimal?, int)>()
                 },
                 new FinancialReport
                 {
                     SecuritiesCode = 1112,
-                    AccountAmounts = new Dictionary<string, decimal>()
+                    AccountAmounts = new Dictionary<string, (decimal?, int)>()
                 },
             };
             reverseDictionaryQueryServiceMock
@@ -116,7 +116,7 @@ public sealed class ReverseLookupAccountItemsInteractorTests
                 new FinancialReport
                 {
                     SecuritiesCode = 1111,
-                    AccountAmounts = new Dictionary<string, decimal>()
+                    AccountAmounts = new Dictionary<string, (decimal?, int)>()
                 },
             };
             reverseDictionaryQueryServiceMock
@@ -179,8 +179,8 @@ public sealed class ReverseLookupAccountItemsInteractorTests
         {
             var reverseLookupResult = new List<ReverseLookupResult>
             {
-                new ReverseLookupResult("NetSales", "hoge"),
-                new ReverseLookupResult("ROE", "fuga")
+                new ReverseLookupResult("NetSales", "hoge", 1),
+                new ReverseLookupResult("ROE", "fuga", 2)
             };
             reverseLookupQueryServiceMock
                 .Setup(x => x.Lookup(It.IsAny<FinancialReport>()))
