@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration.Attributes;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
 using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
@@ -28,12 +29,13 @@ public sealed class AccountItemsRepository : IAccountItemsRepository, IAsyncDisp
 
     public async ValueTask Add(IAsyncEnumerable<AccountItem> normalizedAccountItems)
     {
-        csvWriter.WriteHeader<AccountItem>();
+        csvWriter.WriteHeader<AccountItemInCsv>();
         await csvWriter.NextRecordAsync();
         var writeHistory = new HashSet<(string normalizedName, string originalName)>();
         await foreach (var chunkedAccountItems in normalizedAccountItems.Chunk(5000))
         {
-            await csvWriter.WriteRecordsAsync(chunkedAccountItems.Where(x => !writeHistory.Contains((x.NormalizedName, x.OriginalName))));
+            await csvWriter.WriteRecordsAsync(chunkedAccountItems.Select(x => new AccountItemInCsv(x))
+                .Where(x => !writeHistory.Contains((x.NormalizedName, x.OriginalName))));
             foreach (var item in chunkedAccountItems)
             {
                 writeHistory.Add((item.NormalizedName, item.OriginalName));
@@ -50,5 +52,29 @@ public sealed class AccountItemsRepository : IAccountItemsRepository, IAsyncDisp
     public async ValueTask DisposeAsync()
     {
         await csvWriter.DisposeAsync();
+    }
+
+    private sealed class AccountItemInCsv
+    {
+        [Name("名寄せ先")]
+        public string NormalizedName { get; }
+
+        [Name("XBRL名")]
+        public string OriginalName { get; }
+
+        [Name("証券コード")]
+        public int SecuritiesCode { get; }
+
+        [Name("会計年度")]
+        [Format("yyyy-MM-dd")]
+        public DateTime FiscalYear { get; }
+
+        public AccountItemInCsv(AccountItem accountItem)
+        {
+            NormalizedName = accountItem.NormalizedName;
+            OriginalName = accountItem.OriginalName;
+            SecuritiesCode = accountItem.SecuritiesCode;
+            FiscalYear = accountItem.FiscalYear.ToDateTime(TimeOnly.MinValue);
+        }
     }
 }
