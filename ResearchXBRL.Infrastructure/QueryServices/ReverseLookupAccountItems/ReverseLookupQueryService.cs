@@ -17,15 +17,15 @@ public sealed class ReverseLookupQueryService : SQLService, IReverseLookupQueryS
 
     private async IAsyncEnumerable<ReverseLookupResult> GetNetSalesXBRLNames(FinancialReport financialReport)
     {
-        using var command = connection.CreateCommand();
         foreach (var accountName in financialReport.AccountAmounts.Keys)
         {
-            var (amounts, priority) = financialReport.AccountAmounts[accountName];
+            var amounts = financialReport.AccountAmounts[accountName];
             if (amounts is null)
             {
                 continue;
             }
 
+            using var command = connection.CreateCommand();
             SetSQLQuery(accountName, (decimal)amounts, financialReport.SecuritiesCode, financialReport.FiscalYear, command);
             using var reader = await command.ExecuteReaderAsync();
             var xbrlNameIndex = reader.GetOrdinal("xbrl_name");
@@ -47,19 +47,23 @@ public sealed class ReverseLookupQueryService : SQLService, IReverseLookupQueryS
                     continue;
                 }
 
-                yield return new(accountName, value, priority);
+                yield return new(accountName, value);
             }
         }
     }
     private static void SetSQLQuery(string accountName, decimal amounts, decimal securitiesCode, DateOnly fiscalYear, Npgsql.NpgsqlCommand command)
     {
-        if (accountName == "DividendPaidPerShareSummaryOfBusinessResults")
+        if (accountName == "配当金")
         {
             command.CommandText = GetDividendQueryString(command);
         }
-        else if (IsDurationPeriod(accountName))
+        else if (accountName == "営業活動によるキャッシュフロー")
         {
-            command.CommandText = GetDurationPeriodQueryString(command);
+            command.CommandText = GetCashFlowQueryString(command);
+        }
+        else if (IsPLAccount(accountName))
+        {
+            command.CommandText = GetPLQueryString(command);
         }
         else
         {
@@ -109,11 +113,15 @@ AND
 GROUP BY
     A.xbrl_name;
 ";
-    private static string GetDurationPeriodQueryString(Npgsql.NpgsqlCommand command) => @"
+    private static string GetPLQueryString(Npgsql.NpgsqlCommand command) => @"
 SELECT
     A.xbrl_name
 FROM
     report_items A
+LEFT OUTER JOIN
+    account_elements B
+ON
+    A.xbrl_name = B.xbrl_name
 INNER JOIN
     contexts C
 ON
@@ -136,6 +144,48 @@ AND
     D.securities_code = @securitiesCode
 AND
     C.period_to = @fiscalYear
+AND
+    A.xbrl_name NOT LIKE '%Comprehensive%'
+AND
+    (B.balance = 'credit' OR B.balance IS NULL) -- account_elementsテーブルに情報がない勘定科目はとりあえず候補にあげる
+GROUP BY
+    A.xbrl_name;
+";
+    private static string GetCashFlowQueryString(Npgsql.NpgsqlCommand command) => @"
+SELECT
+    A.xbrl_name
+FROM
+    report_items A
+INNER JOIN
+    account_elements B
+ON
+    A.xbrl_name = B.xbrl_name
+AND
+    B.balance = ''
+INNER JOIN
+    contexts C
+ON
+    A.report_id = C.report_id
+AND
+    A.context_name = c.context_name
+INNER JOIN
+    report_covers RC
+ON
+    A.report_id = RC.id
+INNER JOIN
+    company_master D
+ON
+    RC.company_id = D.code
+WHERE
+    A.amounts = @amounts
+AND
+    C.context_name = 'CurrentYearDuration'
+AND
+    D.securities_code = @securitiesCode
+AND
+    C.period_to = @fiscalYear
+AND
+    A.xbrl_name NOT LIKE '%Comprehensive%'
 GROUP BY
     A.xbrl_name;
 ";
@@ -144,6 +194,12 @@ SELECT
     A.xbrl_name
 FROM
     report_items A
+LEFT OUTER JOIN
+    account_elements B
+ON
+    A.xbrl_name = B.xbrl_name
+AND
+    B.balance = 'credit'
 INNER JOIN
     contexts C
 ON
@@ -166,23 +222,25 @@ AND
     D.securities_code = @securitiesCode
 AND
     C.instant_date = @fiscalYear
+AND
+    (B.balance = 'credit' OR B.balance IS NULL) -- account_elementsテーブルに情報がない勘定科目はとりあえず候補にあげる
 GROUP BY
     A.xbrl_name;
 ";
-    private static bool IsDurationPeriod(in string accountName)
+    private static bool IsPLAccount(in string accountName)
     {
         switch (accountName)
         {
-            case "NetSales":
-            case "OrdinaryIncome":
-            case "OperatingIncome":
-            case "ProfitLossAttributableToOwnersOfParent":
-            case "GrossProfit":
-            case "NetCashProvidedByUsedInOperatingActivities":
+            case "売上高":
+            case "経常利益":
+            case "営業利益":
+            case "親会社帰属利益":
+            case "売上総利益":
                 return true;
-            case "TotalAssets":
-            case "NetAssets":
-            case "Liabilities":
+            case "総資産":
+            case "純資産":
+            case "総負債":
+            case "営業活動によるキャッシュフロー":
                 return false;
             default:
                 throw new NotSupportedException();

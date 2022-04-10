@@ -9,21 +9,23 @@ using ResearchXBRL.Infrastructure.Shared.Extensions;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
 using ReverseLookupAccountItems;
 
-await ConsoleApp.RunAsync(args, async ([Option("f", "name of reverse dictionary file.")] string fileName) =>
+await ConsoleApp.RunAsync(args, async (
+    [Option("f", "name of reverse dictionary file.")] string fileName,
+    [Option("o", "name of output file.")] string ouputFileName) =>
 {
-    using var serviceProvider = CreateServiceProvider(fileName);
+    await using var serviceProvider = CreateServiceProvider(fileName, ouputFileName);
     var usecase = serviceProvider?
         .GetService<IReverseLookupAccountItemsUsecase>()
         ?? throw new System.Exception("usecaseモジュールのDIに失敗しました");
     await usecase.Handle();
 });
 
-static ServiceProvider CreateServiceProvider(string fileName) =>
+static ServiceProvider CreateServiceProvider(string fileName, string outputFileName) =>
      new ServiceCollection()
         .AddTransient<IReverseLookupAccountItemsUsecase, ReverseLookupAccountItemsInteractor>()
         .AddTransient<IReverseLookupAccountItemsPresenter, ConsolePresenter>()
         .AddTransient<IReverseDictionaryQueryService>(x => new ReverseDictionaryCSVQueryService(x.GetService<IFileStorage>()!, fileName))
         .AddTransient<IReverseLookupQueryService, ReverseLookupQueryService>()
-        .AddTransient<IAccountItemsRepository, AccountItemsRepository>()
+        .AddTransient<IAccountItemsRepository>(x => new AccountItemsRepository(x.GetService<IFileStorage>()!, outputFileName))
         .AddSFTPFileStorage()
         .BuildServiceProvider();

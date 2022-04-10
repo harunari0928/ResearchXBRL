@@ -59,11 +59,13 @@
             "program": "${workspaceFolder}/Presentation/ReverseLookupAccountItems/bin/Debug/net6.0/ReverseLookupAccountItems.dll",
             "args": [
                 "--file-name",
-                "ReverseLookupDictionary.csv"
+                "ReverseLookupDictionary2.csv",
+                "--ouput-file-name",
+                "ouput.csv"
             ],
             "cwd": "${workspaceFolder}/Presentation/ReverseLookupAccountItems",
             "console": "internalConsole",
-            "stopAtEntry": true
+            "stopAtEntry": false
         }
     ]
 }
