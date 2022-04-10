@@ -15,7 +15,8 @@ public sealed class AccountItemsRepository : SQLService, IAccountItemsRepository
             .MapVarchar("xbrl_name", x => x.XBRLName)
             .MapDate("taxonomy_version", x => x.TaxonomyVersion)
             .MapVarchar("account_name", x => x.AccountName)
-            .MapVarchar("classification", x => x.Classification);
+            .MapVarchar("classification", x => x.Classification)
+            .MapVarchar("balance", x => x.Balance);
         await helper.SaveAllAsync(connection, elements);
         await tran.CommitAsync();
     }
