@@ -63,7 +63,7 @@ services:
     volumes:
       - upload_dir:/home/foo/upload
     environment:
-      SFTP_USERS: foo:pass:::upload
+      SFTP_USERS: foo:pass:1000:1000:upload
 volumes:
   primary_database:
     driver: local

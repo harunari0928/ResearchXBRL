@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Renci.SshNet;
 
 namespace ResearchXBRL.Infrastructure.Shared.FileStorages;
@@ -44,7 +45,14 @@ public sealed class SFTPFileStorage : IFileStorage
 
     public void Set(in Stream inputStream, in string filePath)
     {
-        throw new NotImplementedException();
+        var fullFilePath = Path.Combine(baseDirectory, filePath);
+
+        inputStream.Position = 0;
+        var result = client.BeginUploadFile(inputStream, fullFilePath);
+        while (!result.IsCompleted)
+        {
+            Thread.Sleep(500);
+        }
     }
 
     public void Unzip(string zipFilePath, string unzippedDirectoryPath)

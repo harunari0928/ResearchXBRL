@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using CsvHelper;
-using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
 using ResearchXBRL.Application.DTO.Results;
+using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
 using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
@@ -52,12 +53,14 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
                     continue; // 未上場企業は無視
                 }
 
+                var accountAmounts = GetAccountAmounts(record);
+
                 yield return new FinancialReport
                 {
                     SecuritiesCode = ParseInt(record["証券コード"]?.ToString(), "証券コード"),
                     AccountingStandard = accountingStandard,
                     FiscalYear = DateOnly.Parse(record["会計年度"]?.ToString() ?? throw new Exception($"会計年度が不正です: {record["会計年度"]}")),
-                    AccountAmounts = GetAccountAmounts(record)
+                    AccountAmounts = accountAmounts
                 };
             }
         }
@@ -66,37 +69,56 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
             DisposeDataResources(resources);
         }
     }
-    private static IReadOnlyDictionary<string, (decimal? amounts, int priority)> GetAccountAmounts(IDictionary<string, object> record)
+    private static IReadOnlyDictionary<string, decimal?> GetAccountAmounts(IDictionary<string, object> record)
     {
-        var accountAmounts = new Dictionary<string, (decimal? amounts, int priority)>();
-        foreach (var (accountName, accountNameInCsv, priority) in new (string, string, int)[]
+        var accountAmounts = new Dictionary<string, decimal?>();
+        foreach (var accountName in new string[]
         {
-            // 金額が大きくなりがちなものから順に優先度を昇順に並べること
-            // 逆引き結果重複を防ぐため
-            ("TotalAssets", "総資産", 1),
-            ("NetAssets", "純資産", 2),
-            ("Liabilities", "総負債", 3),
-            ("NetSales", "売上高", 4),
-            ("GrossProfit", "売上総利益", 5),
-            ("OperatingIncome", "営業利益", 6),
-            ("OrdinaryIncome", "経常利益", 7),
-            ("ProfitLossAttributableToOwnersOfParent", "親会社帰属利益", 8),
-            ("NetCashProvidedByUsedInOperatingActivities", "営業活動によるキャッシュフロー", 9),
-            ("DividendPaidPerShareSummaryOfBusinessResults", "配当金", 10)
+            "総資産",
+            "純資産",
+            "総負債",
+            "売上高",
+            "売上総利益",
+            "営業利益",
+            "経常利益",
+            "親会社帰属利益",
+            "営業活動によるキャッシュフロー",
+            "配当金"
         })
         {
-            var amountStr = record[accountNameInCsv]?.ToString() ?? throw new Exception($"{accountNameInCsv}が不正です: {record[accountNameInCsv]}");
+            var amountStr = record[accountName]?.ToString() ?? throw new Exception($"{accountName}の値が不正です: {record[accountName]}");
             if (amountStr == "NA")
             {
-                accountAmounts.Add(accountName, (null, priority));
+                accountAmounts.Add(accountName, null);
             }
             else
             {
-                accountAmounts.Add(accountName, (ModifyAmounts(accountNameInCsv, decimal.Parse(amountStr)), priority));
+                accountAmounts.Add(accountName, ModifyAmounts(accountName, decimal.Parse(amountStr)));
             }
         }
 
+        // 金額が重複している項目があるとうまく名寄せができないので削除する
+        RemoveDuplicateValues(accountAmounts);
+
         return accountAmounts;
+    }
+    private static void RemoveDuplicateValues(in Dictionary<string, decimal?> accountAmounts)
+    {
+        var memo = new HashSet<decimal?>();
+        foreach (var value in accountAmounts.Values)
+        {
+            if (value is not null && memo.Contains(value))
+            {
+                var keysOfDuplicateValues = accountAmounts
+                    .Where(x => x.Value == value)
+                    .Select(x => x.Key);
+                foreach (var key in keysOfDuplicateValues)
+                {
+                    accountAmounts.Remove(key);
+                }
+            }
+            memo.Add(value);
+        }
     }
     private static decimal ModifyAmounts(string accountName, decimal amounts) => accountName switch
     {

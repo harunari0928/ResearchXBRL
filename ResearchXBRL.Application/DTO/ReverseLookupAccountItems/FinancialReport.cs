@@ -8,7 +8,7 @@ public record FinancialReport
     public decimal SecuritiesCode { get; init; }
     public AccountingStandards AccountingStandard { get; init; }
     public DateOnly FiscalYear { get; init; }
-    public IReadOnlyDictionary<string, (decimal? amounts, int priority)> AccountAmounts { get; init; } = new Dictionary<string, (decimal? amounts, int priority)>();
+    public IReadOnlyDictionary<string, decimal?> AccountAmounts { get; init; } = new Dictionary<string, decimal?>();
 }
 
 public enum AccountingStandards
