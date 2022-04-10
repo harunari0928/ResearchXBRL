@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Npgsql;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
 using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
@@ -30,9 +30,14 @@ public sealed class AccountItemsRepository : IAccountItemsRepository, IAsyncDisp
     {
         csvWriter.WriteHeader<AccountItem>();
         await csvWriter.NextRecordAsync();
+        var writeHistory = new HashSet<(string normalizedName, string originalName)>();
         await foreach (var chunkedAccountItems in normalizedAccountItems.Chunk(5000))
         {
-            await csvWriter.WriteRecordsAsync(chunkedAccountItems);
+            await csvWriter.WriteRecordsAsync(chunkedAccountItems.Where(x => !writeHistory.Contains((x.NormalizedName, x.OriginalName))));
+            foreach (var item in chunkedAccountItems)
+            {
+                writeHistory.Add((item.NormalizedName, item.OriginalName));
+            }
         }
         fileStorage.Set(memoryStream, outputFilePath);
     }
