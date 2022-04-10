@@ -179,8 +179,8 @@ public sealed class ReverseLookupAccountItemsInteractorTests
         {
             var reverseLookupResult = new List<ReverseLookupResult>
             {
-                new ReverseLookupResult("NetSales", "hoge"),
-                new ReverseLookupResult("ROE", "fuga")
+                new ReverseLookupResult("NetSales", "hoge", 1, System.DateOnly.MaxValue),
+                new ReverseLookupResult("ROE", "fuga", 1, System.DateOnly.MaxValue)
             };
             reverseLookupQueryServiceMock
                 .Setup(x => x.Lookup(It.IsAny<FinancialReport>()))

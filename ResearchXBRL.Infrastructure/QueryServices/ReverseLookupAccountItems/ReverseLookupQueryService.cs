@@ -36,18 +36,18 @@ public sealed class ReverseLookupQueryService : SQLService, IReverseLookupQueryS
                     continue;
                 }
 
-                var value = reader[xbrlNameIndex]?.ToString() ?? "";
-                if (string.IsNullOrEmpty(value))
+                var xbrlName = reader[xbrlNameIndex]?.ToString() ?? "";
+                if (string.IsNullOrEmpty(xbrlName))
                 {
                     continue;
                 }
 
-                if (financialReport.AccountAmounts.ContainsKey(value))
+                if (financialReport.AccountAmounts.ContainsKey(xbrlName))
                 {
                     continue;
                 }
 
-                yield return new(accountName, value);
+                yield return new(accountName, xbrlName, financialReport.SecuritiesCode, financialReport.FiscalYear);
             }
         }
     }

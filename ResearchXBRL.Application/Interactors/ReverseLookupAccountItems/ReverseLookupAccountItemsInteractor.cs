@@ -52,7 +52,11 @@ public sealed class ReverseLookupAccountItemsInteractor : IReverseLookupAccountI
         {
             foreach (var lookupResult in await reverseLookupQueryService.Lookup(report))
             {
-                yield return new AccountItem(lookupResult.NormalizedName, lookupResult.OriginalName);
+                yield return new AccountItem(
+                    lookupResult.NormalizedName,
+                     lookupResult.OriginalName,
+                     lookupResult.SecuritiesCode,
+                     lookupResult.FiscalYear);
             }
         }
     }
