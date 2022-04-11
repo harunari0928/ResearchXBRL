@@ -25,7 +25,15 @@ public sealed class SFTPFileStorage : IFileStorage
 
     public void Delete(string path)
     {
-        throw new NotImplementedException();
+        var fullPath = Path.Combine(baseDirectory, path);
+        if (IFileStorage.IsDirectory(fullPath))
+        {
+            client.DeleteDirectory(fullPath);
+        }
+        else
+        {
+            client.DeleteFile(fullPath);
+        }
     }
 
     public Stream? Get(in string filePath)
