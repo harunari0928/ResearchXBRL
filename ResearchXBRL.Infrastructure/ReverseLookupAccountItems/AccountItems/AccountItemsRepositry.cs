@@ -17,7 +17,10 @@ public sealed class AccountItemsRepository : IAccountItemsRepository, IAsyncDisp
 
     public AccountItemsRepository(IFileStorage fileStorage, string outputFilePath)
     {
-        fileStorage.Delete(outputFilePath);
+        if (fileStorage.Get(outputFilePath) is not null)
+        {
+            fileStorage.Delete(outputFilePath);
+        }
         csvWriter = new CsvWriter(fileStorage.CreateFile(outputFilePath), CultureInfo.CurrentCulture);
     }
 
