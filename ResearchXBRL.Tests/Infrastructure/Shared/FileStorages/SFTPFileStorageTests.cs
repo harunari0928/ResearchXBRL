@@ -47,15 +47,15 @@ public sealed class SFTPFileStorageTests
         public void Test3()
         {
             // arrange
-            var baseFilePath = "base";
+            var basePath = "base";
             sftpClientMock.Setup(x => x.Exists(It.IsAny<string>())).Returns(true);
-            var fileStorage = new SFTPFileStorage(sftpClientMock.Object, baseFilePath);
+            var fileStorage = new SFTPFileStorage(sftpClientMock.Object, basePath);
 
             // act
             var acutal = fileStorage.Get("test");
 
             // assert
-            sftpClientMock.Verify(x => x.OpenRead($"{baseFilePath}/test"), Times.Once);
+            sftpClientMock.Verify(x => x.OpenRead($"{basePath}/test"), Times.Once);
         }
     }
 
@@ -86,9 +86,9 @@ public sealed class SFTPFileStorageTests
         public void Test2()
         {
             // arrange
-            var baseFilePath = "base";
+            var basePath = "base";
             var stream = new MemoryStream();
-            var fileStorage = new SFTPFileStorage(sftpClientMock.Object, baseFilePath);
+            var fileStorage = new SFTPFileStorage(sftpClientMock.Object, basePath);
             var actionResultMock = new Mock<IAsyncResult>();
             actionResultMock.SetupGet(x => x.IsCompleted).Returns(true);
             sftpClientMock
@@ -99,7 +99,7 @@ public sealed class SFTPFileStorageTests
             fileStorage.Set(stream, "test");
 
             // assert
-            sftpClientMock.Verify(x => x.BeginUploadFile(stream, $"{baseFilePath}/test"), Times.Once);
+            sftpClientMock.Verify(x => x.BeginUploadFile(stream, $"{basePath}/test"), Times.Once);
         }
     }
 
@@ -111,14 +111,14 @@ public sealed class SFTPFileStorageTests
         public void Test1()
         {
             // arrange
-            var baseFilePath = "base";
-            var fileStorage = new SFTPFileStorage(sftpClientMock.Object, baseFilePath);
+            var basePath = "base";
+            var fileStorage = new SFTPFileStorage(sftpClientMock.Object, basePath);
 
             // act
-            var acutal = fileStorage.Get("test");
+            var acutal = fileStorage.CreateFile("test");
 
             // assert
-            sftpClientMock.Verify(x => x.CreateText($"{baseFilePath}/test"), Times.Once);
+            sftpClientMock.Verify(x => x.CreateText($"{basePath}/test"), Times.Once);
         }
     }
 
@@ -130,14 +130,14 @@ public sealed class SFTPFileStorageTests
         public void Test1()
         {
             // arrange
-            var baseFilePath = "base";
-            var fileStorage = new SFTPFileStorage(sftpClientMock.Object, baseFilePath);
+            var basePath = "base";
+            var fileStorage = new SFTPFileStorage(sftpClientMock.Object, basePath);
 
             // act
             fileStorage.Delete("test");
 
             // assert
-            sftpClientMock.Verify(x => x.DeleteDirectory($"{baseFilePath}/test"), Times.Once);
+            sftpClientMock.Verify(x => x.DeleteDirectory($"{basePath}/test"), Times.Once);
         }
 
         [Fact(DisplayName = "指定したパスがディレクトリのときディレクトリを削除する")]
