@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Application.ViewModel.FinancialAnalysis.AnalysisMenus.AccountItems;
 
 namespace ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
 

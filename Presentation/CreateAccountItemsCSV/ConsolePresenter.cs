@@ -1,18 +1,17 @@
-﻿using ResearchXBRL.Application.Usecase.AccountElements.Transfer;
+﻿using ResearchXBRL.Application.Usecase.ImportAccountItems;
 using System;
 
-namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV
-{
-    public sealed class ConsolePresenter : ITransferAccountElementsPresenter
-    {
-        public void Progress(int percentage)
-        {
-            Console.WriteLine(percentage + "%");
-        }
+namespace ResearchXBRL.Presentaion.CreateAccountItemsCSV;
 
-        public void Complete()
-        {
-            Console.WriteLine("complete");
-        }
+public sealed class ConsolePresenter : ITransferAccountItemsPresenter
+{
+    public void Progress(int percentage)
+    {
+        Console.WriteLine(percentage + "%");
+    }
+
+    public void Complete()
+    {
+        Console.WriteLine("complete");
     }
 }

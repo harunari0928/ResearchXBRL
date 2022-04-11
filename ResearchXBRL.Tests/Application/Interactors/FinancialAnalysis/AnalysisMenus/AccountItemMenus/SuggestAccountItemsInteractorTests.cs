@@ -2,7 +2,7 @@ using Moq;
 using System.Threading.Tasks;
 using ResearchXBRL.Application.Interactors.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
 using Xunit;
-using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItems;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +10,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
 {
     public sealed class SuggestAccountItemsInteractorTests
     {
-        private readonly Mock<IAccountItemMenuRepository> repository;
+        private readonly Mock<IAccountItemsMenuRepository> repository;
 
         public SuggestAccountItemsInteractorTests()
         {
@@ -39,7 +39,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
             var keyword = "売掛金";
             repository
                 .Setup(x => x.GetProposals(keyword))
-                .ReturnsAsync(new AccountItemMenu
+                .ReturnsAsync(new AccountItemsMenu
                 {
                     SearchedAccountItem = expected.First(),
                     SuggestedAccountItems = expected.Skip(1).ToArray()
@@ -78,7 +78,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
             var keyword = "売掛金";
             repository
                 .Setup(x => x.GetProposals(keyword))
-                .ReturnsAsync(new AccountItemMenu
+                .ReturnsAsync(new AccountItemsMenu
                 {
                     SearchedAccountItem = expected.First(),
                     SuggestedAccountItems = expected.Skip(1).ToArray()
@@ -114,7 +114,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
             var keyword = "売掛";
             repository
                 .Setup(x => x.GetProposals(keyword))
-                .ReturnsAsync(new AccountItemMenu
+                .ReturnsAsync(new AccountItemsMenu
                 {
                     SearchedAccountItem = null,
                     SuggestedAccountItems = expected.ToArray()
@@ -138,7 +138,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
             var keyword = ""; // キーワードが空文字
             repository
                 .Setup(x => x.GetProposals(keyword))
-                .ReturnsAsync(new AccountItemMenu
+                .ReturnsAsync(new AccountItemsMenu
                 {
                     SuggestedAccountItems = new List<AccountItem>
                     {
@@ -172,7 +172,7 @@ namespace ResearchXBRL.Tests.Application.Interactors.FinancialAnalysis.AnalysisM
             var keyword = " 　"; // キーワードが空白
             repository
                 .Setup(x => x.GetProposals(keyword))
-                .ReturnsAsync(new AccountItemMenu
+                .ReturnsAsync(new AccountItemsMenu
                 {
                     SuggestedAccountItems = new List<AccountItem>
                     {

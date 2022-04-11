@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 namespace ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders
 {
@@ -62,11 +63,13 @@ namespace ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders
 
         private Stream GetSchemaStream(string basePath, string version, string classification)
         {
-            return storage.Get($"{basePath}/{version}/taxonomy/{classification}/{version}/{classification}_cor_{version}.xsd");
+            return storage.Get($"{basePath}/{version}/taxonomy/{classification}/{version}/{classification}_cor_{version}.xsd")
+                ?? throw new FileNotFoundException("インポート対象ファイルが存在しません");
         }
         private Stream GetLabelStream(string basePath, string version, string classification)
         {
-            return storage.Get($"{basePath}/{version}/taxonomy/{classification}/{version}/label/{classification}_{version}_lab.xml");
+            return storage.Get($"{basePath}/{version}/taxonomy/{classification}/{version}/label/{classification}_{version}_lab.xml")
+                ?? throw new FileNotFoundException("インポート対象ファイルが存在しません");
         }
 
         public void Dispose()

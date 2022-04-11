@@ -14,12 +14,12 @@ using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.AccountIt
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.AnalysisMenus.CorporationMenus;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.PerformanceIndicators;
 using ResearchXBRL.Application.Usecase.FinancialAnalysis.TimeSeriesAnalysis;
-using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
+using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.AccountItems;
 using ResearchXBRL.Domain.FinancialAnalysis.AnalysisMenus.Corporations;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Domain.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
-using ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountItemMenus;
-using ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.CorporationMenus;
+using ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountItems;
+using ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.Corporations;
 using ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis;
 using ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 using ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators;
@@ -54,8 +54,8 @@ public class Startup
         });
         services.AddTransient<ISuggestAccountItemsUsecase, SuggestAccountItemsInteractor>();
         services.AddTransient<ISuggestCorporationsUsecase, SuggestCorporationsInteractor>();
-        services.AddTransient<IAccountItemMenuRepository, AccountItemMenuRepository>();
-        services.AddTransient<ICorporationsMenuRepository, CorporationMenuRepository>();
+        services.AddTransient<IAccountItemsMenuRepository, AccountItemsMenuRepository>();
+        services.AddTransient<ICorporationsMenuRepository, CorporationsMenuRepository>();
         services.AddTransient<ICorporationsRepository, CorporationRepository>();
         services.AddTransient<ITimeSeriesAnalysisResultRepository, TimeSeriesAnalysisResultRepository>();
         services.AddTransient<IPerformTimeSeriesAnalysisUsecase, PerformTimeSeriesAnalysisInteractor>();
