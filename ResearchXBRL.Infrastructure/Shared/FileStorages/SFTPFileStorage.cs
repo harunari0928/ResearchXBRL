@@ -17,6 +17,12 @@ public sealed class SFTPFileStorage : IFileStorage
         this.baseDirectory = baseDirectory;
     }
 
+    public StreamWriter CreateFile(in string filePath)
+    {
+        var fullFilePath = Path.Combine(baseDirectory, filePath);
+        return client.CreateText(fullFilePath)
+    }
+
     public void Delete(string path)
     {
         throw new NotImplementedException();

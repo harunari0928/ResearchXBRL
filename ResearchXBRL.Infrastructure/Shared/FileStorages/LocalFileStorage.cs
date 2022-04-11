@@ -124,4 +124,9 @@ public sealed class LocalFileStorage : IFileStorage
             .OfType<string>()
             .ToArray();
     }
+
+    public StreamWriter CreateFile(in string filePath)
+    {
+        throw new NotImplementedException();
+    }
 }
