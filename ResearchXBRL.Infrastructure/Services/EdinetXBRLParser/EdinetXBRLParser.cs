@@ -202,9 +202,4 @@ public sealed class EdinetXBRLParser : IEdinetXBRLParser
             .GetFiles(Path.Combine(unzippedFolderPath, xbrlDirectoryPath),
             "*"));
     }
-
-    Task<FinancialReport> IEdinetXBRLParser.Parse(EdinetXBRLData data)
-    {
-        throw new NotImplementedException();
-    }
 }
