@@ -59,7 +59,7 @@
             "program": "${workspaceFolder}/Presentation/ReverseLookupAccountItems/bin/Debug/net6.0/ReverseLookupAccountItems.dll",
             "args": [
                 "--file-name",
-                "ReverseLookupDictionary2.csv",
+                "ReverseLookupDictionary.csv",
                 "--ouput-file-name",
                 "ouput.csv"
             ],
