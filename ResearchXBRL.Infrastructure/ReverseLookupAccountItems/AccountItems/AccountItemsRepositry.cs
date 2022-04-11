@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
@@ -15,33 +14,33 @@ namespace ResearchXBRL.Infrastructure.ReverseLookupAccountItems.AccountItems;
 public sealed class AccountItemsRepository : IAccountItemsRepository, IAsyncDisposable, IDisposable
 {
     private readonly CsvWriter csvWriter;
-    private readonly IFileStorage fileStorage;
-    private readonly Stream memoryStream = new MemoryStream();
-    private readonly string outputFilePath;
 
     public AccountItemsRepository(IFileStorage fileStorage, string outputFilePath)
     {
-        var writer = new StreamWriter(memoryStream);
-        csvWriter = new CsvWriter(writer, CultureInfo.CurrentCulture);
-        this.fileStorage = fileStorage;
-        this.outputFilePath = outputFilePath;
+        csvWriter = new CsvWriter(fileStorage.CreateFile(outputFilePath), CultureInfo.CurrentCulture);
     }
 
     public async ValueTask Add(IAsyncEnumerable<AccountItem> normalizedAccountItems)
     {
         csvWriter.WriteHeader<AccountItemInCsv>();
         await csvWriter.NextRecordAsync();
-        var writeHistory = new HashSet<(string normalizedName, string originalName)>();
+        await csvWriter.FlushAsync();
+        var writeHistory = new HashSet<string>();
         await foreach (var chunkedAccountItems in normalizedAccountItems.Chunk(5000))
         {
-            await csvWriter.WriteRecordsAsync(chunkedAccountItems.Select(x => new AccountItemInCsv(x))
-                .Where(x => !writeHistory.Contains((x.NormalizedName, x.OriginalName))));
-            foreach (var item in chunkedAccountItems)
+            var distincted = chunkedAccountItems
+                .Select(x => new AccountItemInCsv(x))
+                .Where(x => !writeHistory.Contains($"{x.NormalizedName}_{x.OriginalName}"))
+                .GroupBy(x => $"{x.NormalizedName}_{x.OriginalName}")
+                .Select(x => x.First())
+                .ToArray();
+            await csvWriter.WriteRecordsAsync(distincted);
+            await csvWriter.FlushAsync();
+            foreach (var x in distincted)
             {
-                writeHistory.Add((item.NormalizedName, item.OriginalName));
+                writeHistory.Add($"{x.NormalizedName}_{x.OriginalName}");
             }
         }
-        fileStorage.Set(memoryStream, outputFilePath);
     }
 
     public void Dispose()
