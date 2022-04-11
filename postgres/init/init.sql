@@ -114,7 +114,7 @@ CREATE TABLE account_elements (
   taxonomy_version DATE NOT NULL,
   classification VARCHAR NOT NULL,
   account_name VARCHAR NOT NULL,
-  blance VARCHAR NOT NULL,
+  balance VARCHAR NOT NULL,
   PRIMARY KEY (xbrl_name, taxonomy_version, classification)
 );
 
