@@ -6,6 +6,7 @@ namespace ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 public interface IFileStorage
 {
+    public StreamWriter CreateFile(in string filePath);
     public Stream? Get(in string filePath);
     public void Set(in Stream inputStream, in string filePath);
     IReadOnlyList<string> GetFiles(string directoryPath, string searchPattern = "*");
