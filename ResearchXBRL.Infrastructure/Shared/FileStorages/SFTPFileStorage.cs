@@ -20,7 +20,7 @@ public sealed class SFTPFileStorage : IFileStorage
     public StreamWriter CreateFile(in string filePath)
     {
         var fullFilePath = Path.Combine(baseDirectory, filePath);
-        return client.CreateText(fullFilePath)
+        return client.CreateText(fullFilePath);
     }
 
     public void Delete(string path)
