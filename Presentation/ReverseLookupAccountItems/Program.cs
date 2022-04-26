@@ -9,7 +9,6 @@ using ResearchXBRL.Infrastructure.QueryServices.ReverseLookupAccountItems;
 using ResearchXBRL.Infrastructure.ReverseLookupAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.Shared.Extensions;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
-using ReverseLookupAccountItems;
 
 await ConsoleApp.RunAsync(args, async (
     [Option("f", "name of reverse dictionary file.")] string fileName,
@@ -25,7 +24,6 @@ await ConsoleApp.RunAsync(args, async (
 static ServiceProvider CreateServiceProvider(string fileName, string outputFileName) =>
      new ServiceCollection()
         .AddTransient<IReverseLookupAccountItemsUsecase, ReverseLookupAccountItemsInteractor>()
-        .AddTransient<IReverseLookupAccountItemsPresenter, ConsolePresenter>()
         .AddTransient<IReverseDictionaryQueryService>(x => new ReverseDictionaryCSVQueryService(x.GetService<IFileStorage>()!, fileName))
         .AddTransient<IReverseLookupQueryService, ReverseLookupQueryService>()
         .AddTransient<IAccountItemsRepository>(x => new AccountItemsRepository(x.GetService<IFileStorage>()!, outputFileName))

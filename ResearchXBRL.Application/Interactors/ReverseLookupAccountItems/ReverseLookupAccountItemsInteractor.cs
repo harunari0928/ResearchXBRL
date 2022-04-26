@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
@@ -5,26 +6,39 @@ using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
 using ResearchXBRL.Application.Usecase.ReverseLookupAccountItems;
 using ResearchXBRL.Domain.ReverseLookupAccountItems.AccountItems;
+using Microsoft.Extensions.Logging;
 
 namespace ResearchXBRL.Application.Interactors.ReverseLookupAccountItems;
 
-public sealed class ReverseLookupAccountItemsInteractor : IReverseLookupAccountItemsUsecase
+public sealed class ReverseLookupAccountItemsInteractor : IReverseLookupAccountItemsUsecase, IDisposable, IAsyncDisposable
 {
     private readonly IReverseDictionaryQueryService reverseDictionaryQueryService;
     private readonly IReverseLookupQueryService reverseLookupQueryService;
     private readonly IAccountItemsRepository repository;
-    private readonly IReverseLookupAccountItemsPresenter presenter;
+    private readonly ILogger<ReverseLookupAccountItemsInteractor> logger;
 
     public ReverseLookupAccountItemsInteractor(
         IReverseDictionaryQueryService reverseLookupTableQueryService,
         IReverseLookupQueryService reverseLookupQueryService,
         IAccountItemsRepository repository,
-        IReverseLookupAccountItemsPresenter presenter)
+        ILogger<ReverseLookupAccountItemsInteractor> logger)
     {
         this.reverseDictionaryQueryService = reverseLookupTableQueryService;
         this.reverseLookupQueryService = reverseLookupQueryService;
         this.repository = repository;
-        this.presenter = presenter;
+        this.logger = logger;
+        logger.LogInformation("Start ReverseLookupAccountItems");
+    }
+
+    public void Dispose()
+    {
+        logger.LogInformation("End ReverseLookupAccountItems");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        logger.LogInformation("End ReverseLookupAccountItems");
+        await Task.CompletedTask;
     }
 
     /// <inheritdoc/>
@@ -41,7 +55,7 @@ public sealed class ReverseLookupAccountItemsInteractor : IReverseLookupAccountI
                 }
 
             case Abort<IAsyncEnumerable<FinancialReport>> abort:
-                presenter.Warn(abort.Message);
+                logger.LogWarning(abort.Message);
                 break;
         }
     }

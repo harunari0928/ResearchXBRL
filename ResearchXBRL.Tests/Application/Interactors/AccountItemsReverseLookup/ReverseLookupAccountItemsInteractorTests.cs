@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.DTO.ReverseLookupAccountItems;
@@ -19,7 +21,6 @@ public sealed class ReverseLookupAccountItemsInteractorTests
         private readonly Mock<IReverseDictionaryQueryService> reverseDictionaryQueryServiceMock = new();
         private readonly Mock<IReverseLookupQueryService> reverseLookupQueryServiceMock = new();
         private readonly Mock<IAccountItemsRepository> repositoryMock = new();
-        private readonly Mock<IReverseLookupAccountItemsPresenter> presenterMock = new();
 
         [Fact(DisplayName = "逆引き辞書の要素数だけ逆引きを行う")]
         public async Task Test1()
@@ -50,7 +51,7 @@ public sealed class ReverseLookupAccountItemsInteractorTests
                 reverseDictionaryQueryServiceMock.Object,
                 reverseLookupQueryServiceMock.Object,
                 repositoryMock.Object,
-                presenterMock.Object
+                new Mock<ILogger<ReverseLookupAccountItemsInteractor>>().Object
             );
 
             // act
@@ -87,7 +88,7 @@ public sealed class ReverseLookupAccountItemsInteractorTests
                 reverseDictionaryQueryServiceMock.Object,
                 reverseLookupQueryServiceMock.Object,
                 repositoryMock.Object,
-                presenterMock.Object
+                new Mock<ILogger<ReverseLookupAccountItemsInteractor>>().Object
             );
             // lookup処理は遅延実行なので以下設定がないと動かない。
             // 処理を動かすため、Addメソッド実行時に引数のリスト要素全件を評価している
@@ -127,7 +128,7 @@ public sealed class ReverseLookupAccountItemsInteractorTests
                 reverseDictionaryQueryServiceMock.Object,
                 reverseLookupQueryServiceMock.Object,
                 repositoryMock.Object,
-                presenterMock.Object
+                new Mock<ILogger<ReverseLookupAccountItemsInteractor>>().Object
             );
 
             // act
@@ -161,18 +162,24 @@ public sealed class ReverseLookupAccountItemsInteractorTests
                 {
                     Message = expectedMessage
                 });
+            var mockLogger = new Mock<ILogger<ReverseLookupAccountItemsInteractor>>();
             var interactor = new ReverseLookupAccountItemsInteractor(
                 reverseDictionaryQueryServiceMock.Object,
                 reverseLookupQueryServiceMock.Object,
                 repositoryMock.Object,
-                presenterMock.Object
+                mockLogger.Object
             );
 
             // act
             await interactor.Handle();
 
             // assert
-            presenterMock.Verify(x => x.Warn(expectedMessage), Times.Once);
+            mockLogger.Verify(x => x.Log<It.IsAnyType>(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Once);
         }
 
         private IReadOnlyList<ReverseLookupResult> CreateReverseLookupQueryServiceMock()
