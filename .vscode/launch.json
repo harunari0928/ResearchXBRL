@@ -60,7 +60,7 @@
             "args": [
                 "--file-name",
                 "ReverseLookupDictionary.csv",
-                "--ouput-file-name",
+                "--output-file-name",
                 "output.csv"
             ],
             "cwd": "${workspaceFolder}/Presentation/ReverseLookupAccountItems",
