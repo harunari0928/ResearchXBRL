@@ -1,7 +1,7 @@
 version: '3.2'
 services:
   dev:
-    build: 
+    build:
       context: ..
       dockerfile: Dockerfile.dev
     volumes:
@@ -11,7 +11,7 @@ services:
       - "45612:45612"
     command: /bin/bash -c "dotnet build; while sleep 1000; do :; done"
     container_name: aquire_report_batch
-    environment: 
+    environment:
       DB_SERVERNAME: report_rdb_primary_backend_dev
       DB_USERID: postgres
       DB_NAME: postgres
@@ -57,7 +57,7 @@ services:
     depends_on:
       - rdb_primary
   sftp:
-    image: atmoz/sftp
+    image: harunari/sftp-server:stable
     ports:
       - "22"
     volumes:
