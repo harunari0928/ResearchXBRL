@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.ImportFinancialReports;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.ImportFinancialReports;
@@ -12,85 +11,93 @@ using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
-namespace AquireFinancialReports
+await ConsoleApp.RunAsync(args, async (
+    [Option("f", "get date from.")] string? from,
+    [Option("t", "get date to.")] string? to,
+    [Option("p", "max parallelism.")] int? maxParallelism) =>
 {
-    class Program
+    // デフォルトはシングルスレッド実行
+    await using var serviceProvider = CreateServiceProvider(maxParallelism ?? 1);
+    var usecase = serviceProvider?
+        .GetService<IAquireFinancialReportsUsecase>()
+        ?? throw new System.Exception("usecaseモジュールのDIに失敗しました");
+    var getAquireFromToResult = GetAquireFromTo(from, to);
+
+    if (getAquireFromToResult is Succeeded<(DateTimeOffset, DateTimeOffset)> succeeded)
     {
-        static async Task Main(string[] args)
-        {
-            var maxParallelism = GetMaxParallelism(args);
-            using var serviceProvider = CreateServiceProvider(maxParallelism);
-            var usecase = serviceProvider
-                .GetService<IAquireFinancialReportsUsecase>() ?? throw new Exception($"{nameof(IAquireFinancialReportsUsecase)}のDIに失敗しました");
-
-            var (from, to) = GetAquireSpan(args);
-
-            await usecase.Handle(from, to);
-        }
-
-        private static (DateTimeOffset, DateTimeOffset) GetAquireSpan(in string[] args)
-        {
-            // デフォルトでは直近1日の報告書を取得する
-            var from = DateTimeOffset.Now.AddDays(-1);
-            var to = DateTimeOffset.Now;
-            var fromArgKey = "--from";
-            if (args.Contains(fromArgKey))
-            {
-                from = new DateTimeOffset(GetDateTimeArg(args, fromArgKey), TimeSpan.FromHours(9));
-            }
-            var toArgKey = "--to";
-            if (args.Contains(toArgKey))
-            {
-                to = new DateTimeOffset(GetDateTimeArg(args, toArgKey), TimeSpan.FromHours(9));
-            }
-            return (from, to);
-        }
-        private static DateTime GetDateTimeArg(in string[] args, string argKey)
-        {
-            if (DateTime.TryParse(args.SkipWhile(x => x != argKey).Skip(1).FirstOrDefault(), out var datetime))
-            {
-                return datetime;
-            }
-            throw new ArgumentException($"{argKey}には、日付を指定してください");
-        }
-        private static int GetMaxParallelism(in string[] args)
-        {
-            var maxParallelismArgKey = "--maxParallelism";
-            if (args.Contains(maxParallelismArgKey))
-            {
-                return GetIntArg(args, maxParallelismArgKey);
-            }
-            return 1; // デフォルトはシングルスレッド実行
-        }
-        private static int GetIntArg(in string[] args, string argKey)
-        {
-            if (int.TryParse(args.SkipWhile(x => x != argKey).Skip(1).FirstOrDefault(), out var intValue))
-            {
-                return intValue;
-            }
-            throw new ArgumentException($"{argKey}には、数値を指定してください");
-        }
-        private static ServiceProvider CreateServiceProvider(int maxParallelism)
-        {
-            return new ServiceCollection()
-                .AddTransient<IAquireFinancialReportsUsecase>(x
-                    => new AquireFinancialReportsInteractor(
-                        x.GetService<IEdinetXBRLDownloader>() ?? throw new Exception($"{nameof(IEdinetXBRLDownloader)}のDIに失敗しました"),
-                        x.GetService<IEdinetXBRLParser>() ?? throw new Exception($"{nameof(IEdinetXBRLParser)}のDIに失敗しました"),
-                        x.GetService<IFinancialReportsRepository>() ?? throw new Exception($"{nameof(IFinancialReportsRepository)}のDIに失敗しました"),
-                        x.GetService<IAquireFinancialReportsPresenter>() ?? throw new Exception($"{nameof(IAquireFinancialReportsPresenter)}のDIに失敗しました"),
-                        maxParallelism
-                    ))
-                .AddTransient<IEdinetXBRLDownloader>(x =>
-                    new SecurityReportsDownloader(
-                        x.GetService<IHttpClientFactory>() ?? throw new Exception($"{nameof(IHttpClientFactory)}のDIに失敗しました"),
-                 "v1"))
-                .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
-                .AddTransient<IFinancialReportsRepository, FinancialReportsRepository>()
-                .AddSingleton<IFileStorage>(_ => new LocalFileStorage(".tmp"))
-                .AddSingleton<IAquireFinancialReportsPresenter, ConsolePresenter>()
-                .AddHttpClient()
-                .BuildServiceProvider();
-        }
+        var (fromDateTime, toDateTime) = succeeded.Value;
+        await usecase.Handle(fromDateTime, toDateTime);
     }
+    else if (getAquireFromToResult is Failed<(DateTimeOffset, DateTimeOffset)> failed)
+    {
+        // TODO: 警告ログ
+    }
+    throw new NotSupportedException($"{nameof(GetAquireFromTo)}メソッドから予期しない戻り値の型が返されました。返された型に対する処理の実装をお願いします。");
+});
+
+static IResult<(DateTimeOffset, DateTimeOffset)> GetAquireFromTo(in string? from, in string? to)
+{
+    if (ConvertToDateTimeOffset(from) is Succeeded<DateTimeOffset?> mayBeFromDateTime
+    && ConvertToDateTimeOffset(to) is Succeeded<DateTimeOffset?> mayBeToDateTime)
+    {
+        // デフォルトでは直近1日の報告書を取得する
+        return new Succeeded<(DateTimeOffset, DateTimeOffset)>((
+            mayBeFromDateTime.Value ?? DateTimeOffset.Now.AddDays(-1),
+            mayBeToDateTime.Value ?? DateTimeOffset.Now));
+    }
+
+    if (ConvertToDateTimeOffset(from) is Failed<DateTimeOffset?>)
+    {
+        return new Failed<(DateTimeOffset, DateTimeOffset)>
+        {
+            Message = $"{nameof(from)}には日付を指定してください。"
+        };
+    }
+    else if (ConvertToDateTimeOffset(to) is Failed<DateTimeOffset?>)
+    {
+        return new Failed<(DateTimeOffset, DateTimeOffset)>
+        {
+            Message = $"{nameof(to)}には日付を指定してください。"
+        };
+    }
+
+    throw new NotSupportedException($"{nameof(ConvertToDateTimeOffset)}メソッドから予期しない戻り値の型が返されました。返された型に対する処理の実装をお願いします。");
+}
+
+static ServiceProvider CreateServiceProvider(int maxParallelism)
+{
+    return new ServiceCollection()
+        .AddTransient<IAquireFinancialReportsUsecase>(x
+            => new AquireFinancialReportsInteractor(
+                x.GetService<IEdinetXBRLDownloader>() ?? throw new Exception($"{nameof(IEdinetXBRLDownloader)}のDIに失敗しました"),
+                x.GetService<IEdinetXBRLParser>() ?? throw new Exception($"{nameof(IEdinetXBRLParser)}のDIに失敗しました"),
+                x.GetService<IFinancialReportsRepository>() ?? throw new Exception($"{nameof(IFinancialReportsRepository)}のDIに失敗しました"),
+                x.GetService<IAquireFinancialReportsPresenter>() ?? throw new Exception($"{nameof(IAquireFinancialReportsPresenter)}のDIに失敗しました"),
+                maxParallelism
+            ))
+        .AddTransient<IEdinetXBRLDownloader>(x =>
+            new SecurityReportsDownloader(
+                x.GetService<IHttpClientFactory>() ?? throw new Exception($"{nameof(IHttpClientFactory)}のDIに失敗しました"),
+         "v1"))
+        .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
+        .AddTransient<IFinancialReportsRepository, FinancialReportsRepository>()
+        .AddSingleton<IFileStorage>(_ => new LocalFileStorage(".tmp"))
+        .AddHttpClient()
+        .BuildServiceProvider();
+}
+
+static IResult<DateTimeOffset?> ConvertToDateTimeOffset(in string? datetimeStr)
+{
+    if (datetimeStr is null)
+    {
+        return new Succeeded<DateTimeOffset?>(null);
+    }
+    if (DateTime.TryParse(datetimeStr, out var datetime))
+    {
+        return new Succeeded<DateTimeOffset?>(
+            new DateTimeOffset(datetime, TimeSpan.FromHours(9))
+        );
+    }
+
+    return new Failed<DateTimeOffset?>();
 }
