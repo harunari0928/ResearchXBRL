@@ -2,6 +2,8 @@
 using System.Net.Http;
 using AquireFinancialReports.Presenter;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.ImportFinancialReports;
 using ResearchXBRL.Application.Services;
@@ -68,6 +70,12 @@ static ServiceProvider CreateServiceProvider(int maxParallelism)
         .AddTransient<IFinancialReportsRepository, FinancialReportsRepository>()
         .AddSingleton<IFileStorage>(_ => new LocalFileStorage(".tmp"))
         .AddHttpClient()
+        .AddLogging(logging =>
+        {
+            logging.ClearProviders();
+            logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+            logging.AddNLog("nlog.config.xml");
+        })
         .BuildServiceProvider();
 }
 

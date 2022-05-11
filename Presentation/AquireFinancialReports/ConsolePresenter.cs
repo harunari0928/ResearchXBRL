@@ -1,38 +1,50 @@
 using System;
+using Microsoft.Extensions.Logging;
 using ResearchXBRL.Application.Usecase.ImportFinancialReports;
 
 namespace AquireFinancialReports.Presenter;
 
 public sealed class ConsolePresenter : IAquireFinancialReportsPresenter
 {
+    private readonly ILogger<ConsolePresenter> logger;
+
+    public ConsolePresenter(ILogger<ConsolePresenter> logger)
+    {
+        this.logger = logger;
+    }
+
     public void Complete()
     {
-        Console.WriteLine("Aquire reportsTask is completed.");
+        logger.LogInformation("Aquire reports task is completed.");
     }
 
     public void Progress(DateTimeOffset start, DateTimeOffset end, DateTimeOffset current)
     {
         var percentage = (current - start).TotalDays / (end - start).TotalDays * 100;
-        Console.WriteLine($"progress: {percentage:F2}%");
+        if (percentage > 100)
+        {
+            percentage = 100;
+        }
+        logger.LogInformation($"progress: {percentage:F2}%");
     }
 
     public void Error(string message, Exception ex)
     {
-        Console.WriteLine($"message:{message}{Environment.NewLine}{ex}");
+        logger.LogError(ex, message);
     }
 
     public void Start()
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Aquire reports task is started.");
     }
 
     public void Warn(string message)
     {
-        throw new NotImplementedException();
+        logger.LogWarning(message);
     }
 
     public void Error(string message)
     {
-        throw new NotImplementedException();
+        logger.LogError(message);
     }
 }
