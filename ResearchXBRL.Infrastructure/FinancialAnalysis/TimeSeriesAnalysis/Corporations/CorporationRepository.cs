@@ -7,7 +7,7 @@ using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis.Corporations;
 
-public sealed class CorporationRepository : SQLService, ICorporationsRepository
+public sealed class CorporationRepository : ThreadUnsafeSQLService, ICorporationsRepository
 {
     public async ValueTask<bool> Exists(string corporationId)
     {

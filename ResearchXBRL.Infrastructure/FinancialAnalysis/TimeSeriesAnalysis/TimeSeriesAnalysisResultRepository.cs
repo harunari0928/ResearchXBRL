@@ -10,7 +10,7 @@ using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.TimeSeriesAnalysis;
 
-public sealed class TimeSeriesAnalysisResultRepository : SQLService, ITimeSeriesAnalysisResultRepository
+public sealed class TimeSeriesAnalysisResultRepository : ThreadUnsafeSQLService, ITimeSeriesAnalysisResultRepository
 {
     public async Task<TimeSeriesAnalysisResult> GetResult(string corporationId, string accountItemName)
     {

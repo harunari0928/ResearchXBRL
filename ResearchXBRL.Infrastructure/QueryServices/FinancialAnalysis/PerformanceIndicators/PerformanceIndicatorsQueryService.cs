@@ -11,7 +11,7 @@ using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.PerformanceIndicators;
 
-public class PerformanceIndicatorsQueryService : SQLService, IPerformanceIndicatorsQueryService
+public class PerformanceIndicatorsQueryService : ThreadUnsafeSQLService, IPerformanceIndicatorsQueryService
 {
     public async ValueTask<PerformanceIndicator> Get(string corporationId)
     {

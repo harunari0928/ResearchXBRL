@@ -5,7 +5,7 @@ using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.QueryServices.FinancialAnalysis.PerformanceIndicators;
 
-public class CorporationsQueryService : SQLService, ICorporationsQueryService
+public class CorporationsQueryService : ThreadUnsafeSQLService, ICorporationsQueryService
 {
     public async ValueTask<bool> Exists(string corporationId)
     {

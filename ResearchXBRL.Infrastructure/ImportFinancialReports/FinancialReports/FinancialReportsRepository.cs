@@ -1,21 +1,35 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Npgsql;
 using NpgsqlTypes;
 using PostgreSQLCopyHelper;
 using ResearchXBRL.Domain.ImportFinancialReports.Contexts;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReportItems;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
 using ResearchXBRL.Domain.ImportFinancialReports.Units;
-using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.ImportFinancialReports.FinancialReports;
 
-public sealed class FinancialReportsRepository : SQLService, IFinancialReportsRepository
+public sealed class FinancialReportsRepository : IFinancialReportsRepository
 {
+    private NpgsqlConnection CreateConnection()
+    {
+        var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
+        var userId = Environment.GetEnvironmentVariable("DB_USERID");
+        var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+        var port = Environment.GetEnvironmentVariable("DB_PORT");
+        var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+        var connectionString = $"Server={server};Port={port};Database={dbName};User Id={userId};Password={password};Pooling=true;Minimum Pool Size=0;Maximum Pool Size=100";
+        var connection = new NpgsqlConnection(connectionString);
+        connection.Open();
+        return connection;
+    }
+
     public async Task<bool> IsExists(string doucmentId)
     {
-        using var command = connection.CreateCommand();
+        await using var connection = CreateConnection();
+        await using var command = connection.CreateCommand();
         command.CommandText = @"
 SELECT
     id
@@ -30,7 +44,8 @@ LIMIT 1";
 
     public async Task Write(FinancialReport reports)
     {
-        using var tran = connection.BeginTransaction();
+        await using var connection = CreateConnection();
+        await using var tran = connection.BeginTransaction();
         var reportCoverHelper = new PostgreSQLCopyHelper<ReportCover>("report_covers")
             .MapVarchar("id", x => x.DocumentId)
             .MapVarchar("company_id", x => x.CompanyId)

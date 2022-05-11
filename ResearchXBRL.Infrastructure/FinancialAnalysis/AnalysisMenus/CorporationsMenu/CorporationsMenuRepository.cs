@@ -9,7 +9,7 @@ using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.Corporations;
 
-public sealed class CorporationsMenuRepository : SQLService, ICorporationsMenuRepository
+public sealed class CorporationsMenuRepository : ThreadUnsafeSQLService, ICorporationsMenuRepository
 {
     public async Task<CorporatonsMenu> GetProposals(string keyword)
     {

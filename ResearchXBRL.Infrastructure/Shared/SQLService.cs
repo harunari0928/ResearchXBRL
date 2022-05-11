@@ -4,11 +4,11 @@ using Npgsql;
 
 namespace ResearchXBRL.Infrastructure.Shared;
 
-public abstract class SQLService : IDisposable, IAsyncDisposable
+public abstract class ThreadUnsafeSQLService : IDisposable, IAsyncDisposable
 {
     protected readonly NpgsqlConnection connection;
 
-    public SQLService()
+    public ThreadUnsafeSQLService()
     {
         var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
         var userId = Environment.GetEnvironmentVariable("DB_USERID");

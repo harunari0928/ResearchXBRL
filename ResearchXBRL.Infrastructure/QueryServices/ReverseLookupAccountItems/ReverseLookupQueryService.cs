@@ -9,7 +9,7 @@ using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.QueryServices.ReverseLookupAccountItems;
 
-public sealed class ReverseLookupQueryService : SQLService, IReverseLookupQueryService
+public sealed class ReverseLookupQueryService : ThreadUnsafeSQLService, IReverseLookupQueryService
 {
     public async ValueTask<IReadOnlyCollection<ReverseLookupResult>> Lookup(FinancialReport financialReport) =>
         await GetNetSalesXBRLNames(financialReport)

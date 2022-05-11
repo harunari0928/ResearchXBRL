@@ -6,7 +6,7 @@ using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.ImportAccountItems.AccountItems;
 
-public sealed class AccountItemsRepository : SQLService, IAccountItemsRepository
+public sealed class AccountItemsRepository : ThreadUnsafeSQLService, IAccountItemsRepository
 {
     public async Task Write(IEnumerable<AccountItem> elements)
     {

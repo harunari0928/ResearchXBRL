@@ -8,7 +8,7 @@ using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.QueryServices.FinancialAnalysis.PerformanceIndicators;
 
-public class TimeseriesAccountValuesQueryService : SQLService, ITimeseriesAccountValuesQueryService
+public class TimeseriesAccountValuesQueryService : ThreadUnsafeSQLService, ITimeseriesAccountValuesQueryService
 {
     /// <inheritdoc />
     public async ValueTask<IReadOnlyDictionary<DateOnly, decimal>> Get(string corporationId, string accountItemName)

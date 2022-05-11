@@ -8,7 +8,7 @@ using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.FinancialAnalysis.AnalysisMenus.AccountItems;
 
-public sealed class AccountItemsMenuRepository : SQLService, IAccountItemsMenuRepository
+public sealed class AccountItemsMenuRepository : ThreadUnsafeSQLService, IAccountItemsMenuRepository
 {
     public async Task<AccountItemsMenu> GetProposals(string keyword)
     {
