@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ResearchXBRL.Application.DTO.Results;
 
 namespace ResearchXBRL.Application.Usecase.ImportFinancialReports
 {
     public interface IAquireFinancialReportsUsecase
     {
-        Task Handle(DateTimeOffset start, DateTimeOffset end);
+        Task Handle(IResult<(DateTimeOffset, DateTimeOffset)> mayBeFromTo);
     }
 }

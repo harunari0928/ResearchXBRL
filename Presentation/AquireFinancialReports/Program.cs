@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using AquireFinancialReports.Presenter;
 using Microsoft.Extensions.DependencyInjection;
 using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.ImportFinancialReports;
@@ -21,18 +22,7 @@ await ConsoleApp.RunAsync(args, async (
     var usecase = serviceProvider?
         .GetService<IAquireFinancialReportsUsecase>()
         ?? throw new System.Exception("usecaseモジュールのDIに失敗しました");
-    var getAquireFromToResult = GetAquireFromTo(from, to);
-
-    if (getAquireFromToResult is Succeeded<(DateTimeOffset, DateTimeOffset)> succeeded)
-    {
-        var (fromDateTime, toDateTime) = succeeded.Value;
-        await usecase.Handle(fromDateTime, toDateTime);
-    }
-    else if (getAquireFromToResult is Failed<(DateTimeOffset, DateTimeOffset)> failed)
-    {
-        // TODO: 警告ログ
-    }
-    throw new NotSupportedException($"{nameof(GetAquireFromTo)}メソッドから予期しない戻り値の型が返されました。返された型に対する処理の実装をお願いします。");
+    await usecase.Handle(GetAquireFromTo(from, to));
 });
 
 static IResult<(DateTimeOffset, DateTimeOffset)> GetAquireFromTo(in string? from, in string? to)
@@ -73,6 +63,7 @@ static ServiceProvider CreateServiceProvider(int maxParallelism)
             new SecurityReportsDownloader(
                 x.GetService<IHttpClientFactory>() ?? throw new Exception($"{nameof(IHttpClientFactory)}のDIに失敗しました"),
          "v1"))
+        .AddSingleton<IAquireFinancialReportsPresenter, ConsolePresenter>()
         .AddTransient<IEdinetXBRLParser, EdinetXBRLParser>()
         .AddTransient<IFinancialReportsRepository, FinancialReportsRepository>()
         .AddSingleton<IFileStorage>(_ => new LocalFileStorage(".tmp"))

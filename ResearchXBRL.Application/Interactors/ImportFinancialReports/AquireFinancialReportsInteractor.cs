@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ResearchXBRL.Application.DTO;
+using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.ImportFinancialReports;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
@@ -27,6 +28,7 @@ public sealed class AquireFinancialReportsInteractor : IAquireFinancialReportsUs
         in IAquireFinancialReportsPresenter presenter,
         in int maxParallelism)
     {
+        presenter.Start();
         this.downloader = downloader;
         this.parser = parser;
         this.reportRepository = reportRepository;
@@ -36,14 +38,49 @@ public sealed class AquireFinancialReportsInteractor : IAquireFinancialReportsUs
 
     public void Dispose()
     {
+        presenter.Complete();
         semaphore.Dispose();
     }
 
-    public async Task Handle(DateTimeOffset start, DateTimeOffset end)
+    public async Task Handle(IResult<(DateTimeOffset, DateTimeOffset)> mayBeFromTo)
     {
+        switch (await GetResult(mayBeFromTo))
+        {
+            case Succeeded:
+                return;
+            case Abort abort:
+                presenter.Warn(abort.Message);
+                return;
+            case Failed failed:
+                presenter.Error(failed.Message);
+                return;
+            default:
+                throw new NotSupportedException($"{nameof(GetResult)}メソッドから予期しない型が検出されました。当該型に対する処理の実装をお願いします。");
+        }
+    }
+
+    private async Task<IResult> GetResult(IResult<(DateTimeOffset, DateTimeOffset)> mayBeFromTo)
+    {
+        if (mayBeFromTo is not Succeeded<(DateTimeOffset, DateTimeOffset)> succeeded)
+        {
+            if (mayBeFromTo is Failed<(DateTimeOffset, DateTimeOffset)> failed)
+            {
+                return new Abort
+                {
+                    Message = failed.Message
+                };
+            }
+            throw new NotSupportedException($"引数から予期しない型が検出されました。当該型に対する処理の実装をお願いします。");
+        }
+
+        var (start, end) = succeeded.Value;
+
         if (start > end)
         {
-            throw new ArgumentException($"{nameof(start)}よりも{nameof(end)}を後の日付にしてください");
+            return new Abort
+            {
+                Message = $"{nameof(start)}よりも{nameof(end)}を後の日付にしてください"
+            };
         }
 
         await foreach (var data in downloader.Download(start, end))
@@ -55,10 +92,13 @@ public sealed class AquireFinancialReportsInteractor : IAquireFinancialReportsUs
 
         if (exceptions.Any())
         {
-            throw new AggregateException(exceptions);
+            return new Failed
+            {
+                Message = $"{exceptions.Count}件のエラーが発生しました"
+            };
         }
 
-        presenter.Complete();
+        return new Succeeded();
     }
 
     private async Task SaveReport(DateTimeOffset start, DateTimeOffset end, EdinetXBRLData data)
