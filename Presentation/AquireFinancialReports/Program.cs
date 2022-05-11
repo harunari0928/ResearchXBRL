@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using AquireFinancialReports.Presenter;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,45 +15,41 @@ using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
-await ConsoleApp.RunAsync(args, async (
-    [Option("f", "get date from.")] string? from,
-    [Option("t", "get date to.")] string? to,
-    [Option("p", "max parallelism.")] int? maxParallelism) =>
+await ConsoleApp.RunAsync(args, Execute);
+
+static async Task Execute(
+    [Option("f", "get date from.")] string? from = null,
+    [Option("t", "get date to.")] string? to = null,
+    [Option("p", "max parallelism.")] int maxParallelism = 1)
 {
-    // デフォルトはシングルスレッド実行
-    await using var serviceProvider = CreateServiceProvider(maxParallelism ?? 1);
+    await using var serviceProvider = CreateServiceProvider(maxParallelism);
     var usecase = serviceProvider?
         .GetService<IAquireFinancialReportsUsecase>()
         ?? throw new System.Exception("usecaseモジュールのDIに失敗しました");
     await usecase.Handle(GetAquireFromTo(from, to));
-});
-
-static IResult<(DateTimeOffset, DateTimeOffset)> GetAquireFromTo(in string? from, in string? to)
-{
-    return (ConvertToDateTimeOffset(from), ConvertToDateTimeOffset(to)) switch
-    {
-        (Succeeded<DateTimeOffset?> mayBeFromDateTime, Succeeded<DateTimeOffset?> mayBeToDateTime) =>
-            new Succeeded<(DateTimeOffset, DateTimeOffset)>((
-                // デフォルトでは直近1日の報告書を取得する
-                mayBeFromDateTime.Value ?? DateTimeOffset.Now.AddDays(-1),
-                mayBeToDateTime.Value ?? DateTimeOffset.Now)),
-        (Failed<DateTimeOffset?>, _) =>
-            new Failed<(DateTimeOffset, DateTimeOffset)>
-            {
-                Message = $"{nameof(from)}には日付を指定してください。"
-            },
-        (_, Failed<DateTimeOffset?>) =>
-             new Failed<(DateTimeOffset, DateTimeOffset)>
-             {
-                 Message = $"{nameof(to)}には日付を指定してください。"
-             },
-        _ => throw new NotSupportedException($"{nameof(ConvertToDateTimeOffset)}メソッドから予期しない戻り値の型が返されました。返された型に対する処理の実装をお願いします。")
-    };
 }
 
-static ServiceProvider CreateServiceProvider(int maxParallelism)
+static IResult<(DateTimeOffset, DateTimeOffset)> GetAquireFromTo(in string? from, in string? to) => (ConvertToDateTimeOffset(from), ConvertToDateTimeOffset(to)) switch
 {
-    return new ServiceCollection()
+    (Succeeded<DateTimeOffset?> mayBeFromDateTime, Succeeded<DateTimeOffset?> mayBeToDateTime) =>
+        new Succeeded<(DateTimeOffset, DateTimeOffset)>((
+            // デフォルトでは直近1日の報告書を取得する
+            mayBeFromDateTime.Value ?? DateTimeOffset.Now.AddDays(-1),
+            mayBeToDateTime.Value ?? DateTimeOffset.Now)),
+    (Failed<DateTimeOffset?>, _) =>
+        new Failed<(DateTimeOffset, DateTimeOffset)>
+        {
+            Message = $"{nameof(from)}には日付を指定してください。"
+        },
+    (_, Failed<DateTimeOffset?>) =>
+         new Failed<(DateTimeOffset, DateTimeOffset)>
+         {
+             Message = $"{nameof(to)}には日付を指定してください。"
+         },
+    _ => throw new NotSupportedException($"{nameof(ConvertToDateTimeOffset)}メソッドから予期しない戻り値の型が返されました。返された型に対する処理の実装をお願いします。")
+};
+
+static ServiceProvider CreateServiceProvider(int maxParallelism) => new ServiceCollection()
         .AddTransient<IAquireFinancialReportsUsecase>(x
             => new AquireFinancialReportsInteractor(
                 x.GetService<IEdinetXBRLDownloader>() ?? throw new Exception($"{nameof(IEdinetXBRLDownloader)}のDIに失敗しました"),
@@ -77,7 +74,6 @@ static ServiceProvider CreateServiceProvider(int maxParallelism)
             logging.AddNLog("nlog.config.xml");
         })
         .BuildServiceProvider();
-}
 
 static IResult<DateTimeOffset?> ConvertToDateTimeOffset(in string? datetimeStr)
 {
