@@ -13,7 +13,7 @@
             <attribute name="time" layout="${longdate}" />
             <attribute name="level" layout="${level}" />
             <attribute name="message" layout="${message}" />
-            <attribute name="exception" layout="${exception}" />
+            <attribute name="exception" layout="${exception:format=ToString,StackTrace}${newline}" />
         </layout>
     </target>
   </targets>
