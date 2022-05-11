@@ -72,6 +72,9 @@ static ServiceProvider CreateServiceProvider(int maxParallelism) => new ServiceC
             logging.ClearProviders();
             logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
             logging.AddNLog("nlog.config.xml");
+            logging.AddFilter("Microsoft", LogLevel.Warning);
+            logging.AddFilter("System", LogLevel.Warning);
+            logging.AddFilter("NToastNotify", LogLevel.Warning);
         })
         .BuildServiceProvider();
 
