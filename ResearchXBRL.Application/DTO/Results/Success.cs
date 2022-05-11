@@ -1,14 +1,14 @@
 namespace ResearchXBRL.Application.DTO.Results;
 
-public sealed class Success<T> : IResult<T>
+public sealed class Succeeded<T> : IResult<T>
 {
     private readonly T result;
     public T Value => result;
 
-    public Success(T result)
+    public Succeeded(T result)
     {
         this.result = result;
     }
 }
 
-public sealed class Success : IResult { }
+public sealed class Succeeded : IResult { }

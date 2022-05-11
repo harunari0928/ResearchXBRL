@@ -46,7 +46,7 @@ public sealed class ReverseLookupAccountItemsInteractor : IReverseLookupAccountI
     {
         switch (reverseDictionaryQueryService.Get())
         {
-            case Success<IAsyncEnumerable<FinancialReport>> success:
+            case Succeeded<IAsyncEnumerable<FinancialReport>> success:
                 {
                     var normalizedAccountItems = GetNormalizedAccountItems(success.Value);
 

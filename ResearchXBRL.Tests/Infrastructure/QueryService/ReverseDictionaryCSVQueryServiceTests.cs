@@ -31,7 +31,7 @@ public sealed class ReverseDictionaryCSVQueryServiceTests
         var service = new ReverseDictionaryCSVQueryService(fileStorage, "ReverseLookupDictionary.csv");
 
         // act
-        if (service.Get() is not Success<IAsyncEnumerable<FinancialReport>> success)
+        if (service.Get() is not Succeeded<IAsyncEnumerable<FinancialReport>> success)
         {
             throw new Exception("Test Failed.");
         }
@@ -61,7 +61,7 @@ public sealed class ReverseDictionaryCSVQueryServiceTests
         var service = new ReverseDictionaryCSVQueryService(fileStorage, "ReverseLookupDictionary.csv");
 
         // act
-        if (service.Get() is not Success<IAsyncEnumerable<FinancialReport>> success)
+        if (service.Get() is not Succeeded<IAsyncEnumerable<FinancialReport>> success)
         {
             throw new Exception("Test Failed.");
         }
@@ -88,7 +88,7 @@ public sealed class ReverseDictionaryCSVQueryServiceTests
         var service = new ReverseDictionaryCSVQueryService(fileStorage, "ReverseLookupDictionary.csv");
 
         // act
-        if (service.Get() is not Success<IAsyncEnumerable<FinancialReport>> success)
+        if (service.Get() is not Succeeded<IAsyncEnumerable<FinancialReport>> success)
         {
             throw new Exception("Test Failed.");
         }

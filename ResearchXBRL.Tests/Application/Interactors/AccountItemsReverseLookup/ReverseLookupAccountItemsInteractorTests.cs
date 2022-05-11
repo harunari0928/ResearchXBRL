@@ -41,7 +41,7 @@ public sealed class ReverseLookupAccountItemsInteractorTests
             };
             reverseDictionaryQueryServiceMock
                 .Setup(x => x.Get())
-                .Returns(new Success<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
+                .Returns(new Succeeded<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             repositoryMock
                 .Setup(x => x.Add(It.IsAny<IAsyncEnumerable<AccountItem>>()))
@@ -82,7 +82,7 @@ public sealed class ReverseLookupAccountItemsInteractorTests
             };
             reverseDictionaryQueryServiceMock
                 .Setup(x => x.Get())
-                .Returns(new Success<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
+                .Returns(new Succeeded<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             var interactor = new ReverseLookupAccountItemsInteractor(
                 reverseDictionaryQueryServiceMock.Object,
@@ -122,7 +122,7 @@ public sealed class ReverseLookupAccountItemsInteractorTests
             };
             reverseDictionaryQueryServiceMock
                 .Setup(x => x.Get())
-                .Returns(new Success<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
+                .Returns(new Succeeded<IAsyncEnumerable<FinancialReport>>(lookupParameters.ToAsyncEnumerable()));
             var reverseLookupResult = CreateReverseLookupQueryServiceMock();
             var interactor = new ReverseLookupAccountItemsInteractor(
                 reverseDictionaryQueryServiceMock.Object,

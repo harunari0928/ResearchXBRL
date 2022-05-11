@@ -35,7 +35,7 @@ public sealed class ReverseDictionaryCSVQueryService : IReverseDictionaryQuerySe
 
         var streamReader = new StreamReader(fileStream);
         var reader = new CsvReader(streamReader, CultureInfo.CurrentCulture, true);
-        return new Success<IAsyncEnumerable<FinancialReport>>(ReadFinancialReports(reader,
+        return new Succeeded<IAsyncEnumerable<FinancialReport>>(ReadFinancialReports(reader,
             new IDisposable[] { reader, streamReader, fileStream }));
     }
 
