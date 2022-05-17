@@ -16,4 +16,10 @@
     <ProjectReference Include="..\..\ResearchXBRL.Infrastructure\ResearchXBRL.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="../../config/nlog.config.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content >
+  </ItemGroup>
+
 </Project>
