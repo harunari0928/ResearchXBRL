@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using AquireFinancialReports.Presenter;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.ImportFinancialReports;
@@ -23,10 +24,21 @@ static async Task Execute(
     [Option("p", "max parallelism.")] int maxParallelism = 1)
 {
     await using var serviceProvider = CreateServiceProvider(maxParallelism);
-    var usecase = serviceProvider?
-        .GetService<IAquireFinancialReportsUsecase>()
-        ?? throw new System.Exception("usecaseモジュールのDIに失敗しました");
-    await usecase.Handle(GetAquireFromTo(from, to));
+    var logger = serviceProvider.GetService<ILogger>()
+        ?? throw new Exception($"{nameof(ILogger)}モジュールのDIに失敗しました");
+    try
+    {
+        var usecase = serviceProvider?
+            .GetService<IAquireFinancialReportsUsecase>()
+            ?? throw new System.Exception($"{nameof(IAquireFinancialReportsUsecase)}モジュールのDIに失敗しました");
+        await usecase.Handle(GetAquireFromTo(from, to));
+    }
+    catch (Exception ex)
+    {
+        logger.LogCritical(ex, "ハンドリングされていないエラー");
+        Environment.ExitCode = 1;
+    }
+
 }
 
 static IResult<(DateTimeOffset, DateTimeOffset)> GetAquireFromTo(in string? from, in string? to) => (ConvertToDateTimeOffset(from), ConvertToDateTimeOffset(to)) switch

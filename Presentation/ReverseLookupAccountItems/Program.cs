@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using ResearchXBRL.Application.Interactors.ReverseLookupAccountItems;
 using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
@@ -14,10 +16,19 @@ await ConsoleApp.RunAsync(args, async (
     [Option("o", "name of output file.")] string outputFileName) =>
 {
     await using var serviceProvider = CreateServiceProvider(fileName, outputFileName);
-    var usecase = serviceProvider?
-        .GetService<IReverseLookupAccountItemsUsecase>()
-        ?? throw new System.Exception("usecaseモジュールのDIに失敗しました");
-    await usecase.Handle();
+    var logger = serviceProvider.GetService<ILogger>()
+        ?? throw new Exception($"{nameof(ILogger)}モジュールのDIに失敗しました");
+    try
+    {
+        var usecase = serviceProvider?.GetService<IReverseLookupAccountItemsUsecase>()
+            ?? throw new Exception($"{nameof(IReverseLookupAccountItemsUsecase)}モジュールのDIに失敗しました");
+        await usecase.Handle();
+    }
+    catch (Exception ex)
+    {
+        logger.LogCritical(ex, "ハンドリングされていないエラー");
+        Environment.ExitCode = 1;
+    }
 });
 
 static ServiceProvider CreateServiceProvider(string fileName, string outputFileName) =>
