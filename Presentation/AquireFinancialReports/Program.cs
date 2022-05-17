@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using AquireFinancialReports.Presenter;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.ImportFinancialReports;
@@ -13,6 +12,7 @@ using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
 using ResearchXBRL.Infrastructure.ImportFinancialReports.FinancialReports;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLParser;
+using ResearchXBRL.Infrastructure.Shared.Extensions;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 await ConsoleApp.RunAsync(args, Execute);
@@ -67,15 +67,7 @@ static ServiceProvider CreateServiceProvider(int maxParallelism) => new ServiceC
         .AddTransient<IFinancialReportsRepository, FinancialReportsRepository>()
         .AddSingleton<IFileStorage>(_ => new LocalFileStorage(".tmp"))
         .AddHttpClient()
-        .AddLogging(logging =>
-        {
-            logging.ClearProviders();
-            logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-            logging.AddNLog("nlog.config.xml");
-            logging.AddFilter("Microsoft", LogLevel.Warning);
-            logging.AddFilter("System", LogLevel.Warning);
-            logging.AddFilter("NToastNotify", LogLevel.Warning);
-        })
+        .AddNLog()
         .BuildServiceProvider();
 
 static IResult<DateTimeOffset?> ConvertToDateTimeOffset(in string? datetimeStr)

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using ResearchXBRL.Application.Interactors.ReverseLookupAccountItems;
 using ResearchXBRL.Application.QueryServices.ReverseLookupAccountItems;
@@ -28,10 +27,5 @@ static ServiceProvider CreateServiceProvider(string fileName, string outputFileN
         .AddTransient<IReverseLookupQueryService, ReverseLookupQueryService>()
         .AddTransient<IAccountItemsRepository>(x => new AccountItemsRepository(x.GetService<IFileStorage>()!, outputFileName))
         .AddSFTPFileStorage()
-        .AddLogging(logging =>
-        {
-            logging.ClearProviders();
-            logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-            logging.AddNLog("nlog.config.xml");
-        })
+        .AddNLog()
         .BuildServiceProvider();

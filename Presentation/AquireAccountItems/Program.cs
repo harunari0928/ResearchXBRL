@@ -8,6 +8,7 @@ using ResearchXBRL.Infrastructure.ImportAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
 using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
 using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
+using ResearchXBRL.Infrastructure.Shared.Extensions;
 
 namespace AquireAccountItems;
 
@@ -30,6 +31,7 @@ class Program
             .AddTransient<IAccountItemsRepository, AccountItemsRepository>()
             .AddSingleton<IFileStorage>(_ => new LocalFileStorage("/.tmp"))
             .AddHttpClient()
+            .AddNLog()
             .BuildServiceProvider();
     }
 }

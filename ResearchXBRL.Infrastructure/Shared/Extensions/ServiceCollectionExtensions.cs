@@ -1,5 +1,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using Renci.SshNet;
 using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
@@ -30,5 +32,24 @@ public static class ServiceCollectionExtensions
         return serviceCollection
             .AddTransient<ISftpClient>(_ => client)
             .AddTransient<IFileStorage>(x => new SFTPFileStorage(x.GetService<ISftpClient>()!, baseDirectory));
+    }
+
+    /// <summary>
+    /// ログモジュールをDIする
+    /// ログ出力にはNLogを用いる
+    /// </summary>
+    /// <param name="serviceCollection"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddNLog(this IServiceCollection serviceCollection)
+    {
+        return serviceCollection.AddLogging(logging =>
+        {
+            logging.ClearProviders();
+            logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+            logging.AddNLog("nlog.config.xml");
+            logging.AddFilter("Microsoft", LogLevel.Warning);
+            logging.AddFilter("System", LogLevel.Warning);
+            logging.AddFilter("NToastNotify", LogLevel.Warning);
+        });
     }
 }
