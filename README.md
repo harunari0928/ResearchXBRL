@@ -115,14 +115,14 @@ dotnet run --project /src/Presentation/AquireFinancialReports/AquireFinancialRep
     * 指定しない場合は現時刻が指定されます
     * 5年以上前の日時を指定した場合エラーになります EDINETは直近5年のデータしか返さないため
 
-  * --maxParallelism
+  * --max-parallelism
     * インポート処理の並列数を指定します
     * 指定しない場合は1が指定されます
 
 * 引数を使用したコマンドの一例
 
 ```sh
-dotnet run --project /src/Presentation/AquireFinancialReports/AquireFinancialReports.csproj --from 2021-01-01 --to 2021-12-01 --maxParallelism 2
+dotnet run --project /src/Presentation/AquireFinancialReports/AquireFinancialReports.csproj --from 2021-01-01 --to 2021-12-01 --max-parallelism 2
 ```
 
 ### 企業情報インポートバッチ
