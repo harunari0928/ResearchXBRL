@@ -1,22 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ResearchXBRL.Application.Interactors.ImportAccountItems;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.Application.Usecase.ImportAccountItems;
 using ResearchXBRL.Domain.ImportAccountItems.AccountItems;
 using ResearchXBRL.Infrastructure.ImportAccountItems.AccountItems;
-using ResearchXBRL.Infrastructure.Shared.FileStorages;
 using ResearchXBRL.Infrastructure.Services.TaxonomyDownloaders;
 using ResearchXBRL.Infrastructure.Services.TaxonomyParsers;
 using ResearchXBRL.Infrastructure.Shared.Extensions;
-using Microsoft.Extensions.Logging;
-using System;
+using ResearchXBRL.Infrastructure.Shared.FileStorages;
 
 await ConsoleApp.RunAsync(args, async () =>
 {
     await using var serviceProvider = CreateServiceProvider();
-    var logger = serviceProvider.GetService<ILogger>()
-        ?? throw new Exception($"{nameof(ILogger)}モジュールのDIに失敗しました");
+    var logger = serviceProvider.GetService<ILogger<Program>>()
+        ?? throw new Exception($"{nameof(ILogger<Program>)}モジュールのDIに失敗しました");
     try
     {
         var usecase = serviceProvider.GetService<IAquireAccoumtItemsUsecase>()

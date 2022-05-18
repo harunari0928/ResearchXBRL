@@ -16,8 +16,8 @@ await ConsoleApp.RunAsync(args, async (
     [Option("o", "name of output file.")] string outputFileName) =>
 {
     await using var serviceProvider = CreateServiceProvider(fileName, outputFileName);
-    var logger = serviceProvider.GetService<ILogger>()
-        ?? throw new Exception($"{nameof(ILogger)}モジュールのDIに失敗しました");
+    var logger = serviceProvider.GetService<ILogger<Program>>()
+        ?? throw new Exception($"{nameof(ILogger<Program>)}モジュールのDIに失敗しました");
     try
     {
         var usecase = serviceProvider?.GetService<IReverseLookupAccountItemsUsecase>()

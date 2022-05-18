@@ -24,8 +24,8 @@ static async Task Execute(
     [Option("p", "max parallelism.")] int maxParallelism = 1)
 {
     await using var serviceProvider = CreateServiceProvider(maxParallelism);
-    var logger = serviceProvider.GetService<ILogger>()
-        ?? throw new Exception($"{nameof(ILogger)}モジュールのDIに失敗しました");
+    var logger = serviceProvider.GetService<ILogger<Program>>()
+        ?? throw new Exception($"{nameof(ILogger<Program>)}モジュールのDIに失敗しました");
     try
     {
         var usecase = serviceProvider?
