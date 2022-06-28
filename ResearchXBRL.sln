@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreateAccountItemsCSV", "Presentation\CreateAccountItemsCSV\CreateAccountItemsCSV.csproj", "{6B2D5396-855A-40AE-925D-5ABD58A1DCD1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResearchXBRL.Application", "ResearchXBRL.Application\ResearchXBRL.Application.csproj", "{442CEFA6-806A-472A-BB18-6BACB364E1B8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResearchXBRL.CrossCuttingInterest", "ResearchXBRL.CrossCuttingInterest\ResearchXBRL.CrossCuttingInterest.csproj", "{C52AE2FD-F471-4B54-8364-9AC465DB41A9}"
@@ -35,10 +33,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6B2D5396-855A-40AE-925D-5ABD58A1DCD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B2D5396-855A-40AE-925D-5ABD58A1DCD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B2D5396-855A-40AE-925D-5ABD58A1DCD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B2D5396-855A-40AE-925D-5ABD58A1DCD1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{442CEFA6-806A-472A-BB18-6BACB364E1B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{442CEFA6-806A-472A-BB18-6BACB364E1B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{442CEFA6-806A-472A-BB18-6BACB364E1B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -84,7 +78,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{6B2D5396-855A-40AE-925D-5ABD58A1DCD1} = {83659BC8-D359-4911-B07B-184067A7E411}
 		{4567E9A0-16B1-4BC6-97DD-562D4DEF6031} = {83659BC8-D359-4911-B07B-184067A7E411}
 		{A708F5BC-57D6-4477-996F-8CCC731CD518} = {CBA13F0A-C3DE-4E6A-A543-E65E450ABAB1}
 		{08B0E8EC-BD5E-466F-9F73-6B7F30078E56} = {CBA13F0A-C3DE-4E6A-A543-E65E450ABAB1}
