@@ -8,7 +8,7 @@ services:
       - ..:/src
       - upload_dir:/src/upload
     ports:
-      - "45612:45612"
+      - "45613:45613"
     command: /bin/bash -c "dotnet build; while sleep 1000; do :; done"
     container_name: aquire_report_batch
     environment:
@@ -17,7 +17,7 @@ services:
       DB_NAME: postgres
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
-      ASPNETCORE_URLS: http://+:45612
+      ASPNETCORE_URLS: http://+:45613
       ASPNETCORE_ENVIRONMENT: Development
       FILESTORAGE_HOST: sftp
       FILESTORAGE_USERID: foo

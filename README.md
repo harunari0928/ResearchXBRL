@@ -171,7 +171,7 @@ dotnet run --project /src/Presentation/FinancialAnalysisAPI/FinancialAnalysisAPI
 * APIエンドポイント仕様(OpenAPI)
 
 ```http
-http://localhost:45612/swagger/v1/swagger.yaml
+http://localhost:45613/swagger/v1/swagger.yaml
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
