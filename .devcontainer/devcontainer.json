@@ -21,7 +21,6 @@
 	"extensions": [
 		"ms-dotnettools.csharp",
 		"eservice-online.vs-sharper",
-		"k--kato.docomment",
-		"fudge.auto-using"
+		"k--kato.docomment"
 	]
 }
