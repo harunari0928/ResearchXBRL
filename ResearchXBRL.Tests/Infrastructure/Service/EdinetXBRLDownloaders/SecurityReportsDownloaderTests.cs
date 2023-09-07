@@ -63,7 +63,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 public async Task Test2()
                 {
                     // arrange
-                    var startDay = DateTimeOffset.Now.AddYears(3);
+                    var startDay = DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)).AddYears(-3);
                     var endDay = startDay;
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
 
@@ -88,7 +88,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
             ""formCode"": ""030000"",
             ""docTypeCode"": ""333"",
             ""edinetCode"": ""ccc"",
-            ""submitDateTime"": ""2021-08-25""
+            ""submitDateTime"": ""{documentDate}""
         }},
         {{
             ""docID"": ""{documentId2}"",
@@ -104,7 +104,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
             ""formCode"": ""030001"",
             ""docTypeCode"": ""111"",
             ""edinetCode"": ""aaaa"",
-            ""submitDateTime"": ""2021-08-27""
+            ""submitDateTime"": ""{documentDate}""
         }}
     ]
 }}")
@@ -131,7 +131,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                     Assert.Equal(documentId2, succeeded.Value.DocumentId);
                     Assert.Equal(documentType2, succeeded.Value.DocumentType);
                     Assert.Equal(companyId2, succeeded.Value.CompanyId);
-                    Assert.Equal(documentDate.ToString("yyyy-MM-dd"), succeeded.Value.DocumentDateTime.ToString("yyyy-MM-dd"));
+                    Assert.Equal(documentDate.ToString("yyyy-MM-dd"), new DateTimeOffset(succeeded.Value.DocumentDateTime).ToOffset(TimeSpan.FromHours(9)).ToString("yyyy-MM-dd"));
                 }
             }
 
@@ -141,12 +141,12 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 public async Task Test1()
                 {
                     // arrange
-                    var fiveYearsAgo = DateTimeOffset.Now.AddYears(-5);
+                    var fiveYearsAgo = DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)).AddYears(-5);
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
 
                     // act
                     var result = await downloader
-                            .Download(fiveYearsAgo, DateTimeOffset.Now).SingleAsync();
+                            .Download(fiveYearsAgo, DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9))).SingleAsync();
 
                     // assert
                     Assert.IsType<Abort<ResearchXBRL.Application.DTO.EdinetXBRLData>>(result);
@@ -156,12 +156,12 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 public async Task Test2()
                 {
                     // arrange
-                    var fiveYearsAgo = DateTimeOffset.Now.AddYears(-5);
+                    var fiveYearsAgo = DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)).AddYears(-5);
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
 
                     // act
                     var result = await downloader
-                            .Download(DateTimeOffset.Now, fiveYearsAgo)
+                            .Download(DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)), fiveYearsAgo)
                             .SingleAsync();
 
                     // assert
@@ -172,7 +172,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 public async Task Test3()
                 {
                     // arrange
-                    var documentDay = DateTimeOffset.Now.AddYears(-3);
+                    var documentDay = DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)).AddYears(-3);
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
                     mockHttpHandler
                         .When(HttpMethod.Get,
@@ -195,7 +195,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 public async Task Test4()
                 {
                     // arrange
-                    var startDay = DateTimeOffset.Now.AddYears(-3);
+                    var startDay = DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)).AddYears(-3);
                     var endDay = startDay;
                     var apiVersion = "v114514";
                     var downloader = CreateDownloader(mockHttpHandler, apiVersion);
@@ -243,7 +243,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 public async Task Test5()
                 {
                     // arrange
-                    var documentDay = DateTimeOffset.Now.AddYears(-3);
+                    var documentDay = DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)).AddYears(-3);
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
                     mockHttpHandler
                         .When(HttpMethod.Get,

@@ -30,7 +30,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                 public async Task Test1()
                 {
                     // arrange
-                    var startDay = DateTimeOffset.Now.AddYears(-3);
+                    var startDay = DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)).AddYears(-3);
                     var endDay = startDay;
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
 
@@ -57,7 +57,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
             ""formCode"": ""030000"",
             ""docTypeCode"": ""333"",
             ""edinetCode"": ""ccc"",
-            ""submitDateTime"": ""2021-08-25""
+            ""submitDateTime"": ""{documentDate}""
         }},
         {{
             ""docID"": ""{documentId2}"",
@@ -73,7 +73,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
             ""formCode"": ""030001"",
             ""docTypeCode"": ""111"",
             ""edinetCode"": ""aaaa"",
-            ""submitDateTime"": ""2021-08-27""
+            ""submitDateTime"": ""{documentDate}""
         }},
         {{
             ""docID"": ""{documentId4}"",
@@ -81,7 +81,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
             ""formCode"": ""043000"",
             ""docTypeCode"": ""140"",
             ""edinetCode"": ""aaaa2"",
-            ""submitDateTime"": ""2021-08-27""
+            ""submitDateTime"": ""{documentDate}""
         }},
         {{
             ""docID"": ""{documentId5}"",
@@ -89,7 +89,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
             ""formCode"": ""050000"",
             ""docTypeCode"": ""160"",
             ""edinetCode"": ""aaaa3"",
-            ""submitDateTime"": ""2021-08-27""
+            ""submitDateTime"": ""{documentDate}""
         }}
     ]
 }}")

@@ -77,7 +77,7 @@ public sealed class AquireFinancialReportsInteractorTests
 
                 // act
                 await interactor
-                    .Handle(GetValidateResult(DateTimeOffset.Now, DateTimeOffset.Now));
+                    .Handle(GetValidateResult(DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)), DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9))));
 
                 // assert
                 parser.Verify(x => x.Parse(It.IsAny<EdinetXBRLData>()),
@@ -108,7 +108,7 @@ public sealed class AquireFinancialReportsInteractorTests
 
                 // act
                 await interactor
-                    .Handle(GetValidateResult(DateTimeOffset.Now, DateTimeOffset.Now));
+                    .Handle(GetValidateResult(DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)), DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9))));
 
                 // assert
                 reportRepository.Verify(x => x.Write(It.IsAny<FinancialReport>()),
@@ -135,7 +135,7 @@ public sealed class AquireFinancialReportsInteractorTests
 
                 // act
                 await interactor
-                    .Handle(GetValidateResult(DateTimeOffset.Now, DateTimeOffset.Now));
+                    .Handle(GetValidateResult(DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)), DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9))));
 
                 // assert
                 parser.Verify(x => x.Parse(It.IsAny<EdinetXBRLData>()),
@@ -168,7 +168,7 @@ public sealed class AquireFinancialReportsInteractorTests
 
                 // act
                 await interactor
-                    .Handle(GetValidateResult(DateTimeOffset.Now, DateTimeOffset.Now));
+                    .Handle(GetValidateResult(DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)), DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9))));
 
                 // assert
                 presenter.Verify(x => x.Progress(
@@ -206,7 +206,7 @@ public sealed class AquireFinancialReportsInteractorTests
 
                     // act
                     await interactor
-                        .Handle(GetValidateResult(DateTimeOffset.Now, DateTimeOffset.Now));
+                        .Handle(GetValidateResult(DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)), DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9))));
                 }
 
                 // assert
@@ -259,7 +259,7 @@ public sealed class AquireFinancialReportsInteractorTests
                 var interactor = CreateInteractor();
 
                 // act
-                await interactor.Handle(GetValidateResult(DateTimeOffset.Now, DateTimeOffset.Now));
+                await interactor.Handle(GetValidateResult(DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9)), DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9))));
 
                 // assert
                 presenter.Verify(x => x.Error(It.Is<string>(x => x.Contains("インポート中にエラーが発生しました")),
@@ -292,7 +292,7 @@ public sealed class AquireFinancialReportsInteractorTests
                 {
                     Cover = new ReportCover
                     {
-                        SubmissionDate = DateTimeOffset.Now
+                        SubmissionDate = DateTimeOffset.Now.ToOffset(TimeSpan.FromHours(9))
                     }
                 });
         }
