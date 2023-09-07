@@ -30,7 +30,7 @@ static async Task Execute(
     {
         var usecase = serviceProvider?
             .GetService<IAquireFinancialReportsUsecase>()
-            ?? throw new System.Exception($"{nameof(IAquireFinancialReportsUsecase)}モジュールのDIに失敗しました");
+            ?? throw new Exception($"{nameof(IAquireFinancialReportsUsecase)}モジュールのDIに失敗しました");
         await usecase.Handle(GetAquireFromTo(from, to));
     }
     catch (Exception ex)
@@ -49,12 +49,12 @@ static IResult<(DateTimeOffset, DateTimeOffset)> GetAquireFromTo(in string? from
             mayBeFromDateTime.Value ?? DateTimeOffset.Now.AddDays(-1),
             mayBeToDateTime.Value ?? DateTimeOffset.Now)),
     (Failed<DateTimeOffset?>, _) =>
-        new Failed<(DateTimeOffset, DateTimeOffset)>
+        new Abort<(DateTimeOffset, DateTimeOffset)>
         {
             Message = $"{nameof(from)}には日付を指定してください。"
         },
     (_, Failed<DateTimeOffset?>) =>
-         new Failed<(DateTimeOffset, DateTimeOffset)>
+         new Abort<(DateTimeOffset, DateTimeOffset)>
          {
              Message = $"{nameof(to)}には日付を指定してください。"
          },
