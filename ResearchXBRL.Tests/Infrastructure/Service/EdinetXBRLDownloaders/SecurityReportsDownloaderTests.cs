@@ -1,7 +1,9 @@
 ﻿using Moq;
+using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
 using RichardSzalay.MockHttp;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -25,56 +27,8 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
 
             public sealed class 正常系 : DownloadTests
             {
-                [Fact]
-                public async Task APIVersionを変えたとき2つのAPIリクエストurlもそれに応じて変わる()
-                {
-                    // arrange
-                    var startDay = new DateTimeOffset(2018, 4, 15, 10, 10, 10, TimeSpan.FromHours(9));
-                    var endDay = startDay;
-                    var apiVersion = "v114514";
-                    var downloader = CreateDownloader(mockHttpHandler, apiVersion);
-
-                    var documentId = Guid.NewGuid().ToString();
-                    mockHttpHandler
-                        .Expect(HttpMethod.Get,
-                        $"https://disclosure.edinet-fsa.go.jp/api/{apiVersion}/documents.json?date={startDay:yyyy-MM-dd}&type=2")
-                        .Respond(_ => new HttpResponseMessage
-                        {
-                            StatusCode = HttpStatusCode.OK,
-                            Content = new StringContent($@"
-{{
-    ""results"": [
-        {{
-            ""docID"": ""{documentId}"",
-            ""ordinanceCode"": ""010"",
-            ""formCode"": ""030000"",
-            ""docTypeCode"": ""111"",
-            ""edinetCode"": ""aaaa"",
-            ""submitDateTime"": ""2021-08-25""
-        }}
-    ]
-}}")
-                        });
-                    mockHttpHandler
-                        .Expect(HttpMethod.Get,
-                        $"https://disclosure.edinet-fsa.go.jp/api/{apiVersion}/documents/{documentId}?type=1")
-                        .Respond(_ => new HttpResponseMessage
-                        {
-                            StatusCode = HttpStatusCode.OK,
-                            Content = new StringContent("")
-                        });
-
-                    // act
-                    await downloader
-                        .Download(startDay, endDay)
-                        .ForEachAsync(async data => await data.LazyZippedDataStream.Value);
-
-                    // assert
-                    mockHttpHandler.VerifyNoOutstandingExpectation();
-                }
-
-                [Fact]
-                public async Task 取得開始日から終了日までの全ての日付の書類一覧を取得する()
+                [Fact(DisplayName = "取得開始日から終了日までの全ての日付の書類一覧を取得する")]
+                public async Task Test1()
                 {
                     // arrange
                     var startDay = new DateTimeOffset(2019, 3, 15, 10, 10, 10, TimeSpan.FromHours(9));
@@ -105,11 +59,11 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                     mockHttpHandler.VerifyNoOutstandingExpectation();
                 }
 
-                [Fact]
-                public async Task 有価証券報告書のみを絞り込む()
+                [Fact(DisplayName = "有価証券報告書のみを絞り込む")]
+                public async Task Test2()
                 {
                     // arrange
-                    var startDay = new DateTimeOffset(2018, 4, 15, 10, 10, 10, TimeSpan.FromHours(9));
+                    var startDay = DateTimeOffset.Now.AddYears(3);
                     var endDay = startDay;
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
 
@@ -117,7 +71,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                     var documentId2 = Guid.NewGuid().ToString();
                     var companyId2 = Guid.NewGuid().ToString();
                     var documentType2 = Guid.NewGuid().ToString();
-                    var documentDate = "2021-08-26";
+                    var documentDate = startDay.AddYears(1);
                     var documentId3 = Guid.NewGuid().ToString();
                     mockHttpHandler
                         .When(HttpMethod.Get,
@@ -165,53 +119,60 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                         });
 
                     // act
-                    var data = await downloader
+                    var data = (await downloader
                         .Download(startDay, endDay)
-                        .ToArrayAsync();
+                        .ToArrayAsync()).Single();
 
                     // assert
-                    Assert.Equal(documentId2, data.Single().DocumentId);
-                    Assert.Equal(documentType2, data.Single().DocumentType);
-                    Assert.Equal(companyId2, data.Single().CompanyId);
-                    Assert.Equal(documentDate, $"{data.Single().DocumentDateTime:yyyy-MM-dd}");
+                    if (data is not Succeeded<ResearchXBRL.Application.DTO.EdinetXBRLData> succeeded)
+                    {
+                        throw new Exception("ダウンロード失敗");
+                    }
+                    Assert.Equal(documentId2, succeeded.Value.DocumentId);
+                    Assert.Equal(documentType2, succeeded.Value.DocumentType);
+                    Assert.Equal(companyId2, succeeded.Value.CompanyId);
+                    Assert.Equal(documentDate.ToString("yyyy-MM-dd"), succeeded.Value.DocumentDateTime.ToString("yyyy-MM-dd"));
                 }
             }
 
             public sealed class 異常系 : DownloadTests
             {
-                [Fact]
-                public async Task 取得開始日が5年よりも前の場合例外を出す()
+                [Fact(DisplayName = "取得開始日が5年よりも前の場合、中断ステータスを返す")]
+                public async Task Test1()
                 {
                     // arrange
                     var fiveYearsAgo = DateTimeOffset.Now.AddYears(-5);
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
 
-                    // act & assert
-                    await Assert.ThrowsAsync<ArgumentException>(() =>
-                        downloader
-                            .Download(fiveYearsAgo, DateTimeOffset.Now)
-                            .ForEachAsync(_ => { }));
+                    // act
+                    var result = await downloader
+                            .Download(fiveYearsAgo, DateTimeOffset.Now).SingleAsync();
+
+                    // assert
+                    Assert.IsType<Abort<ResearchXBRL.Application.DTO.EdinetXBRLData>>(result);
                 }
 
-                [Fact]
-                public async Task 取得終了日が5年よりも前の場合例外を出す()
+                [Fact(DisplayName = "取得終了日が5年よりも前の場合、中断ステータスを返す")]
+                public async Task Test2()
                 {
                     // arrange
                     var fiveYearsAgo = DateTimeOffset.Now.AddYears(-5);
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
 
-                    // act & assert
-                    await Assert.ThrowsAsync<ArgumentException>(() =>
-                        downloader
+                    // act
+                    var result = await downloader
                             .Download(DateTimeOffset.Now, fiveYearsAgo)
-                            .ForEachAsync(_ => { }));
+                            .SingleAsync();
+
+                    // assert
+                    Assert.IsType<Abort<ResearchXBRL.Application.DTO.EdinetXBRLData>>(result);
                 }
 
-                [Fact]
-                public async Task 書類一覧API接続処理失敗時例外を出す()
+                [Fact(DisplayName = "書類一覧API接続処理失敗時、失敗ステータスを返す")]
+                public async Task Test3()
                 {
                     // arrange
-                    var documentDay = new DateTimeOffset(2018, 4, 15, 10, 10, 10, TimeSpan.FromHours(9));
+                    var documentDay = DateTimeOffset.Now.AddYears(-3);
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
                     mockHttpHandler
                         .When(HttpMethod.Get,
@@ -221,18 +182,20 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                             StatusCode = HttpStatusCode.InternalServerError
                         });
 
-                    // act & assert
-                    await Assert.ThrowsAsync<HttpRequestException>(() =>
-                        downloader
+                    // act
+                    var result = await downloader
                             .Download(documentDay, documentDay)
-                            .ForEachAsync(_ => { }));
+                            .SingleAsync();
+
+                    // assert
+                    Assert.IsType<Failed<ResearchXBRL.Application.DTO.EdinetXBRLData>>(result);
                 }
 
-                [Fact]
-                public async Task 書類API接続処理に失敗した場合例外を出す()
+                [Fact(DisplayName = "書類API接続処理に失敗した場合、失敗ステータスを返す")]
+                public async Task Test4()
                 {
                     // arrange
-                    var startDay = new DateTimeOffset(2018, 4, 15, 10, 10, 10, TimeSpan.FromHours(9));
+                    var startDay = DateTimeOffset.Now.AddYears(-3);
                     var endDay = startDay;
                     var apiVersion = "v114514";
                     var downloader = CreateDownloader(mockHttpHandler, apiVersion);
@@ -266,11 +229,38 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                             StatusCode = HttpStatusCode.InternalServerError,
                         });
 
-                    // act & assert
-                    await foreach (var data in downloader.Download(startDay, startDay))
+                    await foreach (var data in downloader.Download(startDay, startDay).OfType<Succeeded<ResearchXBRL.Application.DTO.EdinetXBRLData>>())
                     {
-                        await Assert.ThrowsAsync<HttpRequestException>(async () => await data.LazyZippedDataStream.Value);
+                        // act
+                        var result = await data.Value.LazyZippedDataStream.Value;
+
+                        // assert
+                        Assert.IsType<Failed<MemoryStream>>(result);
                     }
+                }
+
+                [Fact(DisplayName = "書類一覧API接続処理失敗しても次の取得処理を続行する")]
+                public async Task Test5()
+                {
+                    // arrange
+                    var documentDay = DateTimeOffset.Now.AddYears(-3);
+                    var downloader = CreateDownloader(mockHttpHandler, "v1");
+                    mockHttpHandler
+                        .When(HttpMethod.Get,
+                        $"https://disclosure.edinet-fsa.go.jp/api/v1/documents.json?date={documentDay:yyyy-MM-dd}&type=2")
+                        .Respond(_ => new HttpResponseMessage
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError
+                        });
+
+                    // act
+                    var result = await downloader
+                            // NOTE: 4日分の書類一覧取得を行う
+                            .Download(documentDay, documentDay.AddDays(3))
+                            .ToArrayAsync();
+
+                    // assert
+                    Assert.Equal(4, result.Length);
                 }
             }
 

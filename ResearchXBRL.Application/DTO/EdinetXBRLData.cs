@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using ResearchXBRL.Application.DTO.Results;
 
 namespace ResearchXBRL.Application.DTO
 {
@@ -10,7 +11,7 @@ namespace ResearchXBRL.Application.DTO
         public string DocumentType { get; init; } = "";
         public string CompanyId { get; init; } = "";
         public DateTime DocumentDateTime { get; init; }
-        public Lazy<Task<MemoryStream>> LazyZippedDataStream { get; init; } = new();
+        public Lazy<Task<IResult<MemoryStream>>> LazyZippedDataStream { get; init; } = new();
 
         public async ValueTask DisposeAsync()
         {
@@ -19,7 +20,11 @@ namespace ResearchXBRL.Application.DTO
                 return;
             }
             var value = await LazyZippedDataStream.Value;
-            await value.DisposeAsync();
+            if (value is not Succeeded<MemoryStream> succeeded)
+            {
+                return;
+            }
+            await succeeded.Value.DisposeAsync();
         }
     }
 }

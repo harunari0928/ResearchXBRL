@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Domain.ImportFinancialReports.Contexts;
 using ResearchXBRL.Domain.ImportFinancialReports.FinancialReports;
 using ResearchXBRL.Domain.ImportFinancialReports.Units;
@@ -165,11 +166,11 @@ public sealed class EdinetXBRLParserTests
                 DocumentId = documentId,
                 CompanyId = companyId,
                 DocumentType = documentType,
-                LazyZippedDataStream = new Lazy<Task<MemoryStream>>(async () =>
+                LazyZippedDataStream = new Lazy<Task<IResult<MemoryStream>>>(async () =>
                 {
                     var memoryStream = new MemoryStream();
                     await stream.CopyToAsync(memoryStream);
-                    return memoryStream;
+                    return new Succeeded<MemoryStream>(memoryStream);
                 }, true)
             });
         }

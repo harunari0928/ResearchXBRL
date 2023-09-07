@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using ResearchXBRL.Application.DTO;
+using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Application.Services;
 using ResearchXBRL.CrossCuttingInterest.Extensions;
 using ResearchXBRL.Domain.ImportFinancialReports.Contexts;
@@ -122,13 +123,7 @@ public sealed class EdinetXBRLParser : IEdinetXBRLParser
     {
         // ファイル名先頭jpcrpかつ拡張子.xsdのファイルを取る
         var xbrlFile = files.Single(x => x.Contains($"{xbrlDirectoryPath}jpcrp") && x.EndsWith(".xsd"));
-        using var xbrlFileStream = fileStorage.Get(xbrlFile);
-
-        if (xbrlFileStream is null)
-        {
-            throw new FileNotFoundException("インポート対象ファイルが存在しません");
-        }
-
+        using var xbrlFileStream = fileStorage.Get(xbrlFile) ?? throw new FileNotFoundException("インポート対象ファイルが存在しません");
         using var streamReader = new StreamReader(xbrlFileStream);
         var isJppfs = streamReader.ReadToEnd().Contains("jppfs");
         return isJppfs ? "jppfs" : "jpigp";
@@ -194,12 +189,22 @@ public sealed class EdinetXBRLParser : IEdinetXBRLParser
     {
         var zipFilePath = $"./{data.DocumentId}.zip";
         var unzippedFolderPath = $"./{data.DocumentId}";
-        fileStorage.Set(await data.LazyZippedDataStream.Value, zipFilePath);
-        fileStorage.Unzip(zipFilePath, unzippedFolderPath);
-        fileStorage.Delete(zipFilePath);
-        await data.DisposeAsync();
-        return (unzippedFolderPath, fileStorage
-            .GetFiles(Path.Combine(unzippedFolderPath, xbrlDirectoryPath),
-            "*"));
+        switch (await data.LazyZippedDataStream.Value)
+        {
+            case Abort<MemoryStream> abort:
+                throw new Exception(abort.Message);
+            case Failed<MemoryStream> failed:
+                throw new Exception(failed.Message);
+            case Succeeded<MemoryStream> succeeded:
+                fileStorage.Set(succeeded.Value, zipFilePath);
+                fileStorage.Unzip(zipFilePath, unzippedFolderPath);
+                fileStorage.Delete(zipFilePath);
+                await data.DisposeAsync();
+                return (unzippedFolderPath, fileStorage
+                    .GetFiles(Path.Combine(unzippedFolderPath, xbrlDirectoryPath),
+                    "*"));
+            default:
+                throw new NotSupportedException($"{nameof(GetXBRLFiles)}メソッドから予期しない戻り値の型が返されました。返された型に対する処理の実装をお願いします。");
+        }
     }
 }

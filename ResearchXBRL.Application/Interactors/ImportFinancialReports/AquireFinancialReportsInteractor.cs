@@ -86,7 +86,12 @@ public sealed class AquireFinancialReportsInteractor : IAquireFinancialReportsUs
         await foreach (var data in downloader.Download(start, end))
         {
             await semaphore.WaitAsync();
-            jobs.Push(SaveReport(start, end, data));
+            if (data is Abort<EdinetXBRLData> abort)
+            {
+                semaphore.Release();
+                return new Abort { Message = abort.Message };
+            }
+            HandleDownloadResult(start, end, data);
         }
         await Task.WhenAll(jobs);
 
@@ -99,6 +104,23 @@ public sealed class AquireFinancialReportsInteractor : IAquireFinancialReportsUs
         }
 
         return new Succeeded();
+    }
+
+    private void HandleDownloadResult(DateTimeOffset start, DateTimeOffset end, IResult<EdinetXBRLData> result)
+    {
+        switch (result)
+        {
+            case Succeeded<EdinetXBRLData> succeeded:
+                jobs.Push(SaveReport(start, end, succeeded.Value));
+                break;
+            case Failed<EdinetXBRLData> failed:
+                semaphore.Release();
+                presenter.Error(failed.Message);
+                exceptions.Push(new Exception(failed.Message));
+                break;
+            default:
+                throw new NotSupportedException($"{nameof(GetResult)}メソッドから予期しない型が検出されました。当該型に対する処理の実装をお願いします。");
+        }
     }
 
     private async Task SaveReport(DateTimeOffset start, DateTimeOffset end, EdinetXBRLData data)

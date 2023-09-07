@@ -285,7 +285,7 @@ public sealed class AquireFinancialReportsInteractorTests
                 .Setup(x => x.Download(
                     It.IsAny<DateTimeOffset>(),
                     It.IsAny<DateTimeOffset>()))
-                .Returns(reports);
+                .Returns(reports.Select(x => new Succeeded<EdinetXBRLData>(x)));
             parser
                 .Setup(x => x.Parse(It.IsAny<EdinetXBRLData>()))
                 .ReturnsAsync(new FinancialReport(Enumerable.Empty<FinancialReportItem>())
@@ -297,7 +297,7 @@ public sealed class AquireFinancialReportsInteractorTests
                 });
         }
 
-        private IResult<(DateTimeOffset, DateTimeOffset)> GetValidateResult(DateTimeOffset from, DateTimeOffset to)
+        private static IResult<(DateTimeOffset, DateTimeOffset)> GetValidateResult(DateTimeOffset from, DateTimeOffset to)
         {
             return new Succeeded<(DateTimeOffset, DateTimeOffset)>((from, to));
         }

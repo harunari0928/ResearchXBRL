@@ -13,7 +13,7 @@ namespace ResearchXBRL.Infrastructure.ImportFinancialReports.FinancialReports;
 
 public sealed class FinancialReportsRepository : IFinancialReportsRepository
 {
-    private NpgsqlConnection CreateConnection()
+    private static NpgsqlConnection CreateConnection()
     {
         var server = Environment.GetEnvironmentVariable("DB_SERVERNAME");
         var userId = Environment.GetEnvironmentVariable("DB_USERID");

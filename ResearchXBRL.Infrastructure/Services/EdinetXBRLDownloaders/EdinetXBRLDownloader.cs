@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ResearchXBRL.Application.DTO.Results;
 
 namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
 {
@@ -23,50 +24,75 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
             this.apiVersion = apiVersion;
         }
 
-        public IAsyncEnumerable<EdinetXBRLData> Download(DateTimeOffset start, DateTimeOffset end)
+        public async IAsyncEnumerable<IResult<EdinetXBRLData>> Download(DateTimeOffset start, DateTimeOffset end)
         {
             var fiveYearsAgo = DateTimeOffset.Now.AddYears(-5);
             if (fiveYearsAgo > start || fiveYearsAgo > end)
             {
-                throw new ArgumentException("EdinetAPIは5年以上前のデータ取得に対応していません");
+                yield return new Abort<EdinetXBRLData> { Message = "EdinetAPIは5年以上前のデータ取得に対応していません" };
+                yield break;
             }
 
             var jstStartDate = start.ToOffset(TimeSpan.FromHours(9)).DateTime;
             var jstEndDate = end.ToOffset(TimeSpan.FromHours(9)).DateTime;
-            var documentInfos = GetFilteredDocumentIds(jstStartDate, jstEndDate);
-            return GetDocumentFiles(documentInfos);
-        }
-
-        private async IAsyncEnumerable<EdinetXBRLData> GetDocumentFiles(IAsyncEnumerable<DocumentInfo> documentInfos)
-        {
-            await foreach (var info in documentInfos)
+            await foreach (var item in HandleDocumentInfos(GetFilteredDocumentByIds(jstStartDate, jstEndDate)))
             {
-                yield return new EdinetXBRLData
-                {
-                    DocumentId = info.DocID,
-                    DocumentType = info.DocTypeCode,
-                    CompanyId = info.EdinetCode,
-                    DocumentDateTime = DateTime.Parse(info.SubmitDateTime),
-                    LazyZippedDataStream = GetLazyZippedDataStream(info)
-                };
+                yield return item;
             }
         }
 
-        private Lazy<Task<MemoryStream>> GetLazyZippedDataStream(DocumentInfo info)
+        private async IAsyncEnumerable<IResult<EdinetXBRLData>> HandleDocumentInfos(IAsyncEnumerable<IResult<DocumentInfo>> documentInfos)
         {
-            return new Lazy<Task<MemoryStream>>(() => GetZippedDataStream(info), true);
+            await foreach (var info in documentInfos)
+            {
+                switch (info)
+                {
+                    case Failed<DocumentInfo> failed:
+                        yield return new Failed<EdinetXBRLData> { Message = failed.Message };
+                        break;
+                    case Abort<DocumentInfo> abort:
+                        yield return new Abort<EdinetXBRLData> { Message = abort.Message };
+                        yield break;
+                    case Succeeded<DocumentInfo> succeeded:
+                        yield return new Succeeded<EdinetXBRLData>(new EdinetXBRLData
+                        {
+                            DocumentId = succeeded.Value.DocID,
+                            DocumentType = succeeded.Value.DocTypeCode,
+                            CompanyId = succeeded.Value.EdinetCode,
+                            DocumentDateTime = DateTime.Parse(succeeded.Value.SubmitDateTime),
+                            LazyZippedDataStream = GetLazyZippedDataStream(succeeded.Value)
+                        });
+                        break;
+                    default:
+                        throw new NotSupportedException($"{nameof(Download)}メソッドから予期しない型が検出されました。当該型に対する処理の実装をお願いします。");
+                }
+            }
         }
 
-        private async Task<MemoryStream> GetZippedDataStream(DocumentInfo info)
+        private Lazy<Task<IResult<MemoryStream>>> GetLazyZippedDataStream(DocumentInfo info)
+        {
+            return new Lazy<Task<IResult<MemoryStream>>>(() => GetZippedDataStream(info), true);
+        }
+
+        private async Task<IResult<MemoryStream>> GetZippedDataStream(DocumentInfo info)
         {
             var queryParameters = $"type=1";
             var url = $"{DocumentAPIUrl(info.DocID)}?{queryParameters}";
             using var responseMessage = await httpClient.GetAsync(url);
+            await Task.Delay(500);
             if (!responseMessage.IsSuccessStatusCode)
             {
-                throw new HttpRequestException("書類API接続処理失敗", null, responseMessage.StatusCode);
+                return new Failed<MemoryStream> { Message = $"書類API接続処理失敗 ステータスコード:${responseMessage.StatusCode}" };
             }
-            return await ReadContentStream(responseMessage);
+
+            try
+            {
+                return new Succeeded<MemoryStream>(await ReadContentStream(responseMessage));
+            }
+            catch (Exception ex)
+            {
+                return new Failed<MemoryStream> { Message = ex.ToString() };
+            }
         }
 
         private static async Task<MemoryStream> ReadContentStream(HttpResponseMessage responseMessage)
@@ -77,24 +103,25 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
             return copiedStream;
         }
 
-        protected abstract IAsyncEnumerable<DocumentInfo> GetFilteredDocumentIds(DateTime start, DateTime end);
+        protected abstract IAsyncEnumerable<IResult<DocumentInfo>> GetFilteredDocumentByIds(DateTime start, DateTime end);
 
-        protected async IAsyncEnumerable<DocumentInfo> GetAllDocumentInfos(DateTime start, DateTime end)
+        protected async IAsyncEnumerable<IResult<DocumentInfo>> GetAllDocumentInfos(DateTime start, DateTime end)
         {
             foreach (var date in EnumerateDates(start, end))
             {
                 var queryParameters = $"date={date:yyyy-MM-dd}&type=2";
                 using var responseMessage = await httpClient.GetAsync($"{DocumentListAPIUrl}?{queryParameters}");
+                await Task.Delay(500);
                 if (!responseMessage.IsSuccessStatusCode)
                 {
-                    throw new HttpRequestException("書類一覧API接続処理失敗", null, responseMessage.StatusCode);
+                    yield return new Failed<DocumentInfo> { Message = $"書類一覧API接続処理失敗 ステータスコード:{responseMessage.StatusCode}" };
+                    continue;
                 }
 
                 foreach (var documentInfo in (await DocumentListAPIResponse.Create(responseMessage)).Results)
                 {
-                    yield return documentInfo;
+                    yield return new Succeeded<DocumentInfo>(documentInfo);
                 }
-                await Task.Delay(100);
             }
         }
 

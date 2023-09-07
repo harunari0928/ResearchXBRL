@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Moq;
+using ResearchXBRL.Application.DTO.Results;
 using ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders;
 using RichardSzalay.MockHttp;
 using Xunit;
@@ -25,11 +26,11 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
 
             public sealed class 正常系 : DownloadTests
             {
-                [Fact]
-                public async Task 有価証券報告書_四半期報告書_半期報告書のみを絞り込む()
+                [Fact(DisplayName = "有価証券報告書_四半期報告書_半期報告書のみを絞り込む")]
+                public async Task Test1()
                 {
                     // arrange
-                    var startDay = new DateTimeOffset(2018, 4, 15, 10, 10, 10, TimeSpan.FromHours(9));
+                    var startDay = DateTimeOffset.Now.AddYears(-3);
                     var endDay = startDay;
                     var downloader = CreateDownloader(mockHttpHandler, "v1");
 
@@ -37,7 +38,7 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
                     var documentId2 = Guid.NewGuid().ToString();
                     var companyId2 = Guid.NewGuid().ToString();
                     var documentType2 = Guid.NewGuid().ToString();
-                    var documentDate = "2021-08-26";
+                    var documentDate = startDay.AddYears(1);
                     var documentId3 = Guid.NewGuid().ToString();
                     var documentId4 = Guid.NewGuid().ToString();
                     var documentId5 = Guid.NewGuid().ToString();
@@ -109,8 +110,8 @@ namespace ResearchXBRL.Tests.Infrastructure.Service.EdinetXBRLDownloaders
 
                     // assert
                     Assert.Equal(3, data.Length);
-                    Assert.Contains(documentId4, data.Select(x => x.DocumentId));
-                    Assert.Contains(documentId5, data.Select(x => x.DocumentId));
+                    Assert.Contains(documentId4, data.OfType<Succeeded<ResearchXBRL.Application.DTO.EdinetXBRLData>>().Select(x => x.Value.DocumentId));
+                    Assert.Contains(documentId5, data.OfType<Succeeded<ResearchXBRL.Application.DTO.EdinetXBRLData>>().Select(x => x.Value.DocumentId));
                 }
             }
 
