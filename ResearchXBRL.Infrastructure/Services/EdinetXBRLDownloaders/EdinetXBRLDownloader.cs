@@ -1,13 +1,15 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Net;
 using ResearchXBRL.Application.DTO;
 using ResearchXBRL.Application.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ResearchXBRL.Application.DTO.Results;
+using ResearchXBRL.Infrastructure.Shared;
 
 namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
 {
@@ -15,6 +17,8 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
     {
         private readonly HttpClient httpClient;
         private readonly string apiVersion;
+        private readonly ThrottlingService throttlingService = new(500);
+        private readonly ThrottlingService throttlingService2 = new(500);
 
         public EdinetXBRLDownloader(
             IHttpClientFactory httpClientFactory,
@@ -79,14 +83,19 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
             var queryParameters = $"type=1";
             var url = $"{DocumentAPIUrl(info.DocID)}?{queryParameters}";
             using var responseMessage = await httpClient.GetAsync(url);
-            await Task.Delay(500);
+            await Task.Delay(throttlingService2.HealingTime);
             if (!responseMessage.IsSuccessStatusCode)
             {
+                if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    throttlingService2.SlowDown();
+                }
                 return new Failed<MemoryStream> { Message = $"書類API接続処理失敗 ステータスコード:${responseMessage.StatusCode}" };
             }
 
             try
             {
+                throttlingService2.Reset();
                 return new Succeeded<MemoryStream>(await ReadContentStream(responseMessage));
             }
             catch (Exception ex)
@@ -111,15 +120,20 @@ namespace ResearchXBRL.Infrastructure.Services.EdinetXBRLDownloaders
             {
                 var queryParameters = $"date={date:yyyy-MM-dd}&type=2";
                 using var responseMessage = await httpClient.GetAsync($"{DocumentListAPIUrl}?{queryParameters}");
-                await Task.Delay(500);
+                await Task.Delay(throttlingService.HealingTime);
                 if (!responseMessage.IsSuccessStatusCode)
                 {
+                    if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+                    {
+                        throttlingService.SlowDown();
+                    }
                     yield return new Failed<DocumentInfo> { Message = $"書類一覧API接続処理失敗 ステータスコード:{responseMessage.StatusCode}" };
                     continue;
                 }
 
                 foreach (var documentInfo in (await DocumentListAPIResponse.Create(responseMessage)).Results)
                 {
+                    throttlingService.Reset();
                     yield return new Succeeded<DocumentInfo>(documentInfo);
                 }
             }
